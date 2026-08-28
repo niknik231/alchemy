@@ -23,6 +23,16 @@ header h1{font-size:19px;font-weight:600;margin-right:auto;display:flex;align-it
 button{font:inherit;color:inherit;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:6px 12px;border-radius:10px;cursor:pointer;transition:.15s}
 button:hover{background:rgba(255,255,255,.15)}
 button:active{transform:scale(.96)}
+.menu-wrap{position:relative;flex:none}
+.menu-trigger{height:35px;min-width:40px;padding:6px 10px;font-size:20px;line-height:1}
+.app-menu{position:absolute;top:calc(100% + 8px);right:0;width:min(280px,calc(100vw - 20px));display:none;padding:14px;background:rgba(24,21,44,.98);border:1px solid rgba(255,255,255,.16);border-radius:14px;box-shadow:0 16px 38px rgba(0,0,0,.48);z-index:900}
+.app-menu.open{display:block;animation:menuIn .16s ease-out}
+@keyframes menuIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.menu-title{font-size:16px;font-weight:700;color:#f2efff;margin-bottom:6px}
+.menu-about{font-size:12px;line-height:1.45;color:#aaa5c4;margin-bottom:10px}
+.menu-version{font-size:11px;color:#817b9e;padding-top:9px;border-top:1px solid rgba(255,255,255,.08)}
+.app-menu #btnReset{width:100%;margin-top:12px;color:#ffc7c7;background:rgba(210,71,71,.12);border-color:rgba(255,112,112,.25)}
+.app-menu #btnReset:hover{background:rgba(210,71,71,.24)}
 .game-icon{display:inline-block;width:1em;height:1em;vertical-align:-.14em;overflow:visible}
 main{flex:1;display:flex;min-height:0}
 aside{width:236px;padding:10px;overflow-y:auto;border-right:1px solid rgba(255,255,255,.07)}
@@ -32,8 +42,7 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .chip:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.32)}
 .chip .em{font-size:26px;line-height:1}
 .chip .nm{font-size:10px;color:#cfcbe6;text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chip .recipe-count{position:absolute;top:-5px;left:-5px;min-width:29px;height:18px;padding:0 5px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:9px;font-weight:700;line-height:1;color:#d9d5ea;background:#302b49;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 7px rgba(0,0,0,.35)}
-.chip .recipe-count.done{color:#b9efc3;background:#213b31;border-color:rgba(129,199,132,.45)}
+.chip .recipe-count{position:absolute;top:-5px;left:-5px;min-width:18px;height:18px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:9px;font-weight:700;line-height:1;color:#d9d5ea;background:#302b49;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 7px rgba(0,0,0,.35)}
 .chip.new{animation:newGlow 2.2s ease-out}
 @keyframes newGlow{0%{box-shadow:0 0 0 2px rgba(255,215,0,.9),0 0 26px rgba(255,215,0,.6)}100%{box-shadow:none}}
 #board{flex:1;position:relative;overflow:hidden}
@@ -49,7 +58,7 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .ghost{position:fixed;z-index:999;pointer-events:none;opacity:.85;transform:translate(-50%,-50%);animation:none !important}
 .spark{position:fixed;z-index:998;pointer-events:none;font-size:18px;animation:fly .6s ease-out forwards}
 @keyframes fly{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
-#hintbar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);background:rgba(22,19,42,.94);border:1px solid rgba(255,255,255,.16);padding:9px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;max-width:86%;text-align:center;white-space:nowrap;z-index:5}
+#hintbar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);box-sizing:border-box;width:max-content;max-width:calc(100% - 32px);background:rgba(22,19,42,.96);border:1px solid rgba(255,255,255,.16);padding:9px 18px;border-radius:12px;font-size:14px;line-height:1.35;opacity:0;pointer-events:none;transition:.3s;text-align:center;white-space:normal;overflow-wrap:anywhere;z-index:450}
 #hintbar.show{opacity:1}
 #hintbar .hint-pick{display:inline-flex;align-items:center;gap:5px}
 #hintbar .hint-pick .game-icon{font-size:18px}
@@ -64,7 +73,6 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 #popup .big .game-icon{width:1em;height:1em}
 #popup .ttl{color:#ffd75e;font-weight:700;margin-top:4px}
 #popup .val{font-size:20px;margin-top:2px}
-footer{padding:7px 14px;font-size:12px;color:#7d7899;border-top:1px solid rgba(255,255,255,.06)}
 .modal{position:fixed;inset:0;background:rgba(8,6,18,.72);display:none;align-items:center;justify-content:center;z-index:500}
 .modal.open{display:flex}
 .sheet{width:min(600px,94vw);max-height:84vh;display:flex;flex-direction:column;background:#191631;border:1px solid rgba(255,255,255,.14);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.55);animation:pop .22s cubic-bezier(.34,1.56,.64,1)}
@@ -72,12 +80,16 @@ footer{padding:7px 14px;font-size:12px;color:#7d7899;border-top:1px solid rgba(2
 .sheet-head h2{font-size:15px;margin-right:auto}
 #codexSearch{flex:0 1 220px;font:inherit;font-size:13px;color:inherit;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:6px 10px;outline:none}
 #codexSearch:focus{border-color:rgba(255,215,0,.5)}
+.codex-modes{display:flex;gap:6px;padding:8px 12px 0}
+.codex-mode{flex:1;padding:6px 10px;font-size:12px;color:#aaa5c4;background:rgba(255,255,255,.04)}
+.codex-mode.active{color:#f1edff;background:rgba(137,108,207,.24);border-color:rgba(190,160,255,.38)}
 #codexList{overflow-y:auto;padding:8px}
 .crow{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px}
 .crow:nth-child(even){background:rgba(255,255,255,.04)}
 .crow .em{font-size:22px;width:30px;text-align:center;flex:none;line-height:1}
 .crow .nm{font-size:14px;width:160px;flex:none}
 .crow.unknown .nm{color:#8f89ad}
+.crow.undiscovered .nm{color:#d4cfea}
 .crow .rc{font-size:12px;color:#a9a4c6;margin-left:auto;text-align:right}
 .fin{flex:none;font-size:10px;padding:2px 7px;border-radius:999px;color:#ffd75e;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25)}
 .cat-h{flex-basis:100%;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8f89ad;margin:12px 2px 6px;display:flex;align-items:center;gap:6px}
@@ -94,9 +106,18 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 #tip.show{opacity:1}
 #tip .t{color:#ffd75e;font-weight:600;margin-bottom:2px}
 @media(max-width:640px){
+  header{gap:6px;padding:8px 10px;flex-wrap:nowrap}
+  header h1{font-size:17px;gap:7px;white-space:nowrap}
+  #counter{font-size:12px;padding:3px 8px}
+  header > button,.menu-trigger{width:34px;min-width:34px;height:34px;padding:0;display:grid;place-items:center;font-size:18px;flex:none}
+  header > button .btn-label,.menu-trigger .btn-label{display:none}
   main{flex-direction:column-reverse}
   aside{width:100%;height:158px;border-right:none;border-top:1px solid rgba(255,255,255,.07)}
-  .item{width:66px;height:66px}.item .em{font-size:26px}
+  .chip{width:54px;height:54px;border-radius:12px}
+  .chip .em{font-size:22px}.chip .nm{font-size:9px;max-width:50px}
+  .chip .recipe-count{min-width:16px;height:16px;padding:0 4px;font-size:8px}
+  .item{width:56px;height:56px;border-radius:13px}.item .em{font-size:22px}.item .nm{font-size:9px;max-width:52px}
+  #hintbar{bottom:82px;width:calc(100% - 24px);max-width:none;padding:8px 12px;font-size:12px}
   #blackHole{width:64px;height:64px;right:12px;bottom:12px;font-size:36px}
 }
 </style>
@@ -104,22 +125,33 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <body>
 <header>
   <h1>⚗️ Алхимия <span id="counter"></span></h1>
-  <button id="btnCodex" title="Справочник всех элементов">📖 Справочник</button>
-  <button id="btnHint" title="Показать возможное сочетание">💡 Подсказка</button>
-  <button id="btnClear" title="Убрать всё с поля">🧹 Поле</button>
-  <button id="btnReset" title="Начать игру заново">🔄 Сброс</button>
+  <button id="btnCodex" title="Справочник всех элементов" aria-label="Справочник"><span aria-hidden="true">📖</span><span class="btn-label">Справочник</span></button>
+  <button id="btnHint" title="Показать возможное сочетание" aria-label="Подсказка"><span aria-hidden="true">💡</span><span class="btn-label">Подсказка</span></button>
+  <button id="btnClear" title="Убрать всё с поля" aria-label="Очистить поле"><span aria-hidden="true">🧹</span><span class="btn-label">Поле</span></button>
+  <div class="menu-wrap" id="menuWrap">
+    <button id="btnMenu" class="menu-trigger" title="Меню" aria-label="Открыть меню" aria-expanded="false" aria-controls="appMenu"><span aria-hidden="true">☰</span><span class="btn-label">Меню</span></button>
+    <div class="app-menu" id="appMenu" role="dialog" aria-label="Меню программы">
+      <div class="menu-title">⚗️ Алхимия</div>
+      <div class="menu-about">Игра о создании новых элементов из сочетаний уже открытых. Прогресс хранится только на этом устройстве.</div>
+      <div class="menu-version">Версия <span id="appVersion"></span></div>
+      <button id="btnReset" title="Начать игру заново">🔄 Сбросить прогресс</button>
+    </div>
+  </div>
 </header>
 <main>
   <aside><h2>Открытые элементы</h2><div id="palette"></div></aside>
   <section id="board"><div id="hintbar"></div><div id="blackHole" role="img" aria-label="Чёрная дыра — удалить элемент" title="Перетащи сюда элемент, чтобы удалить">🕳️</div></section>
 </main>
-<footer>Перетаскивай элементы на поле и сталкивай их друг с другом • чёрная дыра удаляет элементы с поля • короткий тап по панели — добавить на поле • двойной клик по элементу на поле — создать копию • уже известный рецепт не тратит элементы</footer>
 <div class="modal" id="codex">
   <div class="sheet">
     <div class="sheet-head">
       <h2>📖 Справочник</h2>
       <input id="codexSearch" type="text" placeholder="Поиск..." autocomplete="off">
       <button id="btnCodexClose" title="Закрыть">✕</button>
+    </div>
+    <div class="codex-modes" id="codexModes" role="tablist" aria-label="Режим справочника">
+      <button class="codex-mode active" type="button" role="tab" aria-selected="true" data-mode="all">Все элементы</button>
+      <button class="codex-mode" type="button" role="tab" aria-selected="false" data-mode="undiscovered">Неоткрытые</button>
     </div>
     <div id="codexList"></div>
   </div>
@@ -128,6 +160,8 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 
 <script>
 "use strict";
+
+const APP_VERSION = "1.2.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -188,7 +222,37 @@ const ICONS = {
   mud:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 38Q7 27 18 23Q22 12 34 18Q45 13 49 24Q61 29 54 40Q56 52 42 51Q32 58 23 51Q8 53 10 38Z" fill="#744934"/><path d="M17 32q8-8 17-5M37 42q8-5 14-1" fill="none" stroke="#a97555" stroke-width="4" stroke-linecap="round"/><ellipse cx="26" cy="42" rx="5" ry="3" fill="#513024" opacity=".7"/></svg>`,
   lava:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 52L27 14Q31 8 36 16L59 52Z" fill="#493943"/><path d="M21 24l8 5 7-8 8 9" fill="#78606a"/><path d="M32 25Q25 35 29 43Q31 49 21 54H45Q38 48 39 41Q40 33 32 25Z" fill="#e63f2e"/><path d="M33 29Q29 38 33 43Q34 47 29 52H39Q35 47 36 41Q38 35 33 29Z" fill="#ff9f2f"/></svg>`,
   steam:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 54Q8 44 18 34Q28 24 18 13M33 55Q23 45 33 34Q43 23 33 9M48 53Q38 43 48 33Q57 24 48 15" fill="none" stroke="#e6edf4" stroke-width="6" stroke-linecap="round" opacity=".88"/></svg>`,
-  gunpowder:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 15Q32 10 51 15V52Q32 57 13 52Z" fill="#8a5833" stroke="#4c2d20" stroke-width="3"/><path d="M13 21Q32 26 51 21M13 46Q32 41 51 46" fill="none" stroke="#c38a4f" stroke-width="4"/><path d="M9 18h46M9 49h46" stroke="#4d4650" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="34" r="11" fill="#2d2528"/><path d="M25 32q0-7 7-7t7 7q0 5-3 7v4h-8v-4q-3-2-3-7Z" fill="#eee7d4"/><circle cx="29" cy="32" r="2" fill="#2d2528"/><circle cx="35" cy="32" r="2" fill="#2d2528"/><path d="M30 38h4" stroke="#2d2528" stroke-width="2"/></svg>`
+  gunpowder:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 15Q32 10 51 15V52Q32 57 13 52Z" fill="#8a5833" stroke="#4c2d20" stroke-width="3"/><path d="M13 21Q32 26 51 21M13 46Q32 41 51 46" fill="none" stroke="#c38a4f" stroke-width="4"/><path d="M9 18h46M9 49h46" stroke="#4d4650" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="34" r="11" fill="#2d2528"/><path d="M25 32q0-7 7-7t7 7q0 5-3 7v4h-8v-4q-3-2-3-7Z" fill="#eee7d4"/><circle cx="29" cy="32" r="2" fill="#2d2528"/><circle cx="35" cy="32" r="2" fill="#2d2528"/><path d="M30 38h4" stroke="#2d2528" stroke-width="2"/></svg>`,
+  clay:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 43Q10 27 22 25Q26 15 39 19Q52 19 56 35Q60 48 44 52H20Q7 52 8 43Z" fill="#b76546" stroke="#77402f" stroke-width="3"/><path d="M14 40Q28 35 51 39M17 47Q32 43 47 46" fill="none" stroke="#d58a68" stroke-width="3" stroke-linecap="round"/><path d="M35 21l-4 9 6 4-4 8" fill="none" stroke="#713b2d" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  sand:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 49Q17 28 31 34Q42 17 59 45V53H5Z" fill="#d8a94d"/><path d="M9 47Q23 38 38 43Q48 45 57 41" fill="none" stroke="#f1cf75" stroke-width="3" stroke-linecap="round"/><g fill="#9f7132"><circle cx="18" cy="49" r="1.5"/><circle cx="28" cy="40" r="1.4"/><circle cx="43" cy="48" r="1.5"/><circle cx="51" cy="40" r="1.2"/></g></svg>`,
+  oasis:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 50Q18 37 33 41Q48 35 60 49V56H4Z" fill="#d8ae55"/><ellipse cx="34" cy="47" rx="17" ry="7" fill="#42b8c8"/><path d="M16 44Q18 29 20 16M50 43Q48 28 47 18" fill="none" stroke="#82512f" stroke-width="4" stroke-linecap="round"/><path d="M20 17q-10 0-13 7q9 2 14-3q-1-9 5-13q3 8-3 13q9-4 14 1q-7 7-16 2M47 19q-9-3-14 3q7 6 14 1q2-9 9-11q1 8-6 12q8-1 11 5q-8 4-14-3" fill="#3f8f4b"/></svg>`,
+  seed:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 40Q10 22 28 14Q48 12 51 30Q52 48 34 53Q18 55 13 40Z" fill="#9a6538" stroke="#5e3b25" stroke-width="3"/><path d="M31 17q-5 12 2 21" fill="none" stroke="#d4a168" stroke-width="3" stroke-linecap="round"/><path d="M33 38q2 9-7 16M33 42q8-5 13 1" fill="none" stroke="#72a94a" stroke-width="3" stroke-linecap="round"/></svg>`,
+  saltwater:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6Q13 29 13 42a19 19 0 0 0 38 0Q51 29 32 6Z" fill="#42aee9" stroke="#b9e9ff" stroke-width="2"/><path d="M18 42q12-7 28 0q-12 11-28 0Z" fill="#197eb9" opacity=".7"/><g fill="#fff" stroke="#c9e4ee" stroke-width="1"><path d="M23 31h6v6h-6Z"/><path d="M37 37h7v7h-7Z"/><path d="M30 45h5v5h-5Z"/></g></svg>`,
+  glass:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M15 8h36l-3 44-13-4-11 8-9-7Z" fill="#9edbea" fill-opacity=".38" stroke="#d8f6ff" stroke-width="3"/><path d="M23 14h18M20 21l20 25M43 12L29 49" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".72"/><path d="M36 48l12 4-5-11Z" fill="#68bdd4" opacity=".65"/></svg>`,
+  dough:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 49h54v8H5Z" fill="#95643b"/><path d="M12 43Q12 28 25 27Q30 17 42 22Q55 25 53 41Q49 50 31 50Q15 50 12 43Z" fill="#ead4a5" stroke="#b99a68" stroke-width="3"/><path d="M20 36q12-7 25 0M25 43q8-4 16 0" fill="none" stroke="#f8ebc8" stroke-width="3" stroke-linecap="round"/><g fill="#fff1d4"><circle cx="10" cy="45" r="1.5"/><circle cx="53" cy="48" r="1.5"/><circle cx="18" cy="52" r="1.2"/></g></svg>`,
+  coal:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 39L17 17l19-8 19 15-3 23-18 9-20-5Z" fill="#20232a" stroke="#08090c" stroke-width="3"/><path d="M17 17l17 13L55 24M34 30v26M14 51l20-21" fill="none" stroke="#555b66" stroke-width="3"/><path d="M36 9l-2 21 18 17" fill="none" stroke="#858b94" stroke-width="2" opacity=".55"/><g fill="#2a2d34"><circle cx="8" cy="53" r="3"/><circle cx="56" cy="51" r="2"/></g></svg>`,
+  hurricane:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 29Q22 8 47 16Q59 20 58 31Q43 21 31 29Q20 37 9 34" fill="#dce9f3"/><path d="M54 37Q43 58 18 50Q6 46 6 35Q21 45 33 37Q44 29 55 32" fill="#91bad4"/><path d="M20 32q8-11 19-4q9 7 1 15q-8 8-17 1q-7-6-3-12Z" fill="#eef7fb"/><ellipse cx="32" cy="36" rx="6" ry="4" fill="#334f68"/></svg>`,
+  ink:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M12 49Q24 19 53 8Q49 35 21 50Z" fill="#e8e1d2" stroke="#8d8578" stroke-width="2"/><path d="M20 49L49 14M27 39l-10-2M34 31l-9-4M41 23l-8-4" fill="none" stroke="#67625b" stroke-width="2.5" stroke-linecap="round"/><path d="M46 48q0-6 6-13q6 7 6 13a6 6 0 0 1-12 0Z" fill="#17141d"/></svg>`,
+  iceberg:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 36h54v20H5Z" fill="#287ea7"/><path d="M13 36L25 9l9 10 7-5 10 22Z" fill="#e6f7ff" stroke="#9ed9ed" stroke-width="2"/><path d="M13 36l11 20h24l3-20Z" fill="#76c4df" opacity=".8"/><path d="M25 9l2 27M41 14l-6 22M25 56l8-20 8 20" fill="none" stroke="#b9e7f5" stroke-width="2"/></svg>`,
+  universe:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="33" rx="27" ry="13" fill="none" stroke="#8d70d8" stroke-width="5" transform="rotate(-18 32 33)"/><ellipse cx="32" cy="33" rx="17" ry="7" fill="none" stroke="#d39be8" stroke-width="4" transform="rotate(-18 32 33)"/><circle cx="32" cy="33" r="6" fill="#fff0a6"/><g fill="#eef2ff"><path d="M10 12l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z"/><path d="M52 42l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5Z"/><circle cx="48" cy="13" r="2"/><circle cx="14" cy="49" r="2"/></g></svg>`,
+  life:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M7 39h12l5-12 8 25 7-17h18" fill="none" stroke="#65d67d" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M33 30Q31 17 43 11q4 13-8 20M31 31Q19 27 17 16q13-1 16 11" fill="#73c95c" stroke="#3e9340" stroke-width="2"/><path d="M33 31v21" stroke="#3e9340" stroke-width="3"/></svg>`,
+  village:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 31l12-11 12 11v22H5ZM25 28l13-13 14 13v25H25ZM43 35l8-8 9 8v18H43Z" fill="#d9b277" stroke="#78523b" stroke-width="2"/><path d="M3 31l14-13 14 13M23 28l15-15 16 15M41 35l10-10 11 10" fill="none" stroke="#9e493c" stroke-width="5"/><path d="M12 40h8v13M33 37h9v16M49 42h6" fill="none" stroke="#76513a" stroke-width="3"/><path d="M4 55q25-5 56 0" stroke="#6a9448" stroke-width="4"/></svg>`,
+  canyon:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 10h22l-4 14 5 9-8 23H4ZM60 10H38l4 14-5 9 8 23h15Z" fill="#ad5a3c"/><path d="M5 20h17M7 35h16M42 19h17M40 37h18" stroke="#e18a55" stroke-width="4"/><path d="M29 56q-4-16 3-25q7 11 3 25Z" fill="#3aa7c7"/><path d="M26 10l-4 14 5 9M38 10l4 14-5 9" fill="none" stroke="#713b31" stroke-width="3"/></svg>`,
+  cyborg:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M12 31Q12 10 32 8Q52 10 52 31v13L42 56H22L12 44Z" fill="#d6a27d" stroke="#6f5e58" stroke-width="2"/><path d="M32 8Q52 10 52 31v13L42 56H32Z" fill="#8795a2"/><path d="M36 17h11l5 9-5 10H36Z" fill="#4d5b68" stroke="#c7d3dc" stroke-width="2"/><circle cx="43" cy="27" r="5" fill="#ef4056"/><circle cx="23" cy="28" r="3" fill="#322b2b"/><path d="M24 44h17M32 9v47M46 40l6 4" stroke="#4e4544" stroke-width="3"/><path d="M38 49h9v5" fill="none" stroke="#d5e1e8" stroke-width="2"/></svg>`,
+  crystal:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 52l8-27 11-9 7 12 9-19 12 17 1 26Z" fill="#85cbea" stroke="#d4f3ff" stroke-width="2"/><path d="M16 25l10 27M27 16l-1 36M43 9l-4 43M55 26L39 52" fill="none" stroke="#4f8fbd" stroke-width="2"/><path d="M8 52h48" stroke="#6d65b5" stroke-width="4"/></svg>`,
+  copper:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 45Q7 27 20 17Q35 6 48 18Q59 31 49 45Q39 58 24 51Q12 46 18 32Q23 20 35 22Q46 24 45 35Q44 44 34 45Q25 45 24 37Q23 30 31 28" fill="none" stroke="#c86b35" stroke-width="6" stroke-linecap="round"/><path d="M49 45l8 8" stroke="#e39a60" stroke-width="5" stroke-linecap="round"/><path d="M19 18q4 5 9 1M45 20q-5 4-2 9" fill="none" stroke="#54a177" stroke-width="3"/></svg>`,
+  motor:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 20h39v31H10Z" fill="#527a93" stroke="#263f50" stroke-width="3"/><path d="M15 15h29v8H15ZM14 27h30M14 34h30M14 41h30" fill="none" stroke="#9ab3c2" stroke-width="3"/><circle cx="50" cy="35" r="10" fill="#35576b" stroke="#a8c2d0" stroke-width="3"/><circle cx="50" cy="35" r="4" fill="#d9a54c"/><path d="M60 35h4M18 51v6M42 51v6" stroke="#293b47" stroke-width="4"/></svg>`,
+  moss:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 49Q8 31 21 28Q27 16 41 22Q55 24 57 43Q52 54 32 55Q14 55 8 49Z" fill="#777b75" stroke="#4d514d" stroke-width="3"/><path d="M10 41q7-11 14-4q4-15 13-5q8-10 16 1q5 5 3 12q-9-4-15 2q-8-8-14 0q-9-6-17 1Z" fill="#4e9b45"/><g fill="#85c86b"><circle cx="19" cy="39" r="4"/><circle cx="32" cy="34" r="5"/><circle cx="46" cy="38" r="4"/><circle cx="36" cy="46" r="4"/></g></svg>`,
+  flour:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M15 18q17 6 34 0l6 35q-23 8-46 0Z" fill="#b99265" stroke="#6f5136" stroke-width="3"/><path d="M15 18q17-9 34 0q-16 7-34 0Z" fill="#68462f"/><path d="M18 18q14-8 28 0q-13 5-28 0Z" fill="#f2ead8"/><path d="M22 18q8-11 20 0Z" fill="#fffaf0"/><path d="M16 28h34M13 48q20 6 39 0" stroke="#d4b487" stroke-width="3"/><path d="M29 33q4-5 8 0v9h-8Z" fill="#8c6948" opacity=".7"/></svg>`,
+  science:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 23L32 9l27 14-27 14Z" fill="#26395e" stroke="#90a8d1" stroke-width="2"/><path d="M17 31v13q15 11 30 0V31" fill="#314a78" stroke="#90a8d1" stroke-width="2"/><path d="M59 23v21" stroke="#d7ae4d" stroke-width="3"/><circle cx="59" cy="47" r="4" fill="#e4bd5b"/><path d="M32 22l4 5-4 5-4-5Z" fill="#e8d787"/></svg>`,
+  pen:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M11 52Q16 23 50 7Q53 28 24 51Z" fill="#e9e2d5" stroke="#8c8579" stroke-width="2"/><path d="M20 50L48 11M27 40l-11-3M34 32l-10-4M41 23l-9-4M18 53l9-2" fill="none" stroke="#65615c" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  cave:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 55Q5 23 22 11Q39 0 56 19Q62 31 60 55Z" fill="#6f6762" stroke="#3e3937" stroke-width="3"/><path d="M17 55Q16 32 29 24Q42 18 51 34Q55 43 53 55Z" fill="#17151a"/><path d="M24 13l4 14 5-10 5 12 5-14" fill="#8f8580"/><path d="M9 35l10-4M49 23l8 5M8 47l8 2" stroke="#a79a92" stroke-width="3"/></svg>`,
+  garden:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M4 48q27-9 56 0v10H4Z" fill="#6f984a"/><path d="M18 48V23" stroke="#7a5030" stroke-width="5"/><path d="M18 29Q6 29 8 17q9-10 17 0q10-7 15 3q2 12-11 13Z" fill="#4f9b45"/><g stroke="#4e823a" stroke-width="2"><path d="M38 50V38M48 50V34M56 50V40"/></g><g><circle cx="38" cy="36" r="5" fill="#e96e86"/><circle cx="48" cy="32" r="5" fill="#f2c84b"/><circle cx="56" cy="38" r="5" fill="#8d78d6"/></g><path d="M30 58q8-8 18-10" fill="none" stroke="#d5c49e" stroke-width="4"/></svg>`,
+  steel:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M9 10h46v10H39v24h16v10H9V44h16V20H9Z" fill="#8fa2ae" stroke="#43545e" stroke-width="3"/><path d="M16 15h32M16 49h32M32 21v22" stroke="#d4e0e6" stroke-width="3"/><circle cx="32" cy="15" r="2" fill="#52636d"/><circle cx="32" cy="49" r="2" fill="#52636d"/></svg>`,
+  cart:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 20h37l-4 25H13Z" fill="#a66b3d" stroke="#5d3c28" stroke-width="3"/><path d="M12 28h31M16 21l3 23M28 21v23M40 21l-5 23" stroke="#d49a5e" stroke-width="3"/><circle cx="18" cy="49" r="9" fill="#765037" stroke="#35271f" stroke-width="3"/><circle cx="18" cy="49" r="3" fill="#c28a51"/><circle cx="39" cy="49" r="9" fill="#765037" stroke="#35271f" stroke-width="3"/><circle cx="39" cy="49" r="3" fill="#c28a51"/><path d="M44 25l18-10M43 32l19-8" stroke="#7e5435" stroke-width="4" stroke-linecap="round"/></svg>`,
+  fabric:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 13h42v34L38 56 10 48Z" fill="#7e73c8" stroke="#473f82" stroke-width="3"/><path d="M18 13v37M28 13v39M38 13v42M48 13v38M10 22h42M10 32h42M10 42h42" stroke="#b8afe9" stroke-width="1.5" opacity=".75"/><path d="M38 56V43h14Z" fill="#5f56a9"/><path d="M12 15l38 32" stroke="#ddd8ff" stroke-width="2" opacity=".5"/></svg>`,
+  university:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 24L32 8l27 16Z" fill="#c5b58f" stroke="#635b4c" stroke-width="3"/><path d="M9 26h46v6H9ZM12 32h7v19h-7Zm16 0h8v19h-8Zm17 0h7v19h-7ZM7 52h50v6H7Z" fill="#ded4b8" stroke="#716855" stroke-width="2"/><circle cx="32" cy="20" r="4" fill="#7b6e52"/></svg>`,
+  farm:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 27l22-17 22 17v29H8Z" fill="#b84f45" stroke="#64352f" stroke-width="3"/><path d="M5 28l25-20 25 20" fill="none" stroke="#e3d5bc" stroke-width="5"/><path d="M22 36h16v20H22Z" fill="#6f412e"/><path d="M25 39l10 14M35 39L25 53" stroke="#d9a56d" stroke-width="3"/><path d="M45 42q7-7 13 0v10H45Z" fill="#f1eee5" stroke="#3e3a38" stroke-width="2"/><circle cx="49" cy="44" r="2" fill="#292929"/><path d="M3 54h58M5 47h13M8 43v14M16 43v14" stroke="#d6b06b" stroke-width="3"/></svg>`
 };
 const R = [
   // первичные сочетания
@@ -302,17 +366,23 @@ const counter  = document.getElementById("counter");
 const hintbar  = document.getElementById("hintbar");
 const popup    = document.getElementById("popup");
 const blackHole= document.getElementById("blackHole");
+const menuWrap = document.getElementById("menuWrap");
+const btnMenu  = document.getElementById("btnMenu");
+const appMenu  = document.getElementById("appMenu");
+document.getElementById("appVersion").textContent = APP_VERSION;
 
 const tip = document.createElement("div");
 tip.id = "tip";
 document.body.appendChild(tip);
 function hideTip(){ tip.classList.remove("show"); }
 
-const ITEM_W = 76, ITEM_H = 76, MERGE_R = 62;
+const itemSize = () => window.matchMedia("(max-width:640px)").matches ? 56 : 76;
+const mergeRadius = () => itemSize() * 62 / 76;
 const items = [];   // {id, x, y, el}
 let zTop = 1;
 let drag = null;
 let lastTapId = null, lastTapT = 0;
+let lastBoardTapItem = null, lastBoardTapT = 0, suppressDblClickUntil = 0;
 
 // ---------- Утилиты ----------
 const key = recipeKey;
@@ -348,10 +418,14 @@ function renderPalette(){
       c.className = "chip" + (id === lastDiscovered ? " new" : "") + (FINAL.has(id) ? " final" : "");
       c.dataset.id = id;
       const [knownRecipes, totalRecipes] = recipeProgress(id);
+      const remainingRecipes = totalRecipes - knownRecipes;
       c.title = E[id][0] + (FINAL.has(id) ? " ✦ конечный элемент" : "") +
-        ` • открыто рецептов: ${knownRecipes} из ${totalRecipes}`;
-      c.innerHTML = chipHTML(id) +
-        `<span class="recipe-count${knownRecipes === totalRecipes ? " done" : ""}">${knownRecipes}/${totalRecipes}</span>`;
+        (FINAL.has(id) ? "" : remainingRecipes > 0
+          ? ` • осталось открыть рецептов: ${remainingRecipes}`
+          : " • все рецепты открыты");
+      c.innerHTML = chipHTML(id) + (!FINAL.has(id) && remainingRecipes > 0
+        ? `<span class="recipe-count" aria-label="Осталось открыть рецептов: ${remainingRecipes}">${remainingRecipes}</span>`
+        : "");
       palette.appendChild(c);
     }
   }
@@ -359,13 +433,14 @@ function renderPalette(){
 }
 
 function addItem(id, x, y){
+  const size = itemSize();
   const el = document.createElement("div");
   el.className = "item" + (FINAL.has(id) ? " final" : "");
   el.innerHTML = chipHTML(id);
   el.style.zIndex = ++zTop;
   const it = { id, x: clampPos(x), y: clampPos(y), el };
-  it.x = Math.min(it.x, board.clientWidth  - ITEM_W - 4);
-  it.y = Math.min(it.y, board.clientHeight - ITEM_H - 4);
+  it.x = Math.min(it.x, board.clientWidth  - size - 4);
+  it.y = Math.min(it.y, board.clientHeight - size - 4);
   el.style.left = it.x + "px";
   el.style.top  = it.y + "px";
   board.appendChild(el);
@@ -493,7 +568,7 @@ function discover(id, at){
   renderPalette();
   showPopup(iconHTML(id), "Новое открытие!", E[id][0]);
   if (hintbar.classList.contains("show")) showHint();
-  if (at) sparks(at.x + ITEM_W/2, at.y + ITEM_H/2);
+  if (at){ const size = itemSize(); sparks(at.x + size/2, at.y + size/2); }
   if (discovered.size === TOTAL && !wonShown){
     wonShown = true;
     setTimeout(() => showPopup("🏆", "Вселенная создана!", "Все элементы открыты!"), 2100);
@@ -502,12 +577,13 @@ function discover(id, at){
 
 // ---------- Соединение ----------
 function tryMerge(mover){
-  const cx = mover.x + ITEM_W/2, cy = mover.y + ITEM_H/2;
+  const size = itemSize(), radius = mergeRadius();
+  const cx = mover.x + size/2, cy = mover.y + size/2;
   let best = null, bestD = Infinity;
   for (const o of items){
     if (o === mover) continue;
-    const d = Math.hypot(cx - (o.x+ITEM_W/2), cy - (o.y+ITEM_H/2));
-    if (d < MERGE_R && d < bestD){ bestD = d; best = o; }
+    const d = Math.hypot(cx - (o.x+size/2), cy - (o.y+size/2));
+    if (d < radius && d < bestD){ bestD = d; best = o; }
   }
   if (!best) return;
 
@@ -521,12 +597,12 @@ function tryMerge(mover){
     notifyHTML(`${iconHTML(res)} «${E[res][0]}» уже создан — рецепт известен`);
     return;
   }
-  const mx = (mover.x + best.x)/2 + ITEM_W/2 - ITEM_W/2;
-  const my = (mover.y + best.y)/2 + ITEM_H/2 - ITEM_H/2;
+  const mx = (mover.x + best.x)/2;
+  const my = (mover.y + best.y)/2;
   removeItem(mover); removeItem(best);
   const nit = addItem(res, mx, my);
   if (!discovered.has(res)) discover(res, nit);
-  else sparks(nit.x + ITEM_W/2, nit.y + ITEM_H/2);
+  else sparks(nit.x + size/2, nit.y + size/2);
 }
 
 // ---------- Перетаскивание ----------
@@ -540,7 +616,7 @@ document.addEventListener("pointerdown", e => {
     g.style.left = e.clientX + "px";
     g.style.top  = e.clientY + "px";
     document.body.appendChild(g);
-    drag = { type:"new", id:chip.dataset.id, ghost:g, moved:false,
+    drag = { type:"new", id:chip.dataset.id, ghost:g, moved:false, pointerType:e.pointerType,
              sx:e.clientX, sy:e.clientY, t0:performance.now() };
     return;
   }
@@ -551,7 +627,7 @@ document.addEventListener("pointerdown", e => {
     const b = board.getBoundingClientRect();
     el.classList.add("dragging");
     el.style.zIndex = ++zTop;
-    drag = { type:"move", it,
+    drag = { type:"move", it, pointerType:e.pointerType,
              offX:e.clientX - (b.left + it.x), offY:e.clientY - (b.top + it.y),
              moved:false, sx:e.clientX, sy:e.clientY };
   }
@@ -559,16 +635,18 @@ document.addEventListener("pointerdown", e => {
 
 document.addEventListener("pointermove", e => {
   if (!drag) return;
-  if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 5) drag.moved = true;
+  const moveThreshold = drag.pointerType === "touch" ? 9 : 5;
+  if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > moveThreshold) drag.moved = true;
   if (drag.type === "new"){
     drag.ghost.style.left = e.clientX + "px";
     drag.ghost.style.top  = e.clientY + "px";
   } else if (drag.moved){
+    const size = itemSize();
     const b = board.getBoundingClientRect();
     let x = clampPos(e.clientX - b.left - drag.offX);
     let y = clampPos(e.clientY - b.top  - drag.offY);
-    x = Math.min(x, board.clientWidth  - ITEM_W - 4);
-    y = Math.min(y, board.clientHeight - ITEM_H - 4);
+    x = Math.min(x, board.clientWidth  - size - 4);
+    y = Math.min(y, board.clientHeight - size - 4);
     drag.it.x = x; drag.it.y = y;
     drag.it.el.style.left = x + "px";
     drag.it.el.style.top  = y + "px";
@@ -596,32 +674,53 @@ function endDrag(e, cancelled){
       lastTapId = null;
     }
     let x, y;
+    const size = itemSize();
     if (!inside && tapped){
-      x = 10 + Math.random() * (board.clientWidth  - ITEM_W - 24);
-      y = 10 + Math.random() * (board.clientHeight - ITEM_H - 24);
+      x = 10 + Math.random() * (board.clientWidth  - size - 24);
+      y = 10 + Math.random() * (board.clientHeight - size - 24);
     } else if (inside){
-      x = e.clientX - b.left - ITEM_W/2;
-      y = e.clientY - b.top  - ITEM_H/2;
+      x = e.clientX - b.left - size/2;
+      y = e.clientY - b.top  - size/2;
     } else return;
     tryMerge(addItem(d.id, x, y));
   } else {
     d.it.el.classList.remove("dragging");
-    if (d.moved && !cancelled){
+    if (!d.moved && !cancelled && d.pointerType !== "mouse"){
+      const now = performance.now();
+      if (d.it === lastBoardTapItem && now - lastBoardTapT < 420){
+        duplicateItem(d.it);
+        lastBoardTapItem = null;
+        lastBoardTapT = 0;
+        suppressDblClickUntil = now + 650;
+      } else {
+        lastBoardTapItem = d.it;
+        lastBoardTapT = now;
+      }
+    } else if (d.moved && !cancelled){
+      lastBoardTapItem = null;
       if (isOverBlackHole(e.clientX, e.clientY)) consumeItem(d.it);
       else tryMerge(d.it);
+    } else if (cancelled){
+      lastBoardTapItem = null;
     }
   }
 }
 document.addEventListener("pointerup",    e => endDrag(e, false));
 document.addEventListener("pointercancel",e => endDrag(e, true));
 
-// двойной клик по элементу на поле — создать копию рядом
+function duplicateItem(it){
+  const size = itemSize();
+  addItem(it.id, it.x + size + 12, it.y + 10);
+}
+
+// двойной клик мышью или двойной тап по элементу — создать одну копию рядом
 board.addEventListener("dblclick", e => {
+  if (performance.now() < suppressDblClickUntil) return;
   const el = e.target.closest(".item");
   if (!el) return;
   const it = items.find(i => i.el === el);
   if (!it) return;
-  addItem(it.id, it.x + 88, it.y + 10);
+  duplicateItem(it);
 });
 
 // ---------- Кнопки ----------
@@ -631,6 +730,8 @@ document.getElementById("btnHint").addEventListener("click", showHint);
 const codex      = document.getElementById("codex");
 const codexList  = document.getElementById("codexList");
 const codexSearch= document.getElementById("codexSearch");
+const codexModes = document.getElementById("codexModes");
+let codexMode = "all";
 
 const RECIPES_BY_RESULT = (() => {
   const m = new Map();
@@ -659,11 +760,36 @@ function makeCodexRow(id){
   return { row, known };
 }
 
+function makeUndiscoveredRow(id){
+  const row = document.createElement("div");
+  row.className = "crow undiscovered";
+  row.dataset.id = id;
+  row.dataset.readiness = String(openedRecipeComponents(id));
+  row.innerHTML =
+    `<span class="em">${iconHTML(id)}</span><span class="nm">${E[id][0]}</span>` +
+    `<span class="rc">ещё не открыт</span>`;
+  return row;
+}
+
+function openedRecipeComponents(id){
+  const pair = RECIPES_BY_RESULT.get(id);
+  return pair ? pair.filter(component => discovered.has(component)).length : 0;
+}
+
 function renderCodex(q){
   q = (q || "").trim().toLowerCase();
   codexList.innerHTML = "";
   let shown = 0;
-  if (q){
+  if (codexMode === "undiscovered"){
+    const ids = Object.keys(E)
+      .filter(id => !discovered.has(id) && (!q || E[id][0].toLowerCase().includes(q)))
+      .sort((a, b) => openedRecipeComponents(b) - openedRecipeComponents(a) ||
+        E[a][0].localeCompare(E[b][0], "ru"));
+    for (const id of ids){
+      codexList.appendChild(makeUndiscoveredRow(id));
+      shown++;
+    }
+  } else if (q){
     // поиск — плоский список подходящих открытых элементов
     const ids = Object.keys(E).sort((x,y) => E[x][0].localeCompare(E[y][0], "ru"));
     for (const id of ids){
@@ -686,20 +812,33 @@ function renderCodex(q){
   if (!shown){
     const d = document.createElement("div");
     d.style.cssText = "text-align:center;color:#8f89ad;padding:20px;font-size:13px";
-    d.textContent = q ? "Ничего не найдено" : "";
+    d.textContent = q ? "Ничего не найдено" : codexMode === "undiscovered" ? "Все элементы открыты" : "";
     codexList.appendChild(d);
   }
 }
 function openCodex(){ renderCodex(""); codex.classList.add("open"); codexSearch.focus(); }
 function closeCodex(){ codex.classList.remove("open"); codexSearch.value = ""; }
 
+codexModes.addEventListener("click", e => {
+  const button = e.target.closest(".codex-mode");
+  if (!button || button.dataset.mode === codexMode) return;
+  codexMode = button.dataset.mode;
+  for (const modeButton of codexModes.querySelectorAll(".codex-mode")){
+    const active = modeButton === button;
+    modeButton.classList.toggle("active", active);
+    modeButton.setAttribute("aria-selected", String(active));
+  }
+  renderCodex(codexSearch.value);
+});
+
 codexList.addEventListener("click", e => {
   const btn = e.target.closest(".cbtn");
   if (!btn) return;
   const id = btn.dataset.id;
+  const size = itemSize();
   addItem(id,
-    20 + Math.random() * Math.max(1, board.clientWidth  - ITEM_W - 40),
-    20 + Math.random() * Math.max(1, board.clientHeight - ITEM_H - 40));
+    20 + Math.random() * Math.max(1, board.clientWidth  - size - 40),
+    20 + Math.random() * Math.max(1, board.clientHeight - size - 40));
   closeCodex();
 });
 
@@ -731,7 +870,22 @@ board.addEventListener("mouseout", e => {
 });
 
 document.getElementById("btnClear").addEventListener("click", () => items.slice().forEach(removeItem));
+
+function setMenuOpen(open){
+  appMenu.classList.toggle("open", open);
+  btnMenu.setAttribute("aria-expanded", String(open));
+  btnMenu.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
+}
+btnMenu.addEventListener("click", e => {
+  e.stopPropagation();
+  setMenuOpen(!appMenu.classList.contains("open"));
+});
+menuWrap.addEventListener("click", e => e.stopPropagation());
+document.addEventListener("click", () => setMenuOpen(false));
+document.addEventListener("keydown", e => { if (e.key === "Escape") setMenuOpen(false); });
+
 document.getElementById("btnReset").addEventListener("click", () => {
+  setMenuOpen(false);
   if (confirm("Начать заново? Все открытия будут потеряны.")){
     localStorage.removeItem("alchemy.discovered");
     location.reload();
@@ -741,9 +895,10 @@ document.getElementById("btnReset").addEventListener("click", () => {
 // ---------- Старт ----------
 renderPalette();
 requestAnimationFrame(() => {
-  const n = BASE.length, gap = 110;
-  const startX = board.clientWidth/2  - gap*(n-1)/2 - ITEM_W/2;
-  const startY = board.clientHeight/2 - ITEM_H/2;
+  const n = BASE.length, gap = window.matchMedia("(max-width:640px)").matches ? 82 : 110;
+  const size = itemSize();
+  const startX = board.clientWidth/2  - gap*(n-1)/2 - size/2;
+  const startY = board.clientHeight/2 - size/2;
   BASE.forEach((id,i) => addItem(id, startX + i*gap, startY));
 });
 </script>
