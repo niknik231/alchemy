@@ -106,7 +106,9 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .crow{position:relative;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px}
 .crow:nth-child(even){background:rgba(255,255,255,.04)}
 .crow .em{font-size:22px;width:30px;text-align:center;flex:none;line-height:1}
-.crow .nm{font-size:14px;width:160px;flex:none}
+.crow .nm{font-size:14px;width:160px;flex:none;display:flex;align-items:center;gap:6px}
+.crow .nm .recipe-count{position:static;display:inline-flex;flex:none;box-shadow:none}
+.codex-star{flex:none;color:#ffd75e;font-size:14px;line-height:1;text-shadow:0 1px 4px rgba(0,0,0,.75)}
 .crow.unknown .nm{color:#8f89ad}
 .crow.undiscovered{cursor:pointer}
 .crow.undiscovered:hover{background:rgba(255,255,255,.075)}
@@ -118,7 +120,6 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .crow.undiscovered.clue-open .element-clue{display:block}
 .element-clue strong{color:#e7cf7b;font-style:normal;font-weight:600}
 .recipe-unknown{color:#ffd75e;font-weight:700;letter-spacing:.08em}
-.fin{flex:none;font-size:10px;padding:2px 7px;border-radius:999px;color:#ffd75e;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25)}
 .cat-h{flex-basis:100%;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8f89ad;margin:12px 2px 6px;display:flex;align-items:center;gap:6px}
 aside h2 + .hidefin + .cat-h{margin-top:4px}
 .cat-h:first-child{margin-top:2px}
@@ -158,10 +159,8 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
   .crow .em{grid-column:1;grid-row:1 / span 2;width:30px;align-self:start}
   .crow .nm{grid-column:2;grid-row:1;width:auto;min-width:0;max-width:100%;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
   .crow .rc{grid-column:2;grid-row:2;min-width:0;max-width:100%;margin:0;text-align:left;line-height:1.35;white-space:normal;overflow-wrap:anywhere;word-break:normal;hyphens:auto}
-  .crow .fin{grid-column:3;grid-row:1;align-self:start;justify-self:end;white-space:nowrap}
   .crow .cbtn{grid-column:3;grid-row:2;align-self:end;justify-self:end}
   .crow > .recipe-count{position:static;grid-column:3;grid-row:1;align-self:start;justify-self:end;transform:none}
-  .crow:has(.fin) .rc{grid-column:2 / -1}
   .crow.unknown .rc,.crow.undiscovered .rc{grid-column:2 / -1}
   .crow.undiscovered.has-clue{align-items:start}
   .crow .element-clue{grid-column:2 / -1;grid-row:3;width:auto;margin:0;padding:7px 9px}
@@ -172,7 +171,6 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
   .crow{grid-template-columns:28px minmax(0,1fr) minmax(26px,max-content);column-gap:6px;padding:9px 6px}
   .crow .em{width:28px;font-size:21px}
   .crow .rc{font-size:11.5px}
-  .crow .fin{font-size:9px;padding:2px 5px}
 }
 </style>
 </head>
@@ -240,7 +238,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.16.0";
+const APP_VERSION = "1.16.2";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -1993,11 +1991,12 @@ function makeCodexRow(id){
   if (known){
     const rc = recipeListHTML(id) || "базовый элемент";
     row.innerHTML =
-      `<span class="em">${iconHTML(id)}</span><span class="nm">${E[id][0]}</span>` +
-      (FINAL.has(id) ? `<span class="fin">✦ конечный</span>` : "") +
+      `<span class="em">${iconHTML(id)}</span>` +
+      `<span class="nm">${E[id][0]}` +
+        (FINAL.has(id) ? `<span class="codex-star" title="Конечный элемент" aria-label="Конечный элемент">✦</span>` : recipeCountHTML(id)) +
+      `</span>` +
       `<span class="rc">${rc}</span>` +
-      `<button class="cbtn" data-id="${id}" title="Добавить на поле">+</button>` +
-      recipeCountHTML(id);
+      `<button class="cbtn" data-id="${id}" title="Добавить на поле">+</button>`;
   } else {
     row.innerHTML =
       `<span class="em">❓</span><span class="nm">???</span><span class="rc">ещё не открыт</span>`;
@@ -2019,7 +2018,6 @@ function makeUndiscoveredRow(id){
   row.setAttribute("aria-label", `${E[id][0]}. Показать подсказку`);
   row.innerHTML =
     `<span class="em">${iconHTML(id)}</span><span class="nm">${E[id][0]}</span>` +
-    `<span class="rc">нажмите для подсказки</span>` +
     `<span class="element-clue" id="${clueId}" hidden><strong>Намёк:</strong> ${clue}</span>`;
   return row;
 }
