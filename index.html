@@ -43,7 +43,7 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .chip:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.32)}
 .chip .em{font-size:26px;line-height:1}
 .chip .nm{font-size:10px;color:#cfcbe6;text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chip .recipe-count{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:9px;font-weight:700;line-height:1;color:#d9d5ea;background:#302b49;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 7px rgba(0,0,0,.35)}
+.recipe-count{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:9px;font-weight:700;line-height:1;color:#d9d5ea;background:#302b49;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 7px rgba(0,0,0,.35)}
 .chip.new{animation:newGlow 2.2s ease-out}
 @keyframes newGlow{0%{box-shadow:0 0 0 2px rgba(255,215,0,.9),0 0 26px rgba(255,215,0,.6)}100%{box-shadow:none}}
 #board{flex:1;position:relative;overflow:hidden}
@@ -99,7 +99,7 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .switch input:checked + .switch-track::after{transform:translateX(20px);background:#fff}
 .switch input:focus-visible + .switch-track{outline:2px solid #d3b8ff;outline-offset:2px}
 .palette-empty{padding:10px 4px;color:#8f89ad;font-size:12px;line-height:1.4}
-.crow{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px}
+.crow{position:relative;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px}
 .crow:nth-child(even){background:rgba(255,255,255,.04)}
 .crow .em{font-size:22px;width:30px;text-align:center;flex:none;line-height:1}
 .crow .nm{font-size:14px;width:160px;flex:none}
@@ -134,7 +134,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
   aside{width:100%;height:158px;border-right:none;border-top:1px solid rgba(255,255,255,.07)}
   .chip{width:54px;height:54px;border-radius:12px}
   .chip .em{font-size:22px}.chip .nm{font-size:9px;max-width:50px}
-  .chip .recipe-count{min-width:16px;height:16px;padding:0 4px;font-size:8px}
+  .recipe-count{min-width:16px;height:16px;padding:0 4px;font-size:8px}
   .item{width:56px;height:56px;border-radius:13px}.item .em{font-size:22px}.item .nm{font-size:9px;max-width:52px}
   #hintbar{bottom:82px;width:calc(100% - 24px);max-width:none;padding:8px 12px;font-size:12px}
   #blackHole{width:64px;height:64px;right:12px;bottom:12px;font-size:36px}
@@ -201,7 +201,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.7.0";
+const APP_VERSION = "1.8.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -920,6 +920,22 @@ function recipeProgress(id){
   return [recipes.filter(recipe => discoveredRecipes.has(recipe)).length, recipes.length];
 }
 
+function recipeCountHTML(id){
+  if (FINAL.has(id)) return "";
+  const [knownRecipes, totalRecipes] = recipeProgress(id);
+  const remainingRecipes = totalRecipes - knownRecipes;
+  return remainingRecipes > 0
+    ? `<span class="recipe-count" aria-label="Осталось открыть рецептов: ${remainingRecipes}">${remainingRecipes}</span>`
+    : "";
+}
+
+function refreshBoardRecipeCounts(){
+  for (const it of items){
+    it.el.querySelector(".recipe-count")?.remove();
+    it.el.insertAdjacentHTML("beforeend", recipeCountHTML(it.id));
+  }
+}
+
 function renderPalette(){
   palette.innerHTML = "";
   let shown = 0;
@@ -947,9 +963,7 @@ function renderPalette(){
         (FINAL.has(id) ? "" : remainingRecipes > 0
           ? ` • осталось открыть рецептов: ${remainingRecipes}`
           : " • все рецепты открыты");
-      c.innerHTML = chipHTML(id) + (!FINAL.has(id) && remainingRecipes > 0
-        ? `<span class="recipe-count" aria-label="Осталось открыть рецептов: ${remainingRecipes}">${remainingRecipes}</span>`
-        : "");
+      c.innerHTML = chipHTML(id) + recipeCountHTML(id);
       palette.appendChild(c);
       shown++;
     }
@@ -961,13 +975,14 @@ function renderPalette(){
     palette.appendChild(empty);
   }
   counter.textContent = `${discovered.size} / ${TOTAL}`;
+  refreshBoardRecipeCounts();
 }
 
 function addItem(id, x, y){
   const size = itemSize();
   const el = document.createElement("div");
   el.className = "item" + (FINAL.has(id) ? " final" : "");
-  el.innerHTML = chipHTML(id);
+  el.innerHTML = chipHTML(id) + recipeCountHTML(id);
   el.style.zIndex = ++zTop;
   const it = { id, x: clampPos(x), y: clampPos(y), el };
   it.x = Math.min(it.x, board.clientWidth  - size - 4);
@@ -1325,7 +1340,8 @@ function makeCodexRow(id){
       `<span class="em">${iconHTML(id)}</span><span class="nm">${E[id][0]}</span>` +
       (FINAL.has(id) ? `<span class="fin">✦ конечный</span>` : "") +
       `<span class="rc">${rc}</span>` +
-      `<button class="cbtn" data-id="${id}" title="Добавить на поле">+</button>`;
+      `<button class="cbtn" data-id="${id}" title="Добавить на поле">+</button>` +
+      recipeCountHTML(id);
   } else {
     row.innerHTML =
       `<span class="em">❓</span><span class="nm">???</span><span class="rc">ещё не открыт</span>`;
