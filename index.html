@@ -43,7 +43,7 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .chip:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.32)}
 .chip .em{font-size:26px;line-height:1}
 .chip .nm{font-size:10px;color:#cfcbe6;text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chip .recipe-count{position:absolute;top:-5px;left:-5px;min-width:18px;height:18px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:9px;font-weight:700;line-height:1;color:#d9d5ea;background:#302b49;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 7px rgba(0,0,0,.35)}
+.chip .recipe-count{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:9px;font-weight:700;line-height:1;color:#d9d5ea;background:#302b49;border:1px solid rgba(255,255,255,.2);box-shadow:0 2px 7px rgba(0,0,0,.35)}
 .chip.new{animation:newGlow 2.2s ease-out}
 @keyframes newGlow{0%{box-shadow:0 0 0 2px rgba(255,215,0,.9),0 0 26px rgba(255,215,0,.6)}100%{box-shadow:none}}
 #board{flex:1;position:relative;overflow:hidden}
@@ -106,6 +106,10 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .crow.unknown .nm{color:#8f89ad}
 .crow.undiscovered .nm{color:#d4cfea}
 .crow .rc{font-size:12px;color:#a9a4c6;margin-left:auto;text-align:right}
+.crow.undiscovered.has-clue{align-items:flex-start;flex-wrap:wrap}
+.element-clue{flex-basis:calc(100% - 42px);margin:-4px 0 2px 42px;padding:6px 9px;border-left:2px solid rgba(255,215,94,.45);font-size:11.5px;line-height:1.4;color:#bbb5d2;font-style:italic}
+.element-clue strong{color:#e7cf7b;font-style:normal;font-weight:600}
+.recipe-unknown{color:#ffd75e;font-weight:700;letter-spacing:.08em}
 .fin{flex:none;font-size:10px;padding:2px 7px;border-radius:999px;color:#ffd75e;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25)}
 .cat-h{flex-basis:100%;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8f89ad;margin:12px 2px 6px;display:flex;align-items:center;gap:6px}
 aside h2 + .hidefin + .cat-h{margin-top:4px}
@@ -197,7 +201,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.5.0";
+const APP_VERSION = "1.7.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -768,8 +772,10 @@ const TOTAL = Object.keys(E).length;
 // Рецепты, в которых элемент используется как ингредиент.
 const RECIPES_USING = new Map(Object.keys(E).map(id => [id, []]));
 for (const [raw, result] of R){
+  const [a, b] = raw.split(" ");
+  const recipe = recipeKey(a, b);
   for (const ingredient of new Set(raw.split(" "))){
-    RECIPES_USING.get(ingredient).push(result);
+    RECIPES_USING.get(ingredient).push(recipe);
   }
 }
 // конечные элементы — не используются как ингредиент ни в одном рецепте
@@ -799,6 +805,26 @@ for (const [id,,,,, cat] of [...EXPANSION, ...MUSIC_EXPANSION]){
 const CAT_COLOR = { base:"#9aa4b5", elem:"#4fc3f7", sky:"#ffd54f", geo:"#a1887f", life:"#81c784", craft:"#ffcc80", food:"#ffab91", transport:"#90a4ae", tech:"#80cbc4", science:"#4db6ac", civ:"#ffb74d", culture:"#f48fb1", myst:"#ce93d8", space:"#9fa8da" };
 const CAT_OF = {}; CATS.forEach(([cid,,ids]) => ids.forEach(id => CAT_OF[id] = cid));
 
+// Пилотные описания-намеки для неоткрытых элементов.
+const ELEMENT_CLUES = Object.freeze({
+  diamond: "Рождается глубоко там, где тёмное вещество веками терпит давление.",
+  iceberg: "Лишь малая часть этого холодного странника видна над солёной гладью.",
+  car: "Личный потомок рельсового транспорта, научившийся сам выбирать дорогу.",
+  airport: "Городские ворота для тех, кто прибывает не по земле.",
+  asphalt: "Каменная дорога становится гладкой благодаря густому следу переработанной нефти.",
+  bus: "Личный транспорт вырастает и начинает служить сразу всему городу.",
+  nuclear_power: "Сердце станции отдаёт скрытую силу устройству, превращающему её в ток.",
+  aluminum: "Лёгкий металл освобождают из породы не пламенем, а направленным током.",
+  astronomy: "Эта наука начинается там, где взгляд покидает пределы Земли.",
+  atom: "Увидеть мельчайшую частицу помогает прибор, а понять её — заключённая внутри сила.",
+  pharmacy: "Здесь средство от болезни становится товаром, который можно выбрать и купить.",
+  antibiotic: "Лекарство выходит на охоту за невидимым одноклеточным противником.",
+  alphabet: "Звуки речи обретают порядок, когда получают письменные знаки.",
+  aqueduct: "Сооружение проводит поток над преградой, словно прокладывает дорогу для реки.",
+  asteroid: "Каменный обломок странствует далеко за пределами привычного мира.",
+  accordion: "Мелодия рождается, когда складчатые меха начинают дышать."
+});
+
 // ---------- Состояние ----------
 const SETTINGS_KEY = "alchemy.settings";
 const settings = { showUnavailableElements:true };
@@ -816,6 +842,33 @@ try {
 } catch(e){}
 const discovered = new Set(saved.filter(id => E[id]));
 BASE.forEach(b => discovered.add(b));
+
+const DISCOVERED_RECIPES_KEY = "alchemy.discoveredRecipes";
+let savedRecipes = [];
+let hasSavedRecipes = false;
+try {
+  const rawSavedRecipes = localStorage.getItem(DISCOVERED_RECIPES_KEY);
+  hasSavedRecipes = rawSavedRecipes !== null;
+  const parsedRecipes = JSON.parse(rawSavedRecipes);
+  savedRecipes = Array.isArray(parsedRecipes) ? parsedRecipes : [];
+} catch(e){}
+const discoveredRecipes = new Set(savedRecipes.filter(recipe =>
+  RECIPE.has(recipe) && discovered.has(RECIPE.get(recipe))
+));
+// Старые сохранения не знали отдельных рецептов. Для уже открытого результата
+// считаем известным первый доступный рецепт, не раскрывая его альтернативы.
+if (!hasSavedRecipes){
+  for (const id of discovered){
+    const firstKnownRecipe = R.find(([raw, result]) =>
+      result === id && raw.split(" ").every(component => discovered.has(component))
+    );
+    if (firstKnownRecipe){
+      const [a, b] = firstKnownRecipe[0].split(" ");
+      discoveredRecipes.add(recipeKey(a, b));
+    }
+  }
+  localStorage.setItem(DISCOVERED_RECIPES_KEY, JSON.stringify([...discoveredRecipes]));
+}
 let lastDiscovered = null;
 let wonShown = false;
 
@@ -851,6 +904,7 @@ let lastBoardTapItem = null, lastBoardTapT = 0, suppressDblClickUntil = 0;
 const key = recipeKey;
 const clampPos = v => Math.max(4, Math.min(v, 99999));
 const save = () => localStorage.setItem("alchemy.discovered", JSON.stringify([...discovered]));
+const saveRecipes = () => localStorage.setItem(DISCOVERED_RECIPES_KEY, JSON.stringify([...discoveredRecipes]));
 const saveSettings = () => localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 
 function iconHTML(id){
@@ -862,8 +916,8 @@ function chipHTML(id){
 }
 
 function recipeProgress(id){
-  const results = RECIPES_USING.get(id) || [];
-  return [results.filter(result => discovered.has(result)).length, results.length];
+  const recipes = RECIPES_USING.get(id) || [];
+  return [recipes.filter(recipe => discoveredRecipes.has(recipe)).length, recipes.length];
 }
 
 function renderPalette(){
@@ -1064,16 +1118,27 @@ function tryMerge(mover){
   }
   if (!best) return;
 
-  const res = RECIPE.get(key(mover.id, best.id));
+  const mergedRecipe = key(mover.id, best.id);
+  const res = RECIPE.get(mergedRecipe);
   if (!res){
     refusePair(mover, best);
     return;
   }
   if (discovered.has(res)){
-    refusePair(mover, best);
-    notifyHTML(`${iconHTML(res)} «${E[res][0]}» уже создан — рецепт известен`);
+    if (!discoveredRecipes.has(mergedRecipe)){
+      discoveredRecipes.add(mergedRecipe);
+      saveRecipes();
+      renderPalette();
+      sparks((mover.x + best.x + size) / 2, (mover.y + best.y + size) / 2);
+      notifyHTML(`✨ Новый рецепт: ${iconHTML(mover.id)} ${E[mover.id][0]} + ${iconHTML(best.id)} ${E[best.id][0]}`);
+    } else {
+      refusePair(mover, best);
+      notifyHTML(`${iconHTML(res)} «${E[res][0]}» уже создан — рецепт известен`);
+    }
     return;
   }
+  discoveredRecipes.add(mergedRecipe);
+  saveRecipes();
   const mx = (mover.x + best.x)/2;
   const my = (mover.y + best.y)/2;
   removeItem(mover); removeItem(best);
@@ -1244,8 +1309,9 @@ const RECIPES_BY_RESULT = (() => {
 
 function recipeListHTML(id){
   const recipes = RECIPES_BY_RESULT.get(id) || [];
-  return recipes.map(pair =>
-    `${iconHTML(pair[0])} ${E[pair[0]][0]} + ${iconHTML(pair[1])} ${E[pair[1]][0]}`
+  return recipes.map(pair => discoveredRecipes.has(key(pair[0], pair[1]))
+    ? `${iconHTML(pair[0])} ${E[pair[0]][0]} + ${iconHTML(pair[1])} ${E[pair[1]][0]}`
+    : `<span class="recipe-unknown" title="Рецепт ещё не открыт">❓ + ❓</span>`
   ).join("<br>");
 }
 
@@ -1269,12 +1335,14 @@ function makeCodexRow(id){
 
 function makeUndiscoveredRow(id){
   const row = document.createElement("div");
-  row.className = "crow undiscovered";
+  const clue = ELEMENT_CLUES[id];
+  row.className = "crow undiscovered" + (clue ? " has-clue" : "");
   row.dataset.id = id;
   row.dataset.readiness = String(openedRecipeComponents(id));
   row.innerHTML =
     `<span class="em">${iconHTML(id)}</span><span class="nm">${E[id][0]}</span>` +
-    `<span class="rc">ещё не открыт</span>`;
+    `<span class="rc">ещё не открыт</span>` +
+    (clue ? `<span class="element-clue"><strong>Намёк:</strong> ${clue}</span>` : "");
   return row;
 }
 
@@ -1348,7 +1416,6 @@ codexList.addEventListener("click", e => {
   addItem(id,
     20 + Math.random() * Math.max(1, board.clientWidth  - size - 40),
     20 + Math.random() * Math.max(1, board.clientHeight - size - 40));
-  closeCodex();
 });
 
 document.getElementById("btnCodex").addEventListener("click", openCodex);
@@ -1414,6 +1481,7 @@ document.getElementById("btnReset").addEventListener("click", () => {
   setMenuOpen(false);
   if (confirm("Начать заново? Все открытия будут потеряны.")){
     localStorage.removeItem("alchemy.discovered");
+    localStorage.removeItem(DISCOVERED_RECIPES_KEY);
     location.reload();
   }
 });
