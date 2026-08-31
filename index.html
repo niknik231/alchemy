@@ -104,10 +104,14 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .crow .em{font-size:22px;width:30px;text-align:center;flex:none;line-height:1}
 .crow .nm{font-size:14px;width:160px;flex:none}
 .crow.unknown .nm{color:#8f89ad}
+.crow.undiscovered{cursor:pointer}
+.crow.undiscovered:hover{background:rgba(255,255,255,.075)}
+.crow.undiscovered:focus-visible{outline:2px solid #d3b8ff;outline-offset:-2px}
 .crow.undiscovered .nm{color:#d4cfea}
 .crow .rc{font-size:12px;color:#a9a4c6;margin-left:auto;text-align:right}
 .crow.undiscovered.has-clue{align-items:flex-start;flex-wrap:wrap}
-.element-clue{flex-basis:calc(100% - 42px);margin:-4px 0 2px 42px;padding:6px 9px;border-left:2px solid rgba(255,215,94,.45);font-size:11.5px;line-height:1.4;color:#bbb5d2;font-style:italic}
+.element-clue{display:none;flex-basis:calc(100% - 42px);margin:-4px 0 2px 42px;padding:6px 9px;border-left:2px solid rgba(255,215,94,.45);font-size:11.5px;line-height:1.4;color:#bbb5d2;font-style:italic}
+.crow.undiscovered.clue-open .element-clue{display:block}
 .element-clue strong{color:#e7cf7b;font-style:normal;font-weight:600}
 .recipe-unknown{color:#ffd75e;font-weight:700;letter-spacing:.08em}
 .fin{flex:none;font-size:10px;padding:2px 7px;border-radius:999px;color:#ffd75e;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25)}
@@ -201,7 +205,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.8.0";
+const APP_VERSION = "1.9.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -805,8 +809,12 @@ for (const [id,,,,, cat] of [...EXPANSION, ...MUSIC_EXPANSION]){
 const CAT_COLOR = { base:"#9aa4b5", elem:"#4fc3f7", sky:"#ffd54f", geo:"#a1887f", life:"#81c784", craft:"#ffcc80", food:"#ffab91", transport:"#90a4ae", tech:"#80cbc4", science:"#4db6ac", civ:"#ffb74d", culture:"#f48fb1", myst:"#ce93d8", space:"#9fa8da" };
 const CAT_OF = {}; CATS.forEach(([cid,,ids]) => ids.forEach(id => CAT_OF[id] = cid));
 
-// Пилотные описания-намеки для неоткрытых элементов.
-const ELEMENT_CLUES = Object.freeze({
+// Авторские описания-намеки для отдельных элементов.
+const ELEMENT_CLUE_OVERRIDES = Object.freeze({
+  water: "Одна из четырёх исходных стихий: текучая, прозрачная и необходимая жизни.",
+  fire: "Одна из четырёх исходных стихий: согревает, освещает и превращает вещества.",
+  earth: "Одна из четырёх исходных стихий: твёрдая основа природного мира.",
+  air: "Одна из четырёх исходных стихий: невидимая, подвижная и окружающая всё живое.",
   diamond: "Рождается глубоко там, где тёмное вещество веками терпит давление.",
   iceberg: "Лишь малая часть этого холодного странника видна над солёной гладью.",
   car: "Личный потомок рельсового транспорта, научившийся сам выбирать дорогу.",
@@ -824,6 +832,41 @@ const ELEMENT_CLUES = Object.freeze({
   asteroid: "Каменный обломок странствует далеко за пределами привычного мира.",
   accordion: "Мелодия рождается, когда складчатые меха начинают дышать."
 });
+
+const CLUE_AREAS = Object.freeze({
+  base: "первооснов",
+  elem: "естественных превращений",
+  sky: "атмосферных процессов",
+  geo: "недр и рельефа",
+  life: "органической природы",
+  craft: "созданных руками вещей",
+  food: "повседневного хозяйства",
+  transport: "путей и перемещения",
+  tech: "устройств и изобретений",
+  science: "исследований",
+  civ: "людей и их устройства",
+  culture: "творчества и традиций",
+  myst: "необъяснимого",
+  space: "далёких миров"
+});
+
+function elementClue(id, knownElements){
+  if (ELEMENT_CLUE_OVERRIDES[id]) return ELEMENT_CLUE_OVERRIDES[id];
+  const sourceRecipe = R.find(([, result]) => result === id);
+  if (!sourceRecipe) return "Присмотритесь к свойствам этого элемента и к его месту в окружающем мире.";
+  let [first, second] = sourceRecipe[0].split(" ");
+  if (knownElements?.has(second) && !knownElements.has(first)) [first, second] = [second, first];
+  const area = CLUE_AREAS[CAT_OF[second]] || "окружающего мира";
+  const firstName = E[first][0];
+  const variants = [
+    `«${firstName}» — половина разгадки. Вторая связана с областью ${area}.`,
+    `Начните с элемента «${firstName}» и ищите недостающее звено среди ${area}.`,
+    `Подумайте, что из области ${area} придаст элементу «${firstName}» новое свойство.`,
+    `Результат появляется, когда «${firstName}» встречает нечто из области ${area}.`
+  ];
+  const variantIndex = [...id].reduce((sum, char) => sum + char.charCodeAt(0), 0) % variants.length;
+  return variants[variantIndex];
+}
 
 // ---------- Состояние ----------
 const SETTINGS_KEY = "alchemy.settings";
@@ -1351,15 +1394,30 @@ function makeCodexRow(id){
 
 function makeUndiscoveredRow(id){
   const row = document.createElement("div");
-  const clue = ELEMENT_CLUES[id];
-  row.className = "crow undiscovered" + (clue ? " has-clue" : "");
+  const clue = elementClue(id, discovered);
+  const clueId = `element-clue-${id}`;
+  row.className = "crow undiscovered has-clue";
   row.dataset.id = id;
   row.dataset.readiness = String(openedRecipeComponents(id));
+  row.tabIndex = 0;
+  row.setAttribute("role", "button");
+  row.setAttribute("aria-expanded", "false");
+  row.setAttribute("aria-controls", clueId);
+  row.setAttribute("aria-label", `${E[id][0]}. Показать подсказку`);
   row.innerHTML =
     `<span class="em">${iconHTML(id)}</span><span class="nm">${E[id][0]}</span>` +
-    `<span class="rc">ещё не открыт</span>` +
-    (clue ? `<span class="element-clue"><strong>Намёк:</strong> ${clue}</span>` : "");
+    `<span class="rc">нажмите для подсказки</span>` +
+    `<span class="element-clue" id="${clueId}" hidden><strong>Намёк:</strong> ${clue}</span>`;
   return row;
+}
+
+function toggleUndiscoveredClue(row){
+  const open = !row.classList.contains("clue-open");
+  row.classList.toggle("clue-open", open);
+  row.setAttribute("aria-expanded", String(open));
+  row.setAttribute("aria-label", `${E[row.dataset.id][0]}. ${open ? "Скрыть" : "Показать"} подсказку`);
+  const clue = row.querySelector(".element-clue");
+  if (clue) clue.hidden = !open;
 }
 
 function openedRecipeComponents(id){
@@ -1426,12 +1484,23 @@ codexModes.addEventListener("click", e => {
 
 codexList.addEventListener("click", e => {
   const btn = e.target.closest(".cbtn");
-  if (!btn) return;
-  const id = btn.dataset.id;
-  const size = itemSize();
-  addItem(id,
-    20 + Math.random() * Math.max(1, board.clientWidth  - size - 40),
-    20 + Math.random() * Math.max(1, board.clientHeight - size - 40));
+  if (btn){
+    const id = btn.dataset.id;
+    const size = itemSize();
+    addItem(id,
+      20 + Math.random() * Math.max(1, board.clientWidth  - size - 40),
+      20 + Math.random() * Math.max(1, board.clientHeight - size - 40));
+    return;
+  }
+  const undiscoveredRow = e.target.closest(".crow.undiscovered");
+  if (undiscoveredRow) toggleUndiscoveredClue(undiscoveredRow);
+});
+
+codexList.addEventListener("keydown", e => {
+  const row = e.target.closest(".crow.undiscovered");
+  if (!row || (e.key !== "Enter" && e.key !== " ")) return;
+  e.preventDefault();
+  toggleUndiscoveredClue(row);
 });
 
 document.getElementById("btnCodex").addEventListener("click", openCodex);
