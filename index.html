@@ -85,6 +85,9 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .codex-modes{display:flex;gap:6px;padding:8px 12px 0}
 .codex-mode{flex:1;padding:6px 10px;font-size:12px;color:#aaa5c4;background:rgba(255,255,255,.04)}
 .codex-mode.active{color:#f1edff;background:rgba(137,108,207,.24);border-color:rgba(190,160,255,.38)}
+.codex-filter{display:flex;align-items:center;gap:8px;margin:8px 12px 0;padding:7px 10px;border-radius:10px;color:#c8c3da;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:12px;cursor:pointer}
+.codex-filter[hidden]{display:none}
+.codex-filter input{accent-color:#8b6bc4}
 #codexList{overflow-y:auto;padding:8px}
 .settings-sheet{width:min(500px,94vw)}
 .settings-body{padding:14px}
@@ -149,6 +152,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
   #codexSearch{flex:1 1 auto;min-width:0;width:auto}
   #btnCodexClose{width:40px;min-width:40px;height:40px;padding:0}
   .codex-modes{padding:8px 8px 0}
+  .codex-filter{margin:8px 8px 0}
   #codexList{padding:6px;overscroll-behavior:contain}
   .crow{display:grid;width:100%;min-width:0;overflow:hidden;grid-template-columns:30px minmax(0,1fr) minmax(26px,max-content);grid-template-rows:auto auto;column-gap:8px;row-gap:5px;align-items:start;padding:10px 8px}
   .crow .em{grid-column:1;grid-row:1 / span 2;width:30px;align-self:start}
@@ -204,6 +208,10 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
       <button class="codex-mode active" type="button" role="tab" aria-selected="true" data-mode="all">Все элементы</button>
       <button class="codex-mode" type="button" role="tab" aria-selected="false" data-mode="undiscovered">Неоткрытые</button>
     </div>
+    <label class="codex-filter" id="codexAvailableFilter" for="codexShowAvailable">
+      <input id="codexShowAvailable" type="checkbox">
+      <span>Показать доступные</span>
+    </label>
     <div id="codexList"></div>
   </div>
 </div>
@@ -232,7 +240,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.15.0";
+const APP_VERSION = "1.16.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -1468,11 +1476,14 @@ validateElementClues();
 
 // ---------- Состояние ----------
 const SETTINGS_KEY = "alchemy.settings";
-const settings = { showUnavailableElements:true };
+const settings = { showUnavailableElements:true, codexShowAvailable:false };
 try {
   const parsedSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY));
   if (parsedSettings && typeof parsedSettings.showUnavailableElements === "boolean"){
     settings.showUnavailableElements = parsedSettings.showUnavailableElements;
+  }
+  if (parsedSettings && typeof parsedSettings.codexShowAvailable === "boolean"){
+    settings.codexShowAvailable = parsedSettings.codexShowAvailable;
   }
 } catch(e){}
 
@@ -1953,6 +1964,9 @@ const codex      = document.getElementById("codex");
 const codexList  = document.getElementById("codexList");
 const codexSearch= document.getElementById("codexSearch");
 const codexModes = document.getElementById("codexModes");
+const codexAvailableFilter = document.getElementById("codexAvailableFilter");
+const codexShowAvailable = document.getElementById("codexShowAvailable");
+codexShowAvailable.checked = settings.codexShowAvailable;
 let codexMode = "all";
 
 const RECIPES_BY_RESULT = (() => {
@@ -2026,6 +2040,12 @@ function openedRecipeComponents(id){
     : 0;
 }
 
+function isAvailableForRecipes(id){
+  if (!discovered.has(id) || FINAL.has(id)) return false;
+  const [knownRecipes, totalRecipes] = recipeProgress(id);
+  return totalRecipes - knownRecipes > 0;
+}
+
 function renderCodex(q){
   q = (q || "").trim().toLowerCase();
   codexList.innerHTML = "";
@@ -2044,25 +2064,30 @@ function renderCodex(q){
     const ids = Object.keys(E).sort((x,y) => E[x][0].localeCompare(E[y][0], "ru"));
     for (const id of ids){
       if (!E[id][0].toLowerCase().includes(q) || !discovered.has(id)) continue;
+      if (codexShowAvailable.checked && !isAvailableForRecipes(id)) continue;
       codexList.appendChild(makeCodexRow(id).row);
       shown++;
     }
   } else {
     for (const [cid, cname, ids] of CATS){
       const open = ids.filter(discovered.has.bind(discovered));
+      const visible = codexShowAvailable.checked ? ids.filter(isAvailableForRecipes) : ids;
+      if (!visible.length) continue;
       const h = document.createElement("div");
       h.className = "cat-h";
       h.innerHTML = `<span class="dot" style="background:${CAT_COLOR[cid]}"></span>${cname}` +
         `<span class="cnt">${open.length}/${ids.length}</span>`;
       codexList.appendChild(h);
-      for (const id of ids) codexList.appendChild(makeCodexRow(id).row);
-      shown += ids.length;
+      for (const id of visible) codexList.appendChild(makeCodexRow(id).row);
+      shown += visible.length;
     }
   }
   if (!shown){
     const d = document.createElement("div");
     d.style.cssText = "text-align:center;color:#8f89ad;padding:20px;font-size:13px";
-    d.textContent = q ? "Ничего не найдено" : codexMode === "undiscovered" ? "Все элементы открыты" : "";
+    d.textContent = q ? "Ничего не найдено" : codexMode === "undiscovered"
+      ? "Все элементы открыты"
+      : codexShowAvailable.checked ? "Нет доступных элементов с неоткрытыми рецептами" : "";
     codexList.appendChild(d);
   }
 }
@@ -2073,11 +2098,18 @@ codexModes.addEventListener("click", e => {
   const button = e.target.closest(".codex-mode");
   if (!button || button.dataset.mode === codexMode) return;
   codexMode = button.dataset.mode;
+  codexAvailableFilter.hidden = codexMode !== "all";
   for (const modeButton of codexModes.querySelectorAll(".codex-mode")){
     const active = modeButton === button;
     modeButton.classList.toggle("active", active);
     modeButton.setAttribute("aria-selected", String(active));
   }
+  renderCodex(codexSearch.value);
+});
+
+codexShowAvailable.addEventListener("change", () => {
+  settings.codexShowAvailable = codexShowAvailable.checked;
+  saveSettings();
   renderCodex(codexSearch.value);
 });
 
