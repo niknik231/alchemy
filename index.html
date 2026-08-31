@@ -31,6 +31,7 @@ button:active{transform:scale(.96)}
 .menu-title{font-size:16px;font-weight:700;color:#f2efff;margin-bottom:6px}
 .menu-about{font-size:12px;line-height:1.45;color:#aaa5c4;margin-bottom:10px}
 .menu-version{font-size:11px;color:#817b9e;padding-top:9px;border-top:1px solid rgba(255,255,255,.08)}
+.app-menu .menu-link{width:100%;margin:2px 0 12px;display:flex;align-items:center;gap:8px;text-align:left}
 .app-menu #btnReset{width:100%;margin-top:12px;color:#ffc7c7;background:rgba(210,71,71,.12);border-color:rgba(255,112,112,.25)}
 .app-menu #btnReset:hover{background:rgba(210,71,71,.24)}
 .game-icon{display:inline-block;width:1em;height:1em;vertical-align:-.14em;overflow:visible}
@@ -84,6 +85,20 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .codex-mode{flex:1;padding:6px 10px;font-size:12px;color:#aaa5c4;background:rgba(255,255,255,.04)}
 .codex-mode.active{color:#f1edff;background:rgba(137,108,207,.24);border-color:rgba(190,160,255,.38)}
 #codexList{overflow-y:auto;padding:8px}
+.settings-sheet{width:min(500px,94vw)}
+.settings-body{padding:14px}
+.setting-row{display:flex;align-items:center;gap:16px;padding:14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);cursor:pointer}
+.setting-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.setting-copy strong{font-size:14px;color:#f0edf9}
+.setting-copy small{font-size:12px;line-height:1.4;color:#aaa5c4}
+.switch{position:relative;width:46px;height:26px;flex:none}
+.switch input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.switch-track{position:absolute;inset:0;border-radius:999px;background:#39354d;border:1px solid rgba(255,255,255,.15);transition:.18s}
+.switch-track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#bbb6ca;box-shadow:0 2px 5px rgba(0,0,0,.35);transition:.18s}
+.switch input:checked + .switch-track{background:#7256aa;border-color:#aa8ee0}
+.switch input:checked + .switch-track::after{transform:translateX(20px);background:#fff}
+.switch input:focus-visible + .switch-track{outline:2px solid #d3b8ff;outline-offset:2px}
+.palette-empty{padding:10px 4px;color:#8f89ad;font-size:12px;line-height:1.4}
 .crow{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px}
 .crow:nth-child(even){background:rgba(255,255,255,.04)}
 .crow .em{font-size:22px;width:30px;text-align:center;flex:none;line-height:1}
@@ -133,6 +148,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
     <div class="app-menu" id="appMenu" role="dialog" aria-label="Меню программы">
       <div class="menu-title">⚗️ Алхимия</div>
       <div class="menu-about">Игра о создании новых элементов из сочетаний уже открытых. Прогресс хранится только на этом устройстве.</div>
+      <button id="btnSettings" class="menu-link" type="button">⚙️ Настройки</button>
       <div class="menu-version">Версия <span id="appVersion"></span></div>
       <button id="btnReset" title="Начать игру заново">🔄 Сбросить прогресс</button>
     </div>
@@ -156,12 +172,32 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
     <div id="codexList"></div>
   </div>
 </div>
+<div class="modal" id="settingsModal">
+  <div class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="sheet-head">
+      <h2 id="settingsTitle">⚙️ Настройки</h2>
+      <button id="btnSettingsClose" type="button" title="Закрыть" aria-label="Закрыть настройки">✕</button>
+    </div>
+    <div class="settings-body">
+      <label class="setting-row" for="showUnavailableElements">
+        <span class="setting-copy">
+          <strong>Отображать недоступные элементы</strong>
+          <small>Показывать в панели выбора конечные элементы и элементы без неоткрытых рецептов.</small>
+        </span>
+        <span class="switch">
+          <input id="showUnavailableElements" type="checkbox" checked>
+          <span class="switch-track" aria-hidden="true"></span>
+        </span>
+      </label>
+    </div>
+  </div>
+</div>
 <div id="popup"><div class="card"><div class="big"></div><div class="ttl">Новое открытие!</div><div class="val"></div></div></div>
 
 <script>
 "use strict";
 
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.5.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -764,6 +800,15 @@ const CAT_COLOR = { base:"#9aa4b5", elem:"#4fc3f7", sky:"#ffd54f", geo:"#a1887f"
 const CAT_OF = {}; CATS.forEach(([cid,,ids]) => ids.forEach(id => CAT_OF[id] = cid));
 
 // ---------- Состояние ----------
+const SETTINGS_KEY = "alchemy.settings";
+const settings = { showUnavailableElements:true };
+try {
+  const parsedSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+  if (parsedSettings && typeof parsedSettings.showUnavailableElements === "boolean"){
+    settings.showUnavailableElements = parsedSettings.showUnavailableElements;
+  }
+} catch(e){}
+
 let saved = [];
 try {
   const parsedSave = JSON.parse(localStorage.getItem("alchemy.discovered"));
@@ -784,7 +829,10 @@ const blackHole= document.getElementById("blackHole");
 const menuWrap = document.getElementById("menuWrap");
 const btnMenu  = document.getElementById("btnMenu");
 const appMenu  = document.getElementById("appMenu");
+const settingsModal = document.getElementById("settingsModal");
+const showUnavailableElements = document.getElementById("showUnavailableElements");
 document.getElementById("appVersion").textContent = APP_VERSION;
+showUnavailableElements.checked = settings.showUnavailableElements;
 
 const tip = document.createElement("div");
 tip.id = "tip";
@@ -803,6 +851,7 @@ let lastBoardTapItem = null, lastBoardTapT = 0, suppressDblClickUntil = 0;
 const key = recipeKey;
 const clampPos = v => Math.max(4, Math.min(v, 99999));
 const save = () => localStorage.setItem("alchemy.discovered", JSON.stringify([...discovered]));
+const saveSettings = () => localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 
 function iconHTML(id){
   return ICONS[id] || E[id][1];
@@ -819,16 +868,22 @@ function recipeProgress(id){
 
 function renderPalette(){
   palette.innerHTML = "";
+  let shown = 0;
   for (const [cid, cname, ids] of CATS){
     const open = ids.filter(id => discovered.has(id));
-    if (!open.length) continue;
+    const visible = settings.showUnavailableElements
+      ? open
+      : open.filter(id => {
+          const [knownRecipes, totalRecipes] = recipeProgress(id);
+          return !FINAL.has(id) && totalRecipes - knownRecipes > 0;
+        });
+    if (!visible.length) continue;
     const h = document.createElement("div");
     h.className = "cat-h";
     h.innerHTML = `<span class="dot" style="background:${CAT_COLOR[cid]}"></span>${cname}` +
       `<span class="cnt">${open.length}/${ids.length}</span>`;
     palette.appendChild(h);
-    for (const id of ids){
-      if (!discovered.has(id)) continue;
+    for (const id of visible){
       const c = document.createElement("div");
       c.className = "chip" + (id === lastDiscovered ? " new" : "") + (FINAL.has(id) ? " final" : "");
       c.dataset.id = id;
@@ -842,7 +897,14 @@ function renderPalette(){
         ? `<span class="recipe-count" aria-label="Осталось открыть рецептов: ${remainingRecipes}">${remainingRecipes}</span>`
         : "");
       palette.appendChild(c);
+      shown++;
     }
+  }
+  if (!shown){
+    const empty = document.createElement("div");
+    empty.className = "palette-empty";
+    empty.textContent = "Нет открытых элементов с неоткрытыми рецептами.";
+    palette.appendChild(empty);
   }
   counter.textContent = `${discovered.size} / ${TOTAL}`;
 }
@@ -1320,13 +1382,33 @@ function setMenuOpen(open){
   btnMenu.setAttribute("aria-expanded", String(open));
   btnMenu.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
 }
+function openSettings(){
+  setMenuOpen(false);
+  showUnavailableElements.checked = settings.showUnavailableElements;
+  settingsModal.classList.add("open");
+  showUnavailableElements.focus();
+}
+function closeSettings(){ settingsModal.classList.remove("open"); }
 btnMenu.addEventListener("click", e => {
   e.stopPropagation();
   setMenuOpen(!appMenu.classList.contains("open"));
 });
 menuWrap.addEventListener("click", e => e.stopPropagation());
 document.addEventListener("click", () => setMenuOpen(false));
-document.addEventListener("keydown", e => { if (e.key === "Escape") setMenuOpen(false); });
+document.getElementById("btnSettings").addEventListener("click", openSettings);
+document.getElementById("btnSettingsClose").addEventListener("click", closeSettings);
+settingsModal.addEventListener("click", e => { if (e.target === settingsModal) closeSettings(); });
+showUnavailableElements.addEventListener("change", () => {
+  settings.showUnavailableElements = showUnavailableElements.checked;
+  saveSettings();
+  renderPalette();
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape"){
+    setMenuOpen(false);
+    closeSettings();
+  }
+});
 
 document.getElementById("btnReset").addEventListener("click", () => {
   setMenuOpen(false);
