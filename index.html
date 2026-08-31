@@ -205,7 +205,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.9.0";
+const APP_VERSION = "1.9.1";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -830,39 +830,30 @@ const ELEMENT_CLUE_OVERRIDES = Object.freeze({
   alphabet: "Звуки речи обретают порядок, когда получают письменные знаки.",
   aqueduct: "Сооружение проводит поток над преградой, словно прокладывает дорогу для реки.",
   asteroid: "Каменный обломок странствует далеко за пределами привычного мира.",
-  accordion: "Мелодия рождается, когда складчатые меха начинают дышать."
+  accordion: "Мелодия рождается, когда складчатые меха начинают дышать.",
+  helicopter: "Эта машина умеет подниматься почти с места; разгадка в принципе, который заставляет лопасти вращаться."
 });
 
-const CLUE_AREAS = Object.freeze({
-  base: "первооснов",
-  elem: "естественных превращений",
-  sky: "атмосферных процессов",
-  geo: "недр и рельефа",
-  life: "органической природы",
-  craft: "созданных руками вещей",
-  food: "повседневного хозяйства",
-  transport: "путей и перемещения",
-  tech: "устройств и изобретений",
-  science: "исследований",
-  civ: "людей и их устройства",
-  culture: "творчества и традиций",
-  myst: "необъяснимого",
-  space: "далёких миров"
-});
-
-function elementClue(id, knownElements){
-  if (ELEMENT_CLUE_OVERRIDES[id]) return ELEMENT_CLUE_OVERRIDES[id];
-  const sourceRecipe = R.find(([, result]) => result === id);
-  if (!sourceRecipe) return "Присмотритесь к свойствам этого элемента и к его месту в окружающем мире.";
-  let [first, second] = sourceRecipe[0].split(" ");
-  if (knownElements?.has(second) && !knownElements.has(first)) [first, second] = [second, first];
-  const area = CLUE_AREAS[CAT_OF[second]] || "окружающего мира";
-  const firstName = E[first][0];
+function elementClue(id){
+  const customClue = ELEMENT_CLUE_OVERRIDES[id];
+  if (customClue){
+    const lowerClue = customClue.toLocaleLowerCase("ru");
+    const ingredientNames = R
+      .filter(([, result]) => result === id)
+      .flatMap(([raw]) => raw.split(" "))
+      .map(component => E[component][0].toLocaleLowerCase("ru"));
+    const categoryNames = CATS.map(([, name]) => name.toLocaleLowerCase("ru"));
+    if (![...ingredientNames, ...categoryNames].some(name => lowerClue.includes(name))){
+      return customClue;
+    }
+  }
   const variants = [
-    `«${firstName}» — половина разгадки. Вторая связана с областью ${area}.`,
-    `Начните с элемента «${firstName}» и ищите недостающее звено среди ${area}.`,
-    `Подумайте, что из области ${area} придаст элементу «${firstName}» новое свойство.`,
-    `Результат появляется, когда «${firstName}» встречает нечто из области ${area}.`
+    "Вспомните, как обычно возникает этот результат: решающий процесс подскажет сочетание.",
+    "Главное свойство результата важнее внешнего вида. Подумайте, что делает его возможным.",
+    "Разгадка в назначении результата: что даёт основу, а что — решающее изменение?",
+    "Сравните результат с похожими вещами: характерное отличие укажет путь.",
+    "Оттолкнитесь от происхождения результата: один шаг даёт основу, другой — характерный признак.",
+    "Подумайте, что умеет результат и благодаря какому принципу это становится возможным."
   ];
   const variantIndex = [...id].reduce((sum, char) => sum + char.charCodeAt(0), 0) % variants.length;
   return variants[variantIndex];
@@ -1394,7 +1385,7 @@ function makeCodexRow(id){
 
 function makeUndiscoveredRow(id){
   const row = document.createElement("div");
-  const clue = elementClue(id, discovered);
+  const clue = elementClue(id);
   const clueId = `element-clue-${id}`;
   row.className = "crow undiscovered has-clue";
   row.dataset.id = id;
