@@ -35,6 +35,9 @@ button:active{transform:scale(.96)}
 .app-menu #btnReset{width:100%;margin-top:12px;color:#ffc7c7;background:rgba(210,71,71,.12);border-color:rgba(255,112,112,.25)}
 .app-menu #btnReset:hover{background:rgba(210,71,71,.24)}
 .game-icon{display:inline-block;width:1em;height:1em;vertical-align:-.14em;overflow:visible}
+.composite-icon{position:relative;display:inline-grid;width:1em;height:1em;place-items:center;vertical-align:-.12em;line-height:1}
+.composite-icon .icon-base{font-size:.86em;transform:translate(-.08em,.05em)}
+.composite-icon .icon-badge{position:absolute;right:-12%;bottom:-10%;display:grid;box-sizing:border-box;width:48%;height:48%;padding:0;place-items:center;border-radius:999px;color:#fff;background:#241f3d;border:1px solid rgba(255,255,255,.72);box-shadow:0 .08em .2em rgba(0,0,0,.65);font-size:.42em;font-weight:800;line-height:1;text-shadow:0 .05em .1em #000}
 main{flex:1;display:flex;min-height:0}
 aside{width:236px;padding:10px;overflow-y:auto;border-right:1px solid rgba(255,255,255,.07)}
 aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f89ad;margin:2px 2px 8px}
@@ -205,7 +208,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.9.1";
+const APP_VERSION = "1.10.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -322,6 +325,52 @@ const ICONS = {
   band:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="18" cy="18" r="7" fill="#d7a07b"/><circle cx="32" cy="14" r="7" fill="#b97f62"/><circle cx="47" cy="19" r="7" fill="#e2b18c"/><path d="M7 50q1-20 11-20t11 20M21 50q1-23 11-23t11 23M36 50q1-19 11-19t10 19" fill="#6f5aa6" stroke="#31274f" stroke-width="2"/><path d="M8 45h48" stroke="#e0b957" stroke-width="3"/><circle cx="32" cy="43" r="7" fill="#292b35" stroke="#d8d4df" stroke-width="2"/></svg>`,
   vinyl_record:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" fill="#18171d" stroke="#55515e" stroke-width="2"/><circle cx="32" cy="32" r="11" fill="#d85b67"/><circle cx="32" cy="32" r="3" fill="#f3e7cb"/><circle cx="32" cy="32" r="20" fill="none" stroke="#6b6771"/><path d="M12 25q20-9 40 0M13 40q19 8 38 0" fill="none" stroke="#3d3a42" stroke-width="2"/></svg>`
 };
+
+// Составные иконки устраняют повторы эмодзи: основной образ сохраняет узнаваемость,
+// а смысловой знак меняет композицию и отличает производный элемент на малой карточке.
+const ICON_BADGES = Object.freeze({
+  limestone:"▤", ore:"⛏", geology:"🔍", meteorite:"🔥",
+  galaxy:"🌀", aurora:"🌈", nebula:"☁", multiverse:"∞",
+  chimney:"💨", powerplant:"⚡", refinery:"🛢", warehouse:"📦",
+  flood:"🏠", lake:"◯", dam:"▦",
+  fern:"🍃", vine:"➰", herb:"✚",
+  sap:"🌳", hydropower:"⚡",
+  stove:"♨", olympics:"🏅",
+  iron:"▰", alloy:"≋",
+  bark:"▧", plank:"▬",
+  cement:"⚪", concrete:"▰",
+  generator:"⚡", mill:"🌾",
+  government:"⚖", museum:"🎨",
+  pulsar:"📡", dark_energy:"↗",
+  supernova:"⭐", big_bang:"◎",
+  glacier:"⛰", sugar:"◻",
+  waterfall:"↓", park:"🌳",
+  yacht:"🛥", sail:"△",
+  laptop:"⌨", code:"⌘",
+  algae:"🌿", reef:"🌊",
+  reed:"🎋", hay:"▤",
+  orbit:"⭕", space_station:"🏠",
+  virus:"✹", cell:"◉",
+  biology:"🔬", molecule:"⚛",
+  meteor:"🔥", asteroid:"🪨",
+  gravity:"↓", wormhole:"◎",
+  pond:"🌊", lily:"⚪",
+  stew:"🥩", pot:"🏺",
+  wax:"💧", spirit:"👻",
+  nuclear_power:"☢", physics:"∑",
+  palace:"👑", fortress:"🛡",
+  windmill:"⚙", cotton:"🧵", battery:"🔌", ecology:"♻",
+  rubber_tire:"⬛", skyscraper:"⬆", frost:"✣", website:"📄",
+  rover:"🛞", spaceship:"🛸", spacesuit:"🛡", smoke:"🔥",
+  porcelain:"✨", yogurt:"🥄", cup:"🍵", delta:"🌊",
+  aqueduct:"💧", sailor:"👤", song:"🎤", paint:"🖌",
+  tablet:"▭", astronomy:"⭐", chemistry:"🧪", antibiotic:"🦠",
+  social_network:"🌐", leaf:"🌿", oven:"🔥", dune:"〰",
+  werewolf:"🌕", centaur:"👤", griffin:"🦁", oil:"⚙",
+  canal:"║", dwarf:"👤", ai:"⚙", programmer:"⌨",
+  driver:"🚗", spell:"✨", ball:"●", lighthouse:"💡",
+  tunnel:"◼", golem:"✨"
+});
 const R = [
   // первичные сочетания
   ["air earth","dust"],   ["air fire","energy"],  ["air water","cloud"],  ["earth fire","lava"],
@@ -942,7 +991,11 @@ const saveRecipes = () => localStorage.setItem(DISCOVERED_RECIPES_KEY, JSON.stri
 const saveSettings = () => localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 
 function iconHTML(id){
-  return ICONS[id] || E[id][1];
+  if (ICONS[id]) return ICONS[id];
+  const badge = ICON_BADGES[id];
+  return badge
+    ? `<span class="composite-icon" aria-hidden="true"><span class="icon-base">${E[id][1]}</span><span class="icon-badge">${badge}</span></span>`
+    : E[id][1];
 }
 
 function chipHTML(id){
