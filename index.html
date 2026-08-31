@@ -35,9 +35,7 @@ button:active{transform:scale(.96)}
 .app-menu #btnReset{width:100%;margin-top:12px;color:#ffc7c7;background:rgba(210,71,71,.12);border-color:rgba(255,112,112,.25)}
 .app-menu #btnReset:hover{background:rgba(210,71,71,.24)}
 .game-icon{display:inline-block;width:1em;height:1em;vertical-align:-.14em;overflow:visible}
-.composite-icon{position:relative;display:inline-grid;width:1em;height:1em;place-items:center;vertical-align:-.12em;line-height:1}
-.composite-icon .icon-base{font-size:.86em;transform:translate(-.08em,.05em)}
-.composite-icon .icon-badge{position:absolute;right:-12%;bottom:-10%;display:grid;box-sizing:border-box;width:48%;height:48%;padding:0;place-items:center;border-radius:999px;color:#fff;background:#241f3d;border:1px solid rgba(255,255,255,.72);box-shadow:0 .08em .2em rgba(0,0,0,.65);font-size:.42em;font-weight:800;line-height:1;text-shadow:0 .05em .1em #000}
+.scene-icon{filter:drop-shadow(0 2px 2px rgba(0,0,0,.42))}
 main{flex:1;display:flex;min-height:0}
 aside{width:236px;padding:10px;overflow-y:auto;border-right:1px solid rgba(255,255,255,.07)}
 aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f89ad;margin:2px 2px 8px}
@@ -145,6 +143,32 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
   .item{width:56px;height:56px;border-radius:13px}.item .em{font-size:22px}.item .nm{font-size:9px;max-width:52px}
   #hintbar{bottom:82px;width:calc(100% - 24px);max-width:none;padding:8px 12px;font-size:12px}
   #blackHole{width:64px;height:64px;right:12px;bottom:12px;font-size:36px}
+  .sheet{width:calc(100vw - 16px);max-height:calc(100dvh - 24px);border-radius:14px}
+  .sheet-head{gap:8px;padding:10px}
+  .sheet-head h2{font-size:14px;white-space:nowrap}
+  #codexSearch{flex:1 1 auto;min-width:0;width:auto}
+  #btnCodexClose{width:40px;min-width:40px;height:40px;padding:0}
+  .codex-modes{padding:8px 8px 0}
+  #codexList{padding:6px;overscroll-behavior:contain}
+  .crow{display:grid;width:100%;min-width:0;overflow:hidden;grid-template-columns:30px minmax(0,1fr) minmax(26px,max-content);grid-template-rows:auto auto;column-gap:8px;row-gap:5px;align-items:start;padding:10px 8px}
+  .crow .em{grid-column:1;grid-row:1 / span 2;width:30px;align-self:start}
+  .crow .nm{grid-column:2;grid-row:1;width:auto;min-width:0;max-width:100%;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
+  .crow .rc{grid-column:2;grid-row:2;min-width:0;max-width:100%;margin:0;text-align:left;line-height:1.35;white-space:normal;overflow-wrap:anywhere;word-break:normal;hyphens:auto}
+  .crow .fin{grid-column:3;grid-row:1;align-self:start;justify-self:end;white-space:nowrap}
+  .crow .cbtn{grid-column:3;grid-row:2;align-self:end;justify-self:end}
+  .crow > .recipe-count{position:static;grid-column:3;grid-row:1;align-self:start;justify-self:end;transform:none}
+  .crow:has(.fin) .rc{grid-column:2 / -1}
+  .crow.unknown .rc,.crow.undiscovered .rc{grid-column:2 / -1}
+  .crow.undiscovered.has-clue{align-items:start}
+  .crow .element-clue{grid-column:2 / -1;grid-row:3;width:auto;margin:0;padding:7px 9px}
+}
+@media(max-width:380px){
+  .sheet{width:calc(100vw - 10px)}
+  .sheet-head{padding:8px}
+  .crow{grid-template-columns:28px minmax(0,1fr) minmax(26px,max-content);column-gap:6px;padding:9px 6px}
+  .crow .em{width:28px;font-size:21px}
+  .crow .rc{font-size:11.5px}
+  .crow .fin{font-size:9px;padding:2px 5px}
 }
 </style>
 </head>
@@ -208,7 +232,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.10.0";
+const APP_VERSION = "1.15.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -323,54 +347,90 @@ const ICONS = {
   amplifier:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 11h48v45H8Z" fill="#302e35" stroke="#0d0c10" stroke-width="3"/><path d="M12 15h40v9H12Z" fill="#aa9360"/><circle cx="18" cy="19" r="2" fill="#e2d45c"/><circle cx="26" cy="19" r="2" fill="#e2d45c"/><circle cx="32" cy="39" r="13" fill="#17161b" stroke="#77717d" stroke-width="3"/><circle cx="32" cy="39" r="5" fill="#4c4852"/></svg>`,
   recording_studio:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M7 9h50v46H7Z" fill="#33445c" stroke="#162233" stroke-width="3"/><path d="M12 14h23v36H12Z" fill="#7192a6"/><path d="M42 18v20M36 28h12M38 42h8" stroke="#e0d5b6" stroke-width="4" stroke-linecap="round"/><path d="M16 28q4-8 8 0t8 0M16 37q4-8 8 0t8 0" fill="none" stroke="#9ee2d9" stroke-width="2"/></svg>`,
   band:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="18" cy="18" r="7" fill="#d7a07b"/><circle cx="32" cy="14" r="7" fill="#b97f62"/><circle cx="47" cy="19" r="7" fill="#e2b18c"/><path d="M7 50q1-20 11-20t11 20M21 50q1-23 11-23t11 23M36 50q1-19 11-19t10 19" fill="#6f5aa6" stroke="#31274f" stroke-width="2"/><path d="M8 45h48" stroke="#e0b957" stroke-width="3"/><circle cx="32" cy="43" r="7" fill="#292b35" stroke="#d8d4df" stroke-width="2"/></svg>`,
+  galaxy:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke-linecap="round"><path d="M7 37q9-22 33-18q20 3 14 19q-6 15-27 11q-16-3-10-15q6-12 20-7q10 4 4 11q-5 7-13 3" stroke="#785bd2" stroke-width="8"/><path d="M9 40q20-10 47-15" stroke="#65d8d0" stroke-width="4"/></g><ellipse cx="34" cy="35" rx="7" ry="5" fill="#ffd34e"/><g fill="#eef7ff"><circle cx="11" cy="15" r="2"/><circle cx="49" cy="11" r="2"/><circle cx="55" cy="48" r="2"/><circle cx="13" cy="53" r="1.5"/></g></svg>`,
+  aurora:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke-linecap="round"><path d="M8 12h31q10 0 10 7t-10 7H18q-10 0-10 7t11 7h36" stroke="#20d89f" stroke-width="7"/><path d="M20 6h26q10 0 10 7t-9 7H30" stroke="#76eac0" stroke-width="4"/></g><g fill="#dff7ff"><circle cx="12" cy="9" r="2"/><circle cx="52" cy="31" r="2"/><circle cx="38" cy="35" r="1.5"/></g><path d="M5 58l12-15l9 10l12-20l9 15l8-8l6 18Z" fill="#5b8fd0"/><path d="M30 58l8-25l9 15l8-8l6 18Z" fill="#9cdaf0"/><path d="M35 41l3-8l5 9Z" fill="#f3fbff"/></svg>`,
+  powerplant:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M6 53h52v7H6Z" fill="#3b557c"/><path d="M8 53l5-29h14l5 29Zm28 0l3-23h13l5 23Z" fill="#dfeef3"/><path d="M13 24q7 5 14 0m12 6q7 4 13 0" fill="none" stroke="#87a9ba" stroke-width="3"/><path d="M31 7l-8 17h9l-5 16l16-22h-9l6-11Z" fill="#ffd64a"/><path d="M8 53V39h20m14 14V42h16" fill="none" stroke="#527493" stroke-width="4"/></svg>`,
+  refinery:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 54h54v6H5Z" fill="#344e72"/><path d="M8 33h15v21H8Zm22-17h14v38H30Zm18 21h11v17H48Z" fill="#dce9ed"/><path d="M34 8h7v8m-9 9h12m-12 9h12m-21 12h9m12-16h10v7M16 33V20h15" fill="none" stroke="#527793" stroke-width="3"/><path d="M52 19q-7-8 1-15q9 8 1 15Z" fill="#ff7048"/><path d="M52 16q-3-4 1-8q4 4 1 8Z" fill="#ffd04e"/></svg>`,
+  ore:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M7 39l8-23l19-9l22 13l2 24l-17 13l-25-5Z" fill="#626873" stroke="#343943" stroke-width="3"/><path d="M15 32l9-6l8 5l10-9l8 4M21 47l10-6l9 5l12-7" fill="none" stroke="#ffd24e" stroke-width="6" stroke-linecap="round"/><g fill="#ffe88c"><circle cx="21" cy="28" r="3"/><circle cx="43" cy="23" r="3"/><circle cx="46" cy="45" r="3"/></g></svg>`,
+  meteorite:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 32q9-24 35-27q13 3 20 15q-15-5-28 6q-12 10-15 25Z" fill="#ff7a3d"/><path d="M10 34q7-17 24-23q10 1 17 9q-13 1-22 10q-8 8-12 17Z" fill="#ffc447"/><path d="M18 35l8-14l16-4l15 12l-4 18l-17 10l-16-8Z" fill="#616976" stroke="#303640" stroke-width="2"/><g fill="#343b47"><circle cx="31" cy="31" r="5"/><circle cx="44" cy="42" r="4"/></g></svg>`,
+  flood:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 36V21l14-11l15 11v19Z" fill="#f1cf8a"/><path d="M10 23L28 8l18 15" fill="none" stroke="#dd5f58" stroke-width="6"/><path d="M24 29h8v13h-8Z" fill="#745044"/><path d="M2 37q8-7 16 0t16 0t16 0t14 0v24H2Z" fill="#1889bd"/><path d="M3 47q8-6 16 0t16 0t16 0t12 0M4 55q8-5 16 0t16 0t16 0" fill="none" stroke="#9ae8f2" stroke-width="3"/></svg>`,
+  fern:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 58Q30 40 41 5" fill="none" stroke="#377d43" stroke-width="6" stroke-linecap="round"/><g fill="#64b84f" stroke="#2f743d" stroke-width="1.5"><path d="M36 17Q18 7 14 20q11 7 21 3Z"/><path d="M31 29Q12 19 9 33q11 7 21 2Z"/><path d="M26 41Q8 32 7 46q10 7 19 0Z"/><path d="M39 16q16-8 19 5q-10 7-20 2Z"/><path d="M35 28q18-8 20 5q-10 7-21 2Z"/><path d="M30 40q16-6 18 6q-10 6-19 0Z"/></g></svg>`,
+  virus:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><g stroke="#bd4f8b" stroke-width="4" stroke-linecap="round"><path d="M32 3v11M32 50v11M3 32h11M50 32h11M11 11l8 8M45 45l8 8M53 11l-8 8M19 45l-8 8"/></g><g fill="#e283b5"><circle cx="32" cy="7" r="4"/><circle cx="32" cy="57" r="4"/><circle cx="7" cy="32" r="4"/><circle cx="57" cy="32" r="4"/><circle cx="13" cy="13" r="4"/><circle cx="51" cy="51" r="4"/><circle cx="51" cy="13" r="4"/><circle cx="13" cy="51" r="4"/></g><circle cx="32" cy="32" r="20" fill="#c64f8b" stroke="#82345d" stroke-width="3"/><g fill="#f4b5d5"><circle cx="25" cy="26" r="4"/><circle cx="39" cy="24" r="3"/><circle cx="38" cy="39" r="5"/><circle cx="23" cy="40" r="3"/></g></svg>`,
+  cell:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M6 35Q5 15 24 8q23-8 34 13q11 22-9 35Q29 69 12 52Q7 46 6 35Z" fill="#79d7b8" stroke="#3d9b87" stroke-width="3"/><circle cx="37" cy="31" r="13" fill="#8068c0"/><circle cx="40" cy="28" r="4" fill="#d9cbf0"/><g fill="#ffc65c"><ellipse cx="20" cy="23" rx="7" ry="4" transform="rotate(-24 20 23)"/><ellipse cx="22" cy="46" rx="6" ry="3" transform="rotate(25 22 46)"/></g><path d="M12 36q6-8 13 0t12 0" fill="none" stroke="#3d9b87" stroke-width="2"/><g fill="#e9fff8"><circle cx="18" cy="34" r="2"/><circle cx="49" cy="43" r="3"/><circle cx="50" cy="19" r="2"/></g></svg>`,
+  aqueduct:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 15h54v12H5Z" fill="#b9a17d" stroke="#6f604b" stroke-width="2"/><path d="M7 27h50v30H7Zm8 30V42a7 7 0 0 1 14 0v15Zm20 0V42a7 7 0 0 1 14 0v15Z" fill="#a98f6c" fill-rule="evenodd" stroke="#6f604b" stroke-width="2"/><path d="M6 18q9-5 18 0t18 0t16 0" fill="none" stroke="#55c8e8" stroke-width="5" stroke-linecap="round"/><path d="M9 31h46M10 47h7m11 0h9m11 0h7M18 27v7m14-7v7m15-7v7" stroke="#d7c29e" stroke-width="2"/></svg>`,
+  concrete:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 19l33-9l15 11l-4 33l-34 2L7 43Z" fill="#aeb4ba" stroke="#5f666d" stroke-width="3"/><path d="M8 19l14 11l34-9M22 30l-4 26M22 30l19-20" fill="none" stroke="#dce1e4" stroke-width="3"/><path d="M18 39l6-3m7 10l7-4m5-13l6-2M31 19l5-2" stroke="#777f86" stroke-width="3" stroke-linecap="round"/><g fill="#eceff1"><circle cx="14" cy="27" r="2"/><circle cx="28" cy="35" r="2"/><circle cx="46" cy="37" r="2.5"/><circle cx="37" cy="51" r="2"/></g></svg>`,
+  windmill:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 57l4-34h17l5 34Z" fill="#d8a866" stroke="#815b35" stroke-width="3"/><path d="M22 23l10-11l11 11Z" fill="#b84f45" stroke="#71322f" stroke-width="2"/><path d="M28 57V42h10v15M25 31h18M24 38h20" fill="none" stroke="#8b6037" stroke-width="3"/><circle cx="34" cy="24" r="5" fill="#f1cf76" stroke="#765431" stroke-width="2"/><g fill="#eee5d2" stroke="#7e725f" stroke-width="2"><path d="M31 20L16 5l-5 4l16 15Z"/><path d="M38 21L54 8l4 5l-17 13Z"/><path d="M37 28l14 17l-5 4l-13-18Z"/><path d="M30 28L12 42l-4-5l19-13Z"/></g></svg>`,
+  driver:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 34l7-25h22l7 25Z" fill="#9fdcf0" stroke="#315b78" stroke-width="3"/><circle cx="32" cy="19" r="9" fill="#d9a078"/><path d="M22 17q10-13 20 0v3H22Z" fill="#284d73"/><path d="M26 12h12l6 5H20Z" fill="#3d6c98"/><circle cx="29" cy="20" r="1.3" fill="#3c302d"/><circle cx="35" cy="20" r="1.3" fill="#3c302d"/><path d="M26 33q6-9 12 0" fill="#315b78"/><path d="M6 36q0-5 6-5h40q6 0 6 5v16H6Z" fill="#e74f4f" stroke="#7f2e35" stroke-width="3"/><circle cx="32" cy="35" r="7" fill="none" stroke="#343b44" stroke-width="3"/><circle cx="16" cy="51" r="5" fill="#2e333b"/><circle cx="48" cy="51" r="5" fill="#2e333b"/><path d="M10 41h10m24 0h10" stroke="#ffd66a" stroke-width="4" stroke-linecap="round"/></svg>`,
+  waterfall:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 51L17 17l11 9L39 7l20 44Z" fill="#718497" stroke="#3f5364" stroke-width="3"/><path d="M17 17l11 9L39 7l7 15l-9-4l-8 13l-7-6Z" fill="#dcebf1"/><path d="M27 27q7 3 13-5l4 6q-6 8-5 17q1 7 7 11H22q8-7 7-15q-1-8-2-14Z" fill="#51bfe1"/><path d="M26 34q5 3 12-4M25 55q8-6 15 0t15 0" fill="none" stroke="#b9f1f7" stroke-width="4" stroke-linecap="round"/></svg>`,
+  algae:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M7 57q11-7 22 0t28 0" fill="none" stroke="#9b7548" stroke-width="6" stroke-linecap="round"/><g fill="none" stroke-linecap="round"><path d="M18 55q-9-11 1-21t-1-22" stroke="#2f9d63" stroke-width="7"/><path d="M32 56q10-12 0-23t3-25" stroke="#49b873" stroke-width="8"/><path d="M46 55q-9-10 0-20t2-22" stroke="#2d8f62" stroke-width="7"/></g><g fill="#75d08a"><ellipse cx="15" cy="28" rx="7" ry="3" transform="rotate(-35 15 28)"/><ellipse cx="35" cy="25" rx="7" ry="3" transform="rotate(35 35 25)"/><ellipse cx="45" cy="38" rx="7" ry="3" transform="rotate(-35 45 38)"/></g></svg>`,
+  wax:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 22q0-7 8-9l30-5q9-1 10 7l2 29q1 8-8 10l-31 3q-9 1-10-8Z" fill="#f4bd42" stroke="#9b6a24" stroke-width="3"/><path d="M10 24q12 5 22-2q11-7 25-2l1 13q-7-5-13 2q-6 8-12-1q-7-9-12 1q-5 8-11 2Z" fill="#ffd96b"/><path d="M18 14l7 8m9-11l5 9m9-10l4 9" stroke="#ffe89b" stroke-width="3" stroke-linecap="round"/><path d="M46 34q7 8 7 13a7 7 0 0 1-14 0q0-5 7-13Z" fill="#f7c64f" stroke="#a66f25" stroke-width="2"/></svg>`,
+  generator:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 18V9h33v9" fill="none" stroke="#38434d" stroke-width="6" stroke-linecap="round"/><rect x="7" y="17" width="50" height="38" rx="7" fill="#df5b45" stroke="#7b322b" stroke-width="3"/><rect x="13" y="24" width="20" height="21" rx="3" fill="#2f4658"/><circle cx="23" cy="34" r="7" fill="#92c9dd"/><circle cx="23" cy="34" r="3" fill="#2c3b46"/><path d="M39 25h12M39 31h12M39 37h12" stroke="#ffd36a" stroke-width="3" stroke-linecap="round"/><path d="M43 41l-5 8h6l-3 7l10-11h-6l4-4Z" fill="#ffe35a"/><circle cx="17" cy="56" r="4" fill="#30363d"/><circle cx="48" cy="56" r="4" fill="#30363d"/></svg>`,
+  geology:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M7 43L15 17l19-9l22 14l2 25l-17 11l-25-5Z" fill="#778594" stroke="#3e4c59" stroke-width="3"/><path d="M12 29q14 8 25-2q10-8 19 0M9 40q14 8 27-1q12-9 21 0M15 51q13 5 24-3q10-7 17-2" fill="none" stroke="#d7a65a" stroke-width="5"/><path d="M39 7l16 12M47 4l11 8M47 13L29 37" stroke="#4b3b31" stroke-width="5" stroke-linecap="round"/><path d="M47 3l12 9l-4 7l-16-12Z" fill="#b9c4ca" stroke="#58656d" stroke-width="2"/></svg>`,
+  dwarf:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 29Q20 8 34 3q14 10 13 28Z" fill="#d94d4d" stroke="#7e2c32" stroke-width="3"/><path d="M22 23q11-5 23 1" fill="none" stroke="#f27468" stroke-width="4"/><circle cx="32" cy="32" r="12" fill="#e0a47d"/><circle cx="28" cy="31" r="1.5" fill="#3d302b"/><circle cx="36" cy="31" r="1.5" fill="#3d302b"/><path d="M17 37q5 24 15 24t15-24q-7 5-15 0q-8 5-15 0Z" fill="#f2eee5" stroke="#a9a59f" stroke-width="2"/><circle cx="32" cy="36" r="4" fill="#d38f6a"/><path d="M22 54h20" stroke="#754735" stroke-width="6" stroke-linecap="round"/></svg>`,
+  gravity:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 9q4-5 9-4" fill="none" stroke="#4d7b35" stroke-width="4" stroke-linecap="round"/><path d="M31 14q-10-8-18 1q-9 11 2 27q8 12 17 8q9 4 17-8q11-16 2-27q-8-9-19-1Z" fill="#e84c4c" stroke="#8e2c35" stroke-width="3"/><path d="M36 11q7-7 14-3q-4 8-14 7Z" fill="#67a94e"/><path d="M19 2v7M27 1v6M45 3v7M23 53v4M32 52v6M41 53v4" stroke="#88a6b8" stroke-width="3" stroke-linecap="round"/><ellipse cx="32" cy="61" rx="17" ry="3" fill="#536574" opacity=".55"/></svg>`,
+  palace:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M6 54h52v7H6Z" fill="#c69239"/><path d="M10 28h44v27H10Z" fill="#f2d28a" stroke="#9c6b32" stroke-width="3"/><path d="M16 25q0-12 8-12t8 12Zm16 0q0-17 8-17t8 17Z" fill="#e1594f" stroke="#8b3431" stroke-width="2"/><circle cx="24" cy="12" r="3" fill="#ffd65a"/><circle cx="40" cy="7" r="3" fill="#ffd65a"/><path d="M16 33h7v18h-7Zm13 0h7v18h-7Zm13 0h7v18h-7Z" fill="#8cc9dd"/><path d="M8 28h48M5 55h54M12 30v25m40-25v25" stroke="#b37b35" stroke-width="3"/><path d="M26 55V42h12v13" fill="#9d6336"/></svg>`,
+  delta:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 4q-8 15-3 25q3 6-8 12Q13 46 9 59h46q-4-13-12-18q-11-6-8-12q5-10-3-25Z" fill="#63aa62" stroke="#397547" stroke-width="3"/><path d="M32 5v22q0 8-10 14Q14 46 10 58M32 28q0 8 11 14q8 5 11 16M28 35l4 23m4-23l-4 23" fill="none" stroke="#4fc3e6" stroke-width="6" stroke-linecap="round"/><path d="M5 58q10-5 18 0t18 0t18 0" fill="none" stroke="#9ce9f3" stroke-width="4"/></svg>`,
+  plank:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M5 20l49-9l5 31l-49 11Z" fill="#c98545" stroke="#704326" stroke-width="3"/><path d="M10 25l45-9M12 34l44-9M14 46l43-10" stroke="#e5ad6b" stroke-width="3"/><path d="M18 28q8 5 16-2m4 10q7-5 14-2M20 43q7-5 15-2" fill="none" stroke="#87542f" stroke-width="2"/><ellipse cx="14" cy="23" rx="4" ry="2" fill="#6e4429"/><path d="M54 12l5 30" stroke="#f1c58a" stroke-width="3"/></svg>`,
+  oven:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="5" width="44" height="54" rx="5" fill="#d8dce0" stroke="#687078" stroke-width="3"/><rect x="15" y="20" width="34" height="31" rx="3" fill="#313b48"/><rect x="19" y="25" width="26" height="20" rx="2" fill="#784640"/><path d="M20 42q5-14 10 0q5-17 10 0" fill="#f0693e"/><path d="M18 15h28" stroke="#717a82" stroke-width="3" stroke-linecap="round"/><g fill="#3c464f"><circle cx="19" cy="12" r="3"/><circle cx="29" cy="12" r="3"/><circle cx="39" cy="12" r="3"/><circle cx="48" cy="12" r="3"/></g><path d="M19 54h26" stroke="#8d959c" stroke-width="3"/></svg>`,
+  smoke:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke-linecap="round"><path d="M30 59q-11-11 1-20q13-10 1-20Q20 9 34 3" stroke="#9da7b1" stroke-width="8"/><path d="M39 58q10-10 0-18q-10-9 1-17q9-7 2-15" stroke="#c2c9cf" stroke-width="6"/><path d="M22 54q-7-8 0-15q8-8 1-15" stroke="#737f8a" stroke-width="5"/></g></svg>`,
+  dune:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M3 55q11-25 31-29q15-4 27 29Z" fill="#dfa94f" stroke="#9e6d2f" stroke-width="3"/><path d="M7 55q16-14 30-12q12 2 21 12Z" fill="#f5cd72"/><path d="M13 45q16-18 34-14M19 51q12-8 25-5" fill="none" stroke="#c58b3d" stroke-width="3" stroke-linecap="round"/><circle cx="49" cy="13" r="8" fill="#ffd24e"/><path d="M9 23q8-6 16 0" fill="none" stroke="#e9b85a" stroke-width="4" stroke-linecap="round"/></svg>`,
+  iron:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 44l9-25l31-7l9 22l-12 19l-28 3Z" fill="#68727d" stroke="#343d46" stroke-width="3"/><path d="M17 19l14 10l17-17M31 29l14 24M17 56l14-27" fill="none" stroke="#939da6" stroke-width="3"/><path d="M21 23l10 7l12-5M23 48l9-5l10 4" fill="none" stroke="#dce2e6" stroke-width="3" stroke-linecap="round"/><g fill="#414a53"><circle cx="18" cy="38" r="3"/><circle cx="43" cy="34" r="4"/></g></svg>`,
+  yogurt:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M11 24h42l-5 33H16Z" fill="#75bde0" stroke="#386986" stroke-width="3"/><ellipse cx="32" cy="24" rx="21" ry="8" fill="#e9f3f7" stroke="#52788d" stroke-width="3"/><ellipse cx="32" cy="23" rx="16" ry="5" fill="#fffdf4"/><path d="M39 22L52 6" stroke="#bcc4ca" stroke-width="5" stroke-linecap="round"/><ellipse cx="53" cy="6" rx="5" ry="3" fill="#dfe4e7" transform="rotate(-30 53 6)"/><path d="M20 36q12 7 24 0M19 44q13 7 26 0" fill="none" stroke="#a9dbed" stroke-width="3"/><circle cx="25" cy="23" r="2" fill="#f7f1df"/></svg>`,
   vinyl_record:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" fill="#18171d" stroke="#55515e" stroke-width="2"/><circle cx="32" cy="32" r="11" fill="#d85b67"/><circle cx="32" cy="32" r="3" fill="#f3e7cb"/><circle cx="32" cy="32" r="20" fill="none" stroke="#6b6771"/><path d="M12 25q20-9 40 0M13 40q19 8 38 0" fill="none" stroke="#3d3a42" stroke-width="2"/></svg>`
 };
 
-// Составные иконки устраняют повторы эмодзи: основной образ сохраняет узнаваемость,
-// а смысловой знак меняет композицию и отличает производный элемент на малой карточке.
-const ICON_BADGES = Object.freeze({
-  limestone:"▤", ore:"⛏", geology:"🔍", meteorite:"🔥",
-  galaxy:"🌀", aurora:"🌈", nebula:"☁", multiverse:"∞",
-  chimney:"💨", powerplant:"⚡", refinery:"🛢", warehouse:"📦",
-  flood:"🏠", lake:"◯", dam:"▦",
-  fern:"🍃", vine:"➰", herb:"✚",
-  sap:"🌳", hydropower:"⚡",
-  stove:"♨", olympics:"🏅",
-  iron:"▰", alloy:"≋",
-  bark:"▧", plank:"▬",
-  cement:"⚪", concrete:"▰",
-  generator:"⚡", mill:"🌾",
+// Крупные самостоятельные emoji-образы на прозрачном фоне.
+// Без круглой подложки и без мелких поясняющих меток.
+const FULL_ICON_MOTIFS = Object.freeze({
+  limestone:"🪨", geology:"🔎",
+  nebula:"☁️", multiverse:"🌌",
+  chimney:"🏭", warehouse:"📦",
+  lake:"🌊", dam:"🚧",
+  vine:"🌿", herb:"🌱",
+  sap:"💧", hydropower:"⚡",
+  stove:"♨️", olympics:"🏅",
+  iron:"🧲", alloy:"🔩",
+  bark:"🪵", plank:"🪚",
+  cement:"🧱", concrete:"🏗️",
+  generator:"⚙️", mill:"🌾",
   government:"⚖", museum:"🎨",
-  pulsar:"📡", dark_energy:"↗",
-  supernova:"⭐", big_bang:"◎",
-  glacier:"⛰", sugar:"◻",
-  waterfall:"↓", park:"🌳",
-  yacht:"🛥", sail:"△",
-  laptop:"⌨", code:"⌘",
-  algae:"🌿", reef:"🌊",
-  reed:"🎋", hay:"▤",
-  orbit:"⭕", space_station:"🏠",
-  virus:"✹", cell:"◉",
-  biology:"🔬", molecule:"⚛",
-  meteor:"🔥", asteroid:"🪨",
-  gravity:"↓", wormhole:"◎",
-  pond:"🌊", lily:"⚪",
+  pulsar:"📡", dark_energy:"↗️",
+  supernova:"⭐", big_bang:"💥",
+  glacier:"🧊", sugar:"🍬",
+  waterfall:"💦", park:"🏞️",
+  yacht:"🛥️", sail:"⛵",
+  laptop:"💻", code:"🧑‍💻",
+  algae:"🦠", reef:"🪸",
+  reed:"🎋", hay:"🟨",
+  orbit:"🪐", space_station:"🛰️",
+  biology:"🔬", molecule:"⚛️",
+  meteor:"☄️", asteroid:"🌑",
+  gravity:"🍎", wormhole:"🌀",
+  pond:"🐸", lily:"🪷",
   stew:"🥩", pot:"🏺",
-  wax:"💧", spirit:"👻",
-  nuclear_power:"☢", physics:"∑",
-  palace:"👑", fortress:"🛡",
-  windmill:"⚙", cotton:"🧵", battery:"🔌", ecology:"♻",
-  rubber_tire:"⬛", skyscraper:"⬆", frost:"✣", website:"📄",
-  rover:"🛞", spaceship:"🛸", spacesuit:"🛡", smoke:"🔥",
-  porcelain:"✨", yogurt:"🥄", cup:"🍵", delta:"🌊",
-  aqueduct:"💧", sailor:"👤", song:"🎤", paint:"🖌",
-  tablet:"▭", astronomy:"⭐", chemistry:"🧪", antibiotic:"🦠",
-  social_network:"🌐", leaf:"🌿", oven:"🔥", dune:"〰",
-  werewolf:"🌕", centaur:"👤", griffin:"🦁", oil:"⚙",
-  canal:"║", dwarf:"👤", ai:"⚙", programmer:"⌨",
+  wax:"🕯", spirit:"👻",
+  nuclear_power:"☢️", physics:"🧪",
+  palace:"👑", fortress:"🏰",
+  windmill:"🌬️", cotton:"🧶", battery:"🔋", ecology:"♻️",
+  rubber_tire:"🛞", skyscraper:"🏙️", frost:"❄️", website:"🌐",
+  rover:"🚙", spaceship:"🚀", spacesuit:"👨‍🚀", smoke:"☁",
+  porcelain:"🍶", yogurt:"🥣", cup:"🍵", delta:"🔺",
+  aqueduct:"⛲", sailor:"⚓", song:"🎵", paint:"🖌️",
+  tablet:"📱", astronomy:"🔭", chemistry:"⚗️", antibiotic:"💊",
+  social_network:"🕸️", leaf:"🍃", oven:"🔥", dune:"🏜️",
+  werewolf:"🐺", centaur:"🏹", griffin:"🦅", oil:"🛢",
+  canal:"🛶", dwarf:"⛏️", ai:"🤖", programmer:"⌨️",
   driver:"🚗", spell:"✨", ball:"●", lighthouse:"💡",
-  tunnel:"◼", golem:"✨"
+  tunnel:"🚇", golem:"🗿"
 });
+
+function makeFullIcon(id, motif){
+  const textSize = motif.length > 5 ? 43 : 50;
+  return `<svg class="game-icon scene-icon" viewBox="0 0 64 64" aria-hidden="true">` +
+    `<text x="32" y="51" text-anchor="middle" font-size="${textSize}" font-family="Segoe UI Emoji, Apple Color Emoji, sans-serif">${motif}</text>` +
+    `</svg>`;
+}
+
 const R = [
   // первичные сочетания
   ["air earth","dust"],   ["air fire","energy"],  ["air water","cloud"],  ["earth fire","lava"],
@@ -815,6 +875,9 @@ R.push(
   ["musician theater","orchestra"],
   ["music plastic","vinyl_record"]
 );
+const FULL_ICONS = Object.freeze(Object.fromEntries(
+  Object.entries(FULL_ICON_MOTIFS).map(([id, motif]) => [id, makeFullIcon(id, motif)])
+));
 // Порядок столкновения ингредиентов не влияет на результат.
 const recipeKey = (a,b) => a < b ? a+" "+b : b+" "+a;
 const RECIPE = new Map(R.map(([k,v]) => {
@@ -858,55 +921,550 @@ for (const [id,,,,, cat] of [...EXPANSION, ...MUSIC_EXPANSION]){
 const CAT_COLOR = { base:"#9aa4b5", elem:"#4fc3f7", sky:"#ffd54f", geo:"#a1887f", life:"#81c784", craft:"#ffcc80", food:"#ffab91", transport:"#90a4ae", tech:"#80cbc4", science:"#4db6ac", civ:"#ffb74d", culture:"#f48fb1", myst:"#ce93d8", space:"#9fa8da" };
 const CAT_OF = {}; CATS.forEach(([cid,,ids]) => ids.forEach(id => CAT_OF[id] = cid));
 
-// Авторские описания-намеки для отдельных элементов.
-const ELEMENT_CLUE_OVERRIDES = Object.freeze({
-  water: "Одна из четырёх исходных стихий: текучая, прозрачная и необходимая жизни.",
-  fire: "Одна из четырёх исходных стихий: согревает, освещает и превращает вещества.",
-  earth: "Одна из четырёх исходных стихий: твёрдая основа природного мира.",
-  air: "Одна из четырёх исходных стихий: невидимая, подвижная и окружающая всё живое.",
-  diamond: "Рождается глубоко там, где тёмное вещество веками терпит давление.",
-  iceberg: "Лишь малая часть этого холодного странника видна над солёной гладью.",
-  car: "Личный потомок рельсового транспорта, научившийся сам выбирать дорогу.",
-  airport: "Городские ворота для тех, кто прибывает не по земле.",
-  asphalt: "Каменная дорога становится гладкой благодаря густому следу переработанной нефти.",
-  bus: "Личный транспорт вырастает и начинает служить сразу всему городу.",
-  nuclear_power: "Сердце станции отдаёт скрытую силу устройству, превращающему её в ток.",
-  aluminum: "Лёгкий металл освобождают из породы не пламенем, а направленным током.",
-  astronomy: "Эта наука начинается там, где взгляд покидает пределы Земли.",
-  atom: "Увидеть мельчайшую частицу помогает прибор, а понять её — заключённая внутри сила.",
-  pharmacy: "Здесь средство от болезни становится товаром, который можно выбрать и купить.",
-  antibiotic: "Лекарство выходит на охоту за невидимым одноклеточным противником.",
-  alphabet: "Звуки речи обретают порядок, когда получают письменные знаки.",
-  aqueduct: "Сооружение проводит поток над преградой, словно прокладывает дорогу для реки.",
-  asteroid: "Каменный обломок странствует далеко за пределами привычного мира.",
-  accordion: "Мелодия рождается, когда складчатые меха начинают дышать.",
-  helicopter: "Эта машина умеет подниматься почти с места; разгадка в принципе, который заставляет лопасти вращаться."
+// Отдельный содержательный намёк для каждого элемента. Резервных шаблонов нет.
+const ELEMENT_CLUES = Object.freeze({
+  water:"Прозрачная текучая основа дождей, рек и питья.",
+  fire:"Пламя согревает, освещает и необратимо меняет вещества.",
+  earth:"Твёрдая плодородная поверхность под ногами и корнями.",
+  air:"Невидимая подвижная оболочка, которой дышат и которая несёт звуки.",
+  steam:"Горячая влага становится невидимой, а остывая — клубится белым.",
+  cloud:"Белая или серая масса капель плывёт высоко над поверхностью.",
+  mud:"Мокрая почва липнет к обуви и легко принимает форму.",
+  lava:"Раскалённый поток из недр застывает чёрной породой.",
+  energy:"Способность совершать работу, двигать, нагревать или освещать.",
+  dust:"Мельчайшие сухие частицы поднимаются при движении и оседают на вещах.",
+  stone:"Твёрдый природный обломок выдерживает вес, удары и долгие годы.",
+  metal:"Прочный блестящий материал проводит ток, поддаётся ковке и плавится.",
+  sea:"Огромная солёная гладь с волнами, приливами и глубинами.",
+  sky:"Пространство над горизонтом меняет цвет от рассвета до ночи.",
+  sun:"Яркий дневной диск дарит тепло и задаёт смену суток.",
+  rain:"Капли падают сверху, наполняют ручьи и промачивают землю.",
+  rainbow:"Цветная дуга появляется напротив светила после ливня.",
+  lightning:"Короткий ослепительный разряд раскалывает грозовое небо.",
+  plant:"Зелёный организм укореняется, растёт к свету и создаёт органику.",
+  swamp:"Топкая влажная местность покрыта кочками и стоячими лужами.",
+  life:"Самовоспроизведение, рост и обмен веществ отличают её от неживого.",
+  human:"Разумное двуногое существо создаёт речь, орудия и общества.",
+  tree:"Высокий многолетний ствол держит крону и годовые кольца.",
+  forest:"Множество стволов образует затенённую среду со своим микроклиматом.",
+  wood:"Срезанный ствол превращается в прочный волокнистый материал.",
+  coal:"Чёрное горючее ископаемое оставляет копоть и долго тлеет.",
+  sand:"Сыпучие крупинки шуршат, просачиваются и накапливаются у берегов.",
+  glass:"Прозрачный хрупкий лист пропускает свет и защищает от ветра.",
+  brick:"Обожжённый прямоугольный блок удобно укладывать ровными рядами.",
+  house:"Крыша и стены создают защищённое место для повседневной жизни.",
+  wheel:"Круглая деталь катится вокруг оси и облегчает перевозку.",
+  mechanism:"Согласованная система деталей передаёт и преобразует движение.",
+  sword:"Длинный заточенный клинок предназначен для рубящих и колющих ударов.",
+  gold:"Мягкий жёлтый драгоценный материал не тускнеет и ценится веками.",
+  philstone:"Легендарная субстанция обещает превращение неблагородного и вечную молодость.",
+  diamond:"Прозрачный сверхтвёрдый кристалл рождается при огромном давлении.",
+  fish:"Обтекаемое позвоночное дышит жабрами и движется плавниками.",
+  bird:"Перья, клюв и лёгкий скелет приспособлены к полёту.",
+  lizard:"Холоднокровная рептилия греется на камнях и может отбросить хвост.",
+  dragon:"Легендарное крылатое чудовище сторожит сокровища и изрыгает пламя.",
+  volcano:"Конус с кратером выбрасывает раскалённые потоки, пепел и газы.",
+  engine:"Тяжёлая машина тянет вагоны, выпуская клубы из трубы.",
+  city:"Плотная сеть улиц, зданий и служб объединяет множество жителей.",
+  civilization:"Письменность, управление, города и разделение труда складываются в устойчивый порядок.",
+  magic:"Невозможное совершается волей, ритуалом или сверхъестественной силой.",
+  wizard:"Учёный чародей применяет тайные знания, жезлы и заклинания.",
+  knight:"Закованный воин служит господину и сражается верхом.",
+  gunpowder:"Чёрная взрывчатая смесь быстро сгорает, создавая много газа.",
+  explosion:"Мгновенное расширение разбрасывает осколки, ударную волну и гром.",
+  mountain:"Высокий скалистый рельеф поднимается над окружающей местностью.",
+  snow:"Мягкие ледяные кристаллы падают хлопьями и укрывают поверхность.",
+  ice:"Твёрдая холодная корка скользит и снова тает при нагревании.",
+  river:"Постоянный поток течёт по руслу от истока к устью.",
+  flower:"Яркий пахучий орган привлекает опылителей и даёт начало семенам.",
+  fruit:"Сочная оболочка защищает семена и часто служит пищей.",
+  animal:"Подвижное многоклеточное питается готовой органикой и чувствует среду.",
+  livestock:"Одомашненные стада дают пищу, сырьё и тягловую силу.",
+  wool:"Тёплые упругие волокна состригают и прядут в нити.",
+  fabric:"Переплетённые нити образуют гибкое полотно для шитья.",
+  clothes:"Носимые вещи закрывают тело, сохраняют тепло и выражают стиль.",
+  boat:"Небольшое плавучее судно перевозит людей по поверхности водоёма.",
+  ship:"Крупное судно с экипажем ходит далеко и несёт тяжёлый груз.",
+  electricity:"Движение зарядов питает приборы и проходит по замкнутой цепи.",
+  wire:"Длинная гибкая жила проводит сигнал или питание между устройствами.",
+  lamp:"Устройство превращает питание в управляемый искусственный свет.",
+  computer:"Программируемая машина хранит данные и выполняет вычисления.",
+  internet:"Всемирная сеть связывает устройства и передаёт цифровые данные.",
+  robot:"Программируемая машина действует в физическом мире через датчики и приводы.",
+  cyborg:"В одном теле органические части дополнены электронными и механическими.",
+  rocket:"Реактивная тяга разгоняет аппарат без опоры на окружающую среду.",
+  moon:"Ночной спутник меняет фазы и вызывает приливные ритмы.",
+  star:"Далёкий светящийся шар поддерживает термоядерное горение в недрах.",
+  space:"Почти пустая безвоздушная область начинается за атмосферой.",
+  time:"Необратимая последовательность событий измеряется периодическими движениями.",
+  astronaut:"Специалист покидает атмосферу, работая в невесомости и герметичном снаряжении.",
+  alien:"Предполагаемая разумная форма возникла за пределами нашей планеты.",
+  universe:"Всё пространство, материя, излучение и история составляют единое целое.",
+  salt:"Белые кристаллы усиливают вкус, сохраняют продукты и растворяются.",
+  saltwater:"Раствор оставляет кристаллический налёт после испарения и щиплет раны.",
+  glacier:"Многолетняя толща медленно ползёт вниз и шлифует долины.",
+  iceberg:"Большая часть холодной плавучей глыбы скрыта под поверхностью.",
+  fog:"Взвесь мелких капель у поверхности резко сокращает видимость.",
+  storm:"Тёмные тучи сопровождаются ливнем, громом и электрическими вспышками.",
+  hurricane:"Гигантский вращающийся вихрь с глазом формируется над тёплым океаном.",
+  flood:"Уровень резко поднимается и затапливает обычно сухую местность.",
+  oasis:"Зелёный участок с источником позволяет выжить среди сухих барханов.",
+  clay:"Пластичная липкая масса после обжига становится твёрдой.",
+  ceramic:"Обожжённое формованное изделие твёрдое, жаростойкое и хрупкое.",
+  crystal:"Упорядоченная решётка создаёт грани, блеск и правильную форму.",
+  copper:"Красноватый проводник легко тянется в проволоку и покрывается патиной.",
+  bronze:"Древний литейный сплав прочнее чистой красноватой основы.",
+  steel:"Прочный сплав закаляют для балок, инструментов и машин.",
+  magnet:"Два полюса притягивают железные предметы и ориентируются по полю.",
+  compass:"Свободная стрелка указывает постоянное направление относительно полюсов.",
+  cave:"Естественная полость уходит в темноту внутри скального массива.",
+  canyon:"Глубокая узкая долина с отвесными стенами вырезана долгой эрозией.",
+  island:"Участок суши со всех сторон отделён волнами.",
+  algae:"Гибкие зелёные ленты растут под поверхностью и не имеют настоящих корней.",
+  moss:"Мягкий зелёный ковёр любит сырость и покрывает камни и кору.",
+  mushroom:"Шляпка на ножке выпускает споры, а основная сеть скрыта в субстрате.",
+  insect:"Шесть ног, наружный скелет и тело из трёх отделов.",
+  bee:"Полосатый опылитель живёт колонией и строит восковые соты.",
+  honey:"Густая сладкая масса хранится в сотах и почти не портится.",
+  butterfly:"Крылья покрыты цветными чешуйками, а взрослению предшествует кокон.",
+  egg:"Твёрдая скорлупа защищает зародыш и запас питания.",
+  chicken:"Домашняя несушка кудахчет, выводит цыплят и разгребает почву лапами.",
+  milk:"Белая питательная жидкость предназначена для выкармливания детёнышей.",
+  cheese:"Плотный продукт созревает, меняя аромат, вкус и структуру.",
+  field:"Открытый обработанный участок регулярно засевают и собирают урожай.",
+  grain:"Мелкие сухие зёрна хранят запас для будущего ростка.",
+  flour:"Тонкий светлый порошок получают длительным размалыванием урожая.",
+  bread:"Пористая ароматная буханка поднимается и румянится при выпечке.",
+  dough:"Мягкая эластичная масса мнётся, раскатывается и держит форму.",
+  cake:"Праздничный многослойный десерт украшают кремом и свечами.",
+  wine:"Перебродивший напиток созревает, накапливая сложный аромат.",
+  juice:"Жидкость, отжатая из мякоти, сохраняет её вкус и цвет.",
+  tea:"Ароматный настой заваривают и пьют горячим или охлаждённым.",
+  coffee:"Обжаренные зёрна дают тёмный бодрящий напиток с горчинкой.",
+  seed:"Спящий зародыш в оболочке ждёт влаги и подходящего тепла.",
+  garden:"Ухоженный участок сочетает посадки, дорожки и регулярный уход.",
+  vegetable:"Съедобную часть огородной культуры выращивают ради корня, листа или плода.",
+  salad:"Холодное блюдо собирают из нарезанных свежих частей и заправки.",
+  paper:"Тонкий волокнистый лист принимает письмо, рисунок и печать.",
+  book:"Скреплённые страницы сохраняют длинный текст и знания.",
+  library:"Упорядоченное собрание изданий выдаёт их читателям.",
+  ink:"Цветная жидкость оставляет стойкий письменный или печатный след.",
+  pen:"Узкий пишущий предмет дозированно переносит краситель на страницу.",
+  map:"Уменьшенная схема местности показывает объекты, направления и расстояния.",
+  bridge:"Пролёт соединяет берега поверх препятствия.",
+  road:"Подготовленная полоса задаёт сухопутный маршрут колёсам и пешеходам.",
+  cart:"Простая двух- или четырёхколёсная повозка везёт груз без мотора.",
+  bicycle:"Два колеса приводятся педалями и удерживаются равновесием.",
+  car:"Самоходная колёсная машина перевозит людей по выбранному маршруту.",
+  airplane:"Неподвижные крылья создают подъёмную силу при быстром разбеге.",
+  airport:"Взлётные полосы, терминалы и диспетчеры обслуживают воздушные рейсы.",
+  harbor:"Защищённая гавань даёт судам причалы, погрузку и ремонт.",
+  factory:"Поточная площадка превращает сырьё в массовую продукцию.",
+  tool:"Предмет усиливает руку и помогает точно воздействовать на материал.",
+  hammer:"Тяжёлая головка на рукояти забивает, кует и разбивает.",
+  clock:"Равномерный ход механизма делит сутки на измеримые интервалы.",
+  music:"Организованные звуки образуют ритм, мелодию и гармонию.",
+  art:"Образ, созданный ради переживания и авторского высказывания.",
+  battery:"Химический запас отдаёт заряд цепи до очередной зарядки.",
+  motor:"Вращающий привод превращает питание в механическую работу.",
+  radio:"Электромагнитные волны несут голос и музыку без проводного соединения.",
+  television:"Экран и динамики воспроизводят движущееся изображение со звуком.",
+  camera:"Оптика фокусирует сцену на светочувствительной поверхности и сохраняет кадр.",
+  phone:"Удалённые собеседники слышат друг друга через сеть связи.",
+  smartphone:"Карманный сенсорный компьютер объединяет связь, камеру и приложения.",
+  satellite:"Аппарат обращается вокруг планеты, наблюдая или передавая сигналы.",
+  telescope:"Оптика приближает слабые далёкие объекты ночного неба.",
+  microscope:"Система линз раскрывает структуры, невидимые невооружённому глазу.",
+  scientist:"Исследователь проверяет гипотезы наблюдением, расчётом и опытом.",
+  science:"Проверяемое знание строится на доказательствах и воспроизводимых опытах.",
+  laboratory:"Оборудованное помещение позволяет безопасно ставить точные опыты.",
+  bacteria:"Одноклеточный микроорганизм делится надвое и населяет почти любую среду.",
+  virus:"Неклеточная частица размножается только внутри чужого организма.",
+  medicine:"Средство предупреждает болезнь, облегчает симптомы или помогает лечению.",
+  vaccine:"Тренировка иммунитета заранее готовит защиту к конкретной инфекции.",
+  hospital:"Палаты, операционные и круглосуточный персонал принимают заболевших.",
+  genetics:"Наследственные признаки изучаются через гены и передачу информации.",
+  clone:"Генетически одинаковая копия происходит от одного исходного организма.",
+  village:"Небольшое поселение окружено хозяйственными угодьями и невысокой застройкой.",
+  farm:"На одном хозяйстве выращивают урожай и содержат домашних животных.",
+  market:"Продавцы и покупатели встречаются для обмена товарами по цене.",
+  money:"Общепринятый эквивалент измеряет стоимость и облегчает обмен.",
+  bank:"Учреждение хранит вклады, выдаёт кредиты и проводит платежи.",
+  school:"Дети систематически осваивают предметы под руководством педагогов.",
+  university:"Высшее образование соединяет лекции, исследования и получение степени.",
+  government:"Органы управления принимают решения и распоряжаются общими ресурсами.",
+  law:"Обязательное правило устанавливает права, обязанности и ответственность.",
+  peace:"Стороны прекращают вооружённую борьбу и договариваются сосуществовать.",
+  planet:"Крупное округлое тело обращается вокруг звезды и очищает свою орбиту.",
+  comet:"Ледяное ядро у светила выпускает яркую кому и длинный хвост.",
+  galaxy:"Миллиарды звёзд связаны притяжением в огромную вращающуюся систему.",
+  blackhole:"Область с такой сильной гравитацией, что свет не покидает горизонт.",
+  portal:"Фантастический проход мгновенно соединяет удалённые места или миры.",
+  dew:"Ночные капли собираются на прохладных листьях без выпадения осадков.",
+  frost:"Тонкие белые кристаллы рисуют узоры на промёрзших поверхностях.",
+  hail:"Твёрдые ледяные шарики падают из мощных грозовых туч.",
+  tornado:"Узкая вращающаяся воронка опускается сверху и разрушает всё на пути.",
+  breeze:"Лёгкое движение воздуха едва колышет лепестки и приносит прохладу.",
+  wind:"Поток воздушных масс гнёт ветви, надувает паруса и вращает лопасти.",
+  smoke:"Серая струя продуктов горения вьётся вверх и рассеивается.",
+  ash:"Светлый рыхлый остаток остаётся после полного сгорания органики.",
+  geyser:"Подземное давление периодически выбрасывает горячий фонтан вверх.",
+  hot_spring:"Естественный тёплый бассейн постоянно подогревается из глубины.",
+  waterfall:"Поток срывается с горного уступа и пенится у подножия.",
+  lake:"Большой замкнутый водоём заполняет впадину и не связан напрямую с океаном.",
+  pond:"Небольшой тихий водоём часто создают рядом с садами и парками.",
+  desert:"Крайне сухой ландшафт получает мало осадков и резко нагревается днём.",
+  dune:"Ветер насыпает подвижный серповидный холм из множества крупинок.",
+  beach:"Пологая прибрежная полоса удобна для купания и отдыха.",
+  delta:"У устья поток разветвляется на рукава и откладывает плодородный ил.",
+  reef:"Подводная гряда близко подходит к поверхности и опасна для судов.",
+  coral:"Колонии крошечных полипов строят ветвистый известковый скелет.",
+  aurora:"Цветные ленты мерцают у полюсов, когда солнечные частицы входят в атмосферу.",
+  grass:"Низкий зелёный покров состоит из узких листьев и быстро отрастает после покоса.",
+  reed:"Высокие полые стебли густо стоят у мелководных берегов.",
+  cactus:"Мясистый стебель запасает влагу, а колючки уменьшают испарение.",
+  palm:"Неразветвлённый ствол заканчивается веером крупных листьев в тёплом климате.",
+  fern:"Древний тенелюбивый вид разворачивает резные листья спиралью.",
+  bamboo:"Полые членистые стебли растут чрезвычайно быстро и остаются прочными.",
+  vine:"Длинный гибкий побег цепляется за опору и поднимается вверх.",
+  rose:"Ароматный многолепестковый бутон защищён шипами на стебле.",
+  sunflower:"Крупная жёлтая корзинка поворачивается к свету и даёт масличные семечки.",
+  lotus:"Круглые листья лежат на поверхности, а чистый венчик поднимается над водой.",
+  lily:"Крупный душистый венчик из шести лепестков растёт на стройном стебле.",
+  herb:"Полезные листья и стебли собирают ради лечебных веществ.",
+  spice:"Ароматная добавка в малом количестве меняет вкус всего блюда.",
+  cotton:"Белые мягкие коробочки дают растительное волокно для прядения.",
+  sap:"Прозрачная или липкая жидкость движется внутри ствола и питает рост.",
+  rubber:"Упругий материал растягивается, возвращает форму и не пропускает влагу.",
+  resin:"Густая липкая капля застывает на повреждённой коре и пахнет хвоей.",
+  bark:"Наружный грубый слой ствола защищает живые ткани от повреждений.",
+  leaf:"Плоская зелёная пластинка ловит свет, испаряет влагу и создаёт питание.",
+  hay:"Высушенные скошенные стебли складывают в тюки для зимнего корма.",
+  frog:"Зелёное земноводное прыгает, квакает и проходит стадию головастика.",
+  snake:"Длинное безногое тело движется изгибами и регулярно меняет кожу.",
+  crocodile:"Крупная бронированная рептилия подстерегает добычу у самой кромки воды.",
+  dinosaur:"Доисторические рептилии господствовали миллионы лет до великого вымирания.",
+  fossil:"Окаменевший след или остаток древнего организма сохраняется в породе.",
+  mammoth:"Лохматый гигант с изогнутыми бивнями был приспособлен к холоду.",
+  bear:"Крупный косолапый всеядный зверь зимует в берлоге.",
+  wolf:"Серый хищник охотится слаженной стаей и воет по ночам.",
+  dog:"Верный домашний компаньон понимает команды и охраняет хозяина.",
+  cat:"Независимый домашний охотник бесшумно крадётся, мурлычет и ловит мышей.",
+  horse:"Быстрое копытное несёт всадника и тянет повозки.",
+  cow:"Крупное жвачное животное пасётся стадами и даёт молочный удой.",
+  pig:"Розовое всеядное с пятачком любит рыться в мягкой почве.",
+  goat:"Бородатое копытное уверенно карабкается по крутым склонам.",
+  duck:"Водоплавающее пернатое с широким клювом и перепончатыми лапами.",
+  eagle:"Крупный хищник парит высоко, высматривая добычу острым зрением.",
+  owl:"Ночной пернатый охотник бесшумно летает и поворачивает голову далеко назад.",
+  penguin:"Нелетающий морской пловец ходит вперевалку и ныряет за добычей.",
+  dolphin:"Умное морское млекопитающее дышит у поверхности и общается свистом.",
+  whale:"Гигантское млекопитающее выпускает фонтан через дыхало и кормит детёнышей.",
+  butter:"Жёлтый сливочный брусок плавится на горячем и взбивается из жира.",
+  yogurt:"Белая кисломолочная масса в чашке имеет нежную густую консистенцию.",
+  icecream:"Холодный сладкий десерт тает быстрее, чем его успевают съесть.",
+  cocoa:"Горький ароматный порошок получают из обжаренных тропических бобов.",
+  chocolate:"Тёмная сладкая плитка тает во рту и ломается с характерным хрустом.",
+  sugar:"Белые сладкие кристаллы быстро растворяются и карамелизуются при нагреве.",
+  jam:"Ягоды или плоды уваривают до густой сладкой заготовки.",
+  soup:"Горячее жидкое блюдо объединяет бульон и варёные кусочки.",
+  meat:"Плотная мышечная пища требует разделки и тепловой обработки.",
+  stew:"Кусочки долго томятся вместе до мягкости и насыщенного соуса.",
+  sausage:"Измельчённая начинка плотно набита в продолговатую оболочку.",
+  sandwich:"Начинка лежит между ломтями и удобно помещается в руке.",
+  pizza:"Круглая открытая лепёшка запекается с соусом и тягучей начинкой.",
+  pasta:"Формованное мучное изделие высушивают, а перед едой отваривают.",
+  noodles:"Длинные тонкие полоски быстро размягчаются в кипятке.",
+  rice:"Белые продолговатые зёрна впитывают жидкость и увеличиваются при варке.",
+  porridge:"Разваренная крупа становится мягкой, густой и питательной.",
+  cookie:"Небольшая сладкая выпечка получается сухой и хрустящей.",
+  pie:"Начинка скрыта внутри или под слоем румяной выпечки.",
+  lemonade:"Прохладный кисло-сладкий напиток освежает и часто шипит пузырьками.",
+  charcoal:"Лёгкие чёрные куски горят жарко и почти без пламени.",
+  plank:"Ровная длинная пиленая заготовка имеет плоские грани и древесный рисунок.",
+  glue:"Липкое вещество соединяет поверхности после высыхания.",
+  plywood:"Несколько тонких слоёв склеены с чередованием направления волокон.",
+  limestone:"Светлая осадочная порода шипит от кислоты и хранит следы раковин.",
+  cement:"Серый вяжущий порошок затвердевает после смешивания с жидкостью.",
+  concrete:"Тяжёлая камнеподобная масса заливается в форму и твердеет монолитом.",
+  petroleum:"Тёмная горючая жидкость залегает под землёй и служит химическим сырьём.",
+  oil:"Смазочная жидкость уменьшает трение и защищает детали от износа.",
+  asphalt:"Чёрное вязкое покрытие создаёт гладкую прочную поверхность для движения.",
+  plastic:"Лёгкий формуемый полимер принимает почти любую форму и медленно разрушается.",
+  nylon:"Прочное синтетическое волокно используют в чулках, сетях и канатах.",
+  leather:"Выделанная шкура становится гибкой, прочной и долговечной.",
+  fur:"Густой волосяной покров сохраняет тепло и образует пушистый материал.",
+  rope:"Множество скрученных волокон образует длинную прочную связку.",
+  chain:"Соединённые кольца гнутся, но выдерживают сильное растяжение.",
+  porcelain:"Тонкое белое изделие слегка просвечивает и звонко отзывается на удар.",
+  rubber_tire:"Упругое чёрное кольцо обхватывает обод и смягчает неровности пути.",
+  paint:"Цветной состав покрывает поверхность, скрывает основу и высыхает плёнкой.",
+  varnish:"Прозрачное покрытие придаёт блеск и защищает от влаги и царапин.",
+  chair:"Сиденье со спинкой поддерживает одного сидящего человека.",
+  table:"Горизонтальная столешница на опорах держит посуду и рабочие предметы.",
+  bed:"Мягкое горизонтальное место предназначено для сна и отдыха.",
+  door:"Подвижная створка закрывает проём и контролирует вход.",
+  window:"Прозрачный проём пропускает дневной свет, сохраняя тепло внутри.",
+  chimney:"Вертикальный канал безопасно выводит продукты горения над крышей.",
+  stove:"Домашний очаг отдаёт тепло помещению и поддерживает горение внутри.",
+  oven:"Закрытая горячая камера равномерно запекает блюда со всех сторон.",
+  pot:"Глубокий жаростойкий сосуд подходит для хранения или приготовления.",
+  cup:"Небольшой сосуд с ручкой удобен для горячего напитка.",
+  bottle:"Узкое горлышко и пробка помогают хранить и наливать жидкости.",
+  mirror:"Гладкая отражающая поверхность возвращает точное изображение смотрящего.",
+  soap:"Скользкая пена отделяет жир и грязь при мытье.",
+  wax:"Мягкое водоотталкивающее вещество плавится от слабого нагрева и снова застывает.",
+  candle:"Фитиль поддерживает маленькое ровное пламя, постепенно расходуя корпус.",
+  brush:"Пучок щетины наносит цвет мазками на поверхность.",
+  scissors:"Два перекрещённых лезвия режут материал при сведении ручек.",
+  needle:"Тонкий острый стержень с ушком протягивает нить сквозь полотно.",
+  umbrella:"Складной купол на спицах держат над головой во время осадков.",
+  backpack:"Заплечная сумка распределяет груз на две лямки и оставляет руки свободными.",
+  train:"Состав вагонов движется по направляющим от станции к станции.",
+  rail:"Две параллельные стальные направляющие задают путь колёсным парам.",
+  station:"Платформы и залы принимают пассажиров между железнодорожными рейсами.",
+  tram:"Городской вагон получает питание сверху и следует по уложенной колее.",
+  bus:"Вместительный маршрутный транспорт перевозит сразу много пассажиров.",
+  truck:"Большая грузовая платформа и мощная тяга предназначены для перевозки тяжестей.",
+  tractor:"Медленная тяговая машина на крупных колёсах работает на пашне.",
+  ambulance:"Спецмашина с сиреной быстро доставляет медицинскую бригаду к пациенту.",
+  firetruck:"Красная спецмашина везёт лестницу, цистерну и команду спасателей.",
+  taxi:"Поездка с водителем оплачивается по расстоянию или времени.",
+  motorcycle:"Двухколёсная машина разгоняется двигателем и управляется наклоном.",
+  scooter:"Компактная дека с рулём едет от аккумулятора и заряжается от розетки.",
+  submarine:"Герметичное судно погружается, меняя плавучесть балластными цистернами.",
+  yacht:"Небольшое комфортабельное судно предназначено для отдыха и прогулок.",
+  canoe:"Лёгкую узкую лодку ведут однолопастным веслом без уключин.",
+  sail:"Полотно ловит поток воздуха и передаёт тягу мачте.",
+  helicopter:"Несущий винт позволяет взлетать вертикально и зависать на месте.",
+  jet:"Реактивная тяга разгоняет крылатую машину до очень высокой скорости.",
+  spaceship:"Герметичный аппарат поддерживает экипаж вдали от атмосферы.",
+  rover:"Автономная колёсная лаборатория исследует поверхность другого мира.",
+  fuel:"Запасённое вещество при реакции выделяет полезное тепло или тягу.",
+  gas:"Летучее горючее заполняет весь доступный объём и легко воспламеняется.",
+  solar_panel:"Плоские тёмные ячейки напрямую превращают дневное излучение в ток.",
+  wind_turbine:"Высокая башня с лопастями вырабатывает ток из движения атмосферы.",
+  hydropower:"Падающий поток вращает турбину и даёт возобновляемое питание.",
+  generator:"Вращение в магнитном поле превращается в электрический ток.",
+  powerplant:"Крупный комплекс непрерывно производит питание для целого региона.",
+  reactor:"Управляемая цепная реакция идёт внутри защищённой активной зоны.",
+  nuclear_power:"Энергия атомных ядер превращается в тепло, а затем в ток.",
+  dam:"Массивная перегородка удерживает уровень и регулирует поток через затворы.",
+  mine:"Глубокие выработки и штреки ведут к залежам полезного сырья.",
+  ore:"Природная порода содержит достаточно ценного вещества для добычи.",
+  iron:"Тяжёлый серый материал ржавеет, куётся и притягивается магнитом.",
+  silver:"Светлый драгоценный материал лучше всех проводит ток и со временем темнеет.",
+  aluminum:"Лёгкий серебристый материал покрывается защитной плёнкой и не ржавеет как железо.",
+  alloy:"Смесь нескольких веществ получает свойства, которых нет у каждого по отдельности.",
+  welding:"Кромки деталей локально расплавляются и срастаются прочным швом.",
+  crane:"Высокая стрела поднимает тяжёлые грузы тросом и перемещает их над площадкой.",
+  pipeline:"Длинная система герметичных труб непрерывно переносит жидкость на расстояние.",
+  refinery:"Промышленная установка разделяет чёрное сырьё на топливо и химические фракции.",
+  keyboard:"Набор клавиш вводит буквы, числа и команды пальцами.",
+  mouse:"Небольшой указатель под ладонью двигает курсор и выбирает объекты щелчком.",
+  monitor:"Плоский экран показывает визуальный результат работы вычислительной системы.",
+  printer:"Устройство переносит цифровой текст и изображения на физические листы.",
+  scanner:"Оптическая линейка превращает бумажный оригинал в цифровое изображение.",
+  speaker:"Мембрана колеблется и превращает электрический сигнал в слышимый звук.",
+  microphone:"Чувствительная мембрана переводит голос в электрический сигнал.",
+  headphones:"Два маленьких излучателя подают звук прямо к ушам слушателя.",
+  tablet:"Плоский сенсорный экран служит одновременно дисплеем и управлением.",
+  laptop:"Складная переносная машина с экраном работает вдали от розетки.",
+  server:"Мощный узел постоянно обслуживает запросы других устройств.",
+  database:"Структурированное хранилище быстро находит, связывает и обновляет записи.",
+  website:"Связанные страницы открываются по адресу через браузер.",
+  email:"Цифровое письмо приходит в адресный ящик через сетевые серверы.",
+  social_network:"Личные профили образуют связи и обмениваются публикациями.",
+  video:"Последовательность кадров создаёт движущееся изображение, часто со звуком.",
+  game:"Интерактивные правила отвечают на действия игрока и задают цель.",
+  code:"Точный текст команд описывает поведение вычислительной машины.",
+  program:"Исполняемый набор инструкций решает определённую задачу.",
+  ai:"Алгоритм обучается на данных, распознаёт закономерности и принимает решения.",
+  physics:"Законы движения, сил, полей и материи выражаются измерениями и формулами.",
+  chemistry:"Состав, свойства и превращения веществ исследуются через реакции.",
+  biology:"Устройство, происхождение и развитие организмов изучаются экспериментально.",
+  astronomy:"Наблюдения и расчёты объясняют далёкие небесные тела и их движение.",
+  geology:"Слои, породы и процессы недр читаются как история планеты.",
+  ecology:"Связи организмов со средой показывают последствия каждого изменения экосистемы.",
+  mathematics:"Абстрактные числа, формы и отношения доказываются строгими рассуждениями.",
+  atom:"Мельчайшая химически неделимая частица имеет ядро и электронную оболочку.",
+  molecule:"Несколько связанных мельчайших частиц сохраняют химические свойства целого вещества.",
+  cell:"Мембрана отделяет минимальную самостоятельную систему с внутренними структурами.",
+  organ:"Несколько типов тканей совместно выполняют отдельную функцию организма.",
+  heart:"Полая мышца ритмично прокачивает кровь по сосудам.",
+  brain:"Сеть нервных клеток управляет телом, памятью и мышлением.",
+  skeleton:"Внутренний каркас поддерживает тело, защищает органы и служит рычагами.",
+  blood:"Красная циркулирующая жидкость переносит кислород, питание и защитные клетки.",
+  surgery:"Лечение проводится непосредственным вмешательством внутрь тела.",
+  doctor:"Специалист ставит диагноз, назначает лечение и следит за выздоровлением.",
+  nurse:"Медицинский сотрудник выполняет процедуры и ежедневно ухаживает за пациентами.",
+  pharmacy:"В этом месте лекарства хранят, подбирают по рецепту и отпускают покупателям.",
+  antibiotic:"Вещество подавляет рост определённых микробов, не действуя на вирусные инфекции.",
+  family:"Близкие родственники ведут общий быт и заботятся друг о друге.",
+  child:"Малыш растёт, учится и зависит от заботы взрослых.",
+  teacher:"Педагог объясняет материал, организует занятия и проверяет понимание.",
+  student:"Учащийся осваивает знания, выполняет задания и отвечает на уроках.",
+  farmer:"Хозяин сельского участка планирует посевы, уход и сбор урожая.",
+  baker:"Мастер замешивает, формует и выпекает ароматные изделия.",
+  chef:"Профессионал управляет кухней, сочетает вкусы и готовит блюда.",
+  miner:"Работник спускается под землю, укрепляет выработку и добывает сырьё.",
+  engineer:"Специалист рассчитывает и проектирует устройства, сооружения или процессы.",
+  programmer:"Разработчик превращает требования в точные алгоритмы и исправляет ошибки.",
+  artist:"Автор выражает замысел через цвет, форму и композицию.",
+  musician:"Исполнитель управляет ритмом, высотой и тембром звучания.",
+  writer:"Автор создаёт персонажей и смыслы с помощью письменной речи.",
+  pilot:"Специалист управляет полётом из кабины и отвечает за безопасный маршрут.",
+  sailor:"Член экипажа несёт вахту, управляет снастями и знает морские правила.",
+  driver:"Профессионал в фуражке сидит за рулём и безопасно ведёт машину.",
+  police:"Служба охраняет порядок, расследует нарушения и помогает в опасности.",
+  judge:"Независимый арбитр выслушивает стороны и выносит обязательное решение.",
+  mayor:"Избранный руководитель отвечает за городские службы и бюджет.",
+  king:"Наследственный монарх носит корону и правит государством.",
+  language:"Система звуков, слов и правил позволяет людям передавать мысли.",
+  alphabet:"Упорядоченный набор знаков записывает звуки речи.",
+  poem:"Ритм, образность и точный выбор слов создают короткий литературный текст.",
+  story:"Небольшое повествование разворачивает одно событие и нескольких героев.",
+  newspaper:"Периодическое печатное издание сообщает свежие события и мнения.",
+  theater:"Живые актёры разыгрывают историю на сцене перед зрителями.",
+  cinema:"Большой экран и тёмный зал собирают публику на просмотр фильма.",
+  museum:"Экспонаты сохраняют и объясняют наследие, природу или достижения.",
+  festival:"Многодневный праздник объединяет выступления, публику и общую тему.",
+  dance:"Осмысленные движения тела следуют ритму и образуют выразительную композицию.",
+  sport:"Соревнование проверяет силу, скорость, точность и соблюдение правил.",
+  ball:"Упругий круглый снаряд катится, летит и отскакивает.",
+  football:"Две команды ногами стараются забить круглый снаряд в ворота.",
+  basketball:"Высокое кольцо с сеткой принимает броски игроков на площадке.",
+  tennis:"Ракетки перебивают небольшой упругий снаряд через натянутую сетку.",
+  chess:"Шестнадцать фигур с разными ходами защищают короля на клетчатой доске.",
+  medal:"Небольшой наградной знак носят на ленте за заслуги или победу.",
+  trophy:"Победителю вручают почётный сосуд на подставке.",
+  stadium:"Трибуны окружают большую арену для соревнований и массовых зрителей.",
+  olympics:"Спортсмены многих стран встречаются раз в четыре года под пятью кольцами.",
+  tower:"Высокое узкое сооружение возвышается ради обзора, сигнала или защиты.",
+  castle:"Каменная резиденция с башнями и стенами защищает феодального владельца.",
+  palace:"Богато украшенная парадная резиденция подчёркивает власть и роскошь.",
+  temple:"Священное здание предназначено для обрядов, молитвы и собрания верующих.",
+  skyscraper:"Многоэтажное здание поднимается значительно выше обычной городской застройки.",
+  apartment:"Множество отдельных квартир разделяют один подъезд, крышу и коммуникации.",
+  warehouse:"Большое помещение хранит запасы на стеллажах до отправки.",
+  mill:"Жернова перемалывают урожай, получая мелкий пищевой порошок.",
+  lighthouse:"Высокий береговой огонь подаёт судам заметный издалека навигационный сигнал.",
+  tunnel:"Подземный или горный проход сокращает путь сквозь препятствие.",
+  subway:"Городские поезда быстро ходят по преимущественно подземным линиям.",
+  canal:"Искусственное русло направляет поток для судоходства или орошения.",
+  aqueduct:"Арочная конструкция переносит непрерывный поток над долинами и преградами.",
+  fountain:"Струи под давлением поднимаются и декоративно падают в чашу.",
+  park:"Открытое городское пространство сочетает деревья, газоны и дорожки для отдыха.",
+  zoo:"Специальные вольеры позволяют посетителям увидеть диких зверей.",
+  greenhouse:"Прозрачные стены удерживают тепло и продлевают сезон выращивания.",
+  windmill:"Классические четыре крыла вращают жернова внутри высокой мельницы.",
+  fortress:"Мощные стены, бастионы и гарнизон рассчитаны на длительную оборону.",
+  monument:"Долговечный художественный объект сохраняет память о событии или личности.",
+  meteor:"Светящийся след возникает, когда небесная частица сгорает в атмосфере.",
+  meteorite:"Обломок переживает огненный полёт и достигает поверхности.",
+  asteroid:"Небольшое каменистое тело самостоятельно обращается вокруг светила.",
+  nebula:"Разреженное межзвёздное скопление газа сияет, отражает свет или закрывает фон.",
+  supernova:"Гибель массивной звезды вспыхивает ярче целой галактики и разбрасывает элементы.",
+  pulsar:"Быстро вращающийся остаток посылает строго периодические импульсы излучения.",
+  quasar:"Активное ядро далёкой галактики светит благодаря поглощению вещества.",
+  exoplanet:"Мир обращается вокруг чужого светила за пределами нашей системы.",
+  orbit:"Замкнутая траектория возникает из непрерывного падения мимо центрального тела.",
+  gravity:"Взаимное притяжение масс удерживает ноги внизу, а небесные тела на орбитах.",
+  spacesuit:"Герметичная оболочка даёт дыхание, давление и защиту во внешнем вакууме.",
+  space_station:"Обитаемая лаборатория долго движется по орбите и принимает экипажи.",
+  moonbase:"Постоянный герметичный комплекс позволяет жить и работать на спутнике.",
+  mars:"Красная пыль, полярные шапки и крупнейший вулкан отличают четвёртый мир от светила.",
+  ufo:"Неопознанный летящий объект часто изображают как светящуюся тарелку.",
+  wormhole:"Гипотетический тоннель сокращает путь через искривлённое пространство-время.",
+  multiverse:"Множество отдельных вселенных существует параллельно в одной гипотезе.",
+  dark_matter:"Невидимая масса обнаруживает себя только дополнительным гравитационным притяжением.",
+  dark_energy:"Неизвестная причина заставляет космическое расширение ускоряться.",
+  big_bang:"Из чрезвычайно горячего плотного состояния началось расширение всего пространства.",
+  ghost:"Полупрозрачный образ умершего бесшумно появляется в знакомых местах.",
+  spirit:"Бестелесная сущность воплощает сознание, характер или силу природы.",
+  fairy:"Крошечное крылатое волшебное существо помогает или проказничает.",
+  elf:"Стройный долгожитель с острыми ушами связан с древними чащами.",
+  dwarf:"Невысокий бородатый мастер в характерной остроконечной шапке любит подземные сокровища.",
+  mermaid:"Женская фигура вместо ног имеет рыбий хвост и живёт в глубине.",
+  centaur:"Человеческий торс соединён с туловищем и четырьмя ногами коня.",
+  unicorn:"Белый сказочный конь отличается единственным спиральным рогом на лбу.",
+  griffin:"Крылья и голова орла соединены с телом могучего льва.",
+  phoenix:"Сказочное крылатое создание сгорает и вновь рождается из собственного пепла.",
+  golem:"Искусственный глиняный великан оживает по начертанному приказу.",
+  zombie:"Безвольное ожившее тело медленно бродит и распространяет заражение укусом.",
+  vampire:"Ночной бессмертный хищник пьёт жизненную жидкость и избегает солнечного света.",
+  werewolf:"При полном сияющем диске двуногий превращается в огромного зверя.",
+  potion:"Волшебную жидкость варят для временного необычного эффекта.",
+  spell:"Точная формула слов и жестов направляет сверхъестественное действие.",
+  wand:"Короткий волшебный жезл фокусирует намерение владельца.",
+  treasure:"Спрятанные драгоценности ждут того, кто расшифрует путь к тайнику.",
+  pirate:"Морской разбойник захватывает суда, ищет добычу и поднимает чёрный флаг.",
+  kraken:"Гигантское щупальчатое чудовище способно обвить и потопить судно.",
+  guitar:"Струны натянуты над деревянным корпусом и звучат от щипка.",
+  electric_guitar:"Звукосниматели передают колебания струн в усилительную аппаратуру.",
+  bass_guitar:"Длинный гриф и толстые струны создают низкую основу ансамбля.",
+  drums:"Барабаны и тарелки образуют ритм ударами палочек и педалей.",
+  piano:"Клавиши через сложную механику заставляют молоточки ударять по струнам.",
+  synthesizer:"Электронные схемы создают и изменяют тембры по нажатию клавиш.",
+  violin:"Смычок ведут по четырём струнам небольшого фигурного корпуса.",
+  saxophone:"Изогнутая духовая трубка с клапанами звучит через одинарную трость.",
+  trumpet:"Музыкант меняет ноты губами и тремя клапанами яркой медной трубы.",
+  accordion:"Складчатые меха прокачивают поток через язычки между двумя клавиатурами.",
+  amplifier:"Электронный блок делает слабый звуковой сигнал мощнее для громкого воспроизведения.",
+  recording_studio:"Звукоизолированное помещение позволяет чисто записывать и сводить исполнение.",
+  song:"Голосовая мелодия соединяет слова, ритм и законченную форму.",
+  album:"Под одной обложкой выпускают связанную последовательность музыкальных треков.",
+  concert:"Исполнители играют вживую перед собравшейся публикой.",
+  band:"Несколько постоянных исполнителей совместно создают единое звучание.",
+  rock_music:"Громкие электрические риффы и мощный ударный ритм ведут композицию.",
+  jazz:"Импровизация, синкопы и свинг позволяют музыкантам разговаривать звуком.",
+  orchestra:"Большой состав разных инструментов играет вместе под управлением дирижёра.",
+  vinyl_record:"Спиральная канавка на чёрном диске хранит аналоговую звукозапись."
 });
 
 function elementClue(id){
-  const customClue = ELEMENT_CLUE_OVERRIDES[id];
-  if (customClue){
-    const lowerClue = customClue.toLocaleLowerCase("ru");
+  const clue = ELEMENT_CLUES[id];
+  if (!clue) throw new Error(`Не задан авторский намёк для элемента: ${id}`);
+  return clue;
+}
+
+function normalizeClueWords(value){
+  return value.toLocaleLowerCase("ru").replace(/ё/g, "е").match(/[а-яa-z0-9]+/g) || [];
+}
+
+function clueContainsName(clue, name){
+  const clueWords = normalizeClueWords(clue);
+  const nameWords = normalizeClueWords(name);
+  return nameWords.length > 0 && clueWords.some((candidate, clueIndex) =>
+    candidate === nameWords[0] &&
+    nameWords.every((part, offset) => clueWords[clueIndex + offset] === part)
+  );
+}
+
+function validateElementClues(){
+  const elementIds = Object.keys(E);
+  const clueIds = Object.keys(ELEMENT_CLUES);
+  const missing = elementIds.filter(id => !ELEMENT_CLUES[id]?.trim());
+  const extra = clueIds.filter(id => !E[id]);
+  const duplicateTexts = clueIds.filter((id, index) =>
+    clueIds.findIndex(otherId => ELEMENT_CLUES[otherId] === ELEMENT_CLUES[id]) !== index
+  );
+  const forbiddenNames = [];
+  for (const id of elementIds){
     const ingredientNames = R
       .filter(([, result]) => result === id)
       .flatMap(([raw]) => raw.split(" "))
-      .map(component => E[component][0].toLocaleLowerCase("ru"));
-    const categoryNames = CATS.map(([, name]) => name.toLocaleLowerCase("ru"));
-    if (![...ingredientNames, ...categoryNames].some(name => lowerClue.includes(name))){
-      return customClue;
+      .map(component => E[component][0]);
+    const categoryNames = CATS.map(([, name]) => name);
+    for (const name of [...ingredientNames, ...categoryNames]){
+      if (clueContainsName(ELEMENT_CLUES[id] || "", name)) forbiddenNames.push(`${id}: ${name}`);
     }
   }
-  const variants = [
-    "Вспомните, как обычно возникает этот результат: решающий процесс подскажет сочетание.",
-    "Главное свойство результата важнее внешнего вида. Подумайте, что делает его возможным.",
-    "Разгадка в назначении результата: что даёт основу, а что — решающее изменение?",
-    "Сравните результат с похожими вещами: характерное отличие укажет путь.",
-    "Оттолкнитесь от происхождения результата: один шаг даёт основу, другой — характерный признак.",
-    "Подумайте, что умеет результат и благодаря какому принципу это становится возможным."
-  ];
-  const variantIndex = [...id].reduce((sum, char) => sum + char.charCodeAt(0), 0) % variants.length;
-  return variants[variantIndex];
+  if (missing.length || extra.length || duplicateTexts.length || forbiddenNames.length){
+    throw new Error(`Некорректные намёки: missing=${missing.join(",")}; extra=${extra.join(",")}; duplicates=${duplicateTexts.join(",")}; forbidden=${forbiddenNames.join(",")}`);
+  }
 }
+validateElementClues();
 
 // ---------- Состояние ----------
 const SETTINGS_KEY = "alchemy.settings";
@@ -992,10 +1550,7 @@ const saveSettings = () => localStorage.setItem(SETTINGS_KEY, JSON.stringify(set
 
 function iconHTML(id){
   if (ICONS[id]) return ICONS[id];
-  const badge = ICON_BADGES[id];
-  return badge
-    ? `<span class="composite-icon" aria-hidden="true"><span class="icon-base">${E[id][1]}</span><span class="icon-badge">${badge}</span></span>`
-    : E[id][1];
+  return FULL_ICONS[id] || E[id][1];
 }
 
 function chipHTML(id){
