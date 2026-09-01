@@ -89,6 +89,26 @@ aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8f8
 .codex-filter[hidden]{display:none}
 .codex-filter input{accent-color:#8b6bc4}
 #codexList{overflow-y:auto;padding:8px}
+.chain-sheet{width:min(520px,94vw)}
+.chain-body{padding:16px;overflow-y:auto}
+.chain-intro{font-size:13px;line-height:1.5;color:#b9b4cd;margin-bottom:14px}
+.chain-progress{height:7px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:16px}
+.chain-progress > span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7a5bb7,#ffd75e);transition:width .3s ease}
+.chain-steps{display:flex;flex-direction:column;gap:8px}
+.chain-step{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:54px;padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}
+.chain-step .chain-icon{font-size:24px;line-height:1;text-align:center}
+.chain-step .chain-copy{min-width:0;display:flex;flex-direction:column;gap:2px}
+.chain-step .chain-label{font-size:11px;color:#8f89ad}
+.chain-step .chain-name{font-size:14px;color:#ddd9ed;overflow-wrap:anywhere}
+.chain-step .chain-state{font-size:16px;color:#77718e}
+.chain-step.done{border-color:rgba(129,199,132,.24);background:rgba(82,150,87,.09)}
+.chain-step.done .chain-state{color:#81c784}
+.chain-step.current{border-color:rgba(255,215,94,.38);background:rgba(255,215,94,.08);box-shadow:0 0 18px rgba(255,215,94,.06)}
+.chain-step.current .chain-label,.chain-step.current .chain-state{color:#ffd75e}
+.chain-step.locked .chain-icon,.chain-step.locked .chain-name{color:#77718e}
+.chain-actions{display:flex;justify-content:flex-end;margin-top:14px}
+.chain-actions button{color:#f3e8b0;border-color:rgba(255,215,94,.3);background:rgba(255,215,94,.09)}
+.chain-empty{text-align:center;padding:22px 10px;color:#aaa5c4;font-size:13px;line-height:1.5}
 .settings-sheet{width:min(500px,94vw)}
 .settings-body{padding:14px}
 .setting-row{display:flex;align-items:center;gap:16px;padding:14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);cursor:pointer}
@@ -179,6 +199,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
   <h1>⚗️ Алхимия <span id="counter"></span></h1>
   <button id="btnCodex" title="Справочник всех элементов" aria-label="Справочник"><span aria-hidden="true">📖</span><span class="btn-label">Справочник</span></button>
   <button id="btnHint" title="Показать возможное сочетание" aria-label="Подсказка"><span aria-hidden="true">💡</span><span class="btn-label">Подсказка</span></button>
+  <button id="btnChain" title="Цепочка открытий" aria-label="Цепочка открытий"><span aria-hidden="true">🧭</span><span class="btn-label">Цепочка</span></button>
   <button id="btnClear" title="Убрать всё с поля" aria-label="Очистить поле"><span aria-hidden="true">🧹</span><span class="btn-label">Поле</span></button>
   <div class="menu-wrap" id="menuWrap">
     <button id="btnMenu" class="menu-trigger" title="Меню" aria-label="Открыть меню" aria-expanded="false" aria-controls="appMenu"><span aria-hidden="true">☰</span><span class="btn-label">Меню</span></button>
@@ -213,6 +234,15 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
     <div id="codexList"></div>
   </div>
 </div>
+<div class="modal" id="chainModal">
+  <div class="sheet chain-sheet" role="dialog" aria-modal="true" aria-labelledby="chainTitle">
+    <div class="sheet-head">
+      <h2 id="chainTitle">🧭 Цепочка открытий</h2>
+      <button id="btnChainClose" type="button" title="Закрыть" aria-label="Закрыть цепочку открытий">✕</button>
+    </div>
+    <div class="chain-body" id="chainBody"></div>
+  </div>
+</div>
 <div class="modal" id="settingsModal">
   <div class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="sheet-head">
@@ -238,7 +268,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.16.2";
+const APP_VERSION = "1.17.0";
 
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
@@ -1519,6 +1549,15 @@ if (!hasSavedRecipes){
   }
   localStorage.setItem(DISCOVERED_RECIPES_KEY, JSON.stringify([...discoveredRecipes]));
 }
+const DISCOVERY_CHAIN_KEY = "alchemy.discoveryChain";
+let discoveryChain = [];
+try {
+  const parsedChain = JSON.parse(localStorage.getItem(DISCOVERY_CHAIN_KEY));
+  const ids = parsedChain && parsedChain.version === 1 && Array.isArray(parsedChain.ids)
+    ? parsedChain.ids
+    : [];
+  discoveryChain = ids.filter((id, index) => E[id] && !BASE.includes(id) && ids.indexOf(id) === index);
+} catch(e){}
 let lastDiscovered = null;
 let wonShown = false;
 
@@ -1534,6 +1573,9 @@ const btnMenu  = document.getElementById("btnMenu");
 const appMenu  = document.getElementById("appMenu");
 const settingsModal = document.getElementById("settingsModal");
 const showUnavailableElements = document.getElementById("showUnavailableElements");
+const chainModal = document.getElementById("chainModal");
+const chainBody = document.getElementById("chainBody");
+const btnChain = document.getElementById("btnChain");
 document.getElementById("appVersion").textContent = APP_VERSION;
 showUnavailableElements.checked = settings.showUnavailableElements;
 
@@ -1556,6 +1598,8 @@ const clampPos = v => Math.max(4, Math.min(v, 99999));
 const save = () => localStorage.setItem("alchemy.discovered", JSON.stringify([...discovered]));
 const saveRecipes = () => localStorage.setItem(DISCOVERED_RECIPES_KEY, JSON.stringify([...discoveredRecipes]));
 const saveSettings = () => localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+const saveDiscoveryChain = () => localStorage.setItem(DISCOVERY_CHAIN_KEY,
+  JSON.stringify({ version:1, ids:discoveryChain }));
 
 function iconHTML(id){
   if (ICONS[id]) return ICONS[id];
@@ -1720,6 +1764,119 @@ function mulberry32(a){
   };
 }
 
+// ---------- Цепочки открытий ----------
+// Маршрут строится только из ещё не открытых результатов. Первый этап уже
+// достижим, а каждый следующий использует предыдущий результат как компонент.
+function createDiscoveryChain(){
+  const unseen = new Set(Object.keys(E).filter(id => !discovered.has(id)));
+  if (!unseen.size) return [];
+
+  const seed = strHash([...discovered].sort().join("|") + ":discovery-chain");
+  const rank = new Map(Object.keys(E).map((id, index) =>
+    [id, strHash(`${seed}:${id}:${index}`)]));
+  const starts = [...new Set(R
+    .filter(([raw, result]) => unseen.has(result) &&
+      raw.split(" ").every(component => discovered.has(component)))
+    .map(([, result]) => result))]
+    .sort((a, b) => rank.get(a) - rank.get(b));
+
+  let best = [];
+  function walk(path){
+    if (path.length > best.length) best = path.slice();
+    if (path.length >= 4) return true;
+    const current = path[path.length - 1];
+    const next = [...new Set(R
+      .filter(([raw, result]) => {
+        const components = raw.split(" ");
+        return unseen.has(result) && !path.includes(result) && components.includes(current) &&
+          components.every(component => discovered.has(component) || path.includes(component));
+      })
+      .map(([, result]) => result))]
+      .sort((a, b) => rank.get(a) - rank.get(b));
+    for (const id of next){
+      if (walk([...path, id])) return true;
+    }
+    return false;
+  }
+
+  for (const start of starts){
+    if (walk([start]) && best.length >= 4) break;
+  }
+  return best.length >= 2 ? best : [];
+}
+
+function chainCompletedCount(){
+  return discoveryChain.filter(id => discovered.has(id)).length;
+}
+
+function updateChainButton(){
+  if (!discoveryChain.length){
+    btnChain.title = "Цепочка открытий — подходящий маршрут пока не найден";
+    btnChain.setAttribute("aria-label", "Цепочка открытий");
+    return;
+  }
+  const progress = `${chainCompletedCount()} из ${discoveryChain.length}`;
+  btnChain.title = `Цепочка открытий — ${progress}`;
+  btnChain.setAttribute("aria-label", `Цепочка открытий, выполнено ${progress}`);
+}
+
+function renderDiscoveryChain(){
+  updateChainButton();
+  if (!discoveryChain.length){
+    chainBody.innerHTML =
+      `<div class="chain-empty">Сейчас из доступных открытий нельзя составить последовательный маршрут. Продолжай экспериментировать — новая цепочка появится вместе с новыми возможностями.</div>` +
+      `<div class="chain-actions"><button type="button" data-chain-action="new">Проверить снова</button></div>`;
+    return;
+  }
+
+  const completed = chainCompletedCount();
+  const currentIndex = discoveryChain.findIndex(id => !discovered.has(id));
+  const complete = currentIndex === -1;
+  const steps = discoveryChain.map((id, index) => {
+    const done = discovered.has(id);
+    const current = !complete && index === currentIndex;
+    const state = done ? "done" : current ? "current" : "locked";
+    const icon = done || current ? iconHTML(id) : "❔";
+    const name = done || current ? E[id][0] : "Скрытый этап";
+    const label = done ? `Этап ${index + 1} завершён` : current ? `Этап ${index + 1} — текущая цель` : `Этап ${index + 1}`;
+    const mark = done ? "✓" : current ? "◆" : "•";
+    return `<div class="chain-step ${state}">` +
+      `<div class="chain-icon">${icon}</div>` +
+      `<div class="chain-copy"><span class="chain-label">${label}</span><span class="chain-name">${name}</span></div>` +
+      `<span class="chain-state" aria-hidden="true">${mark}</span></div>`;
+  }).join("");
+  const intro = complete
+    ? "Цепочка завершена. Можно отправиться по новому маршруту."
+    : "Открой текущую цель обычным сочетанием. Следующий этап проявится после открытия.";
+  chainBody.innerHTML =
+    `<div class="chain-intro">${intro}</div>` +
+    `<div class="chain-progress" aria-label="Выполнено ${completed} из ${discoveryChain.length}"><span style="width:${completed / discoveryChain.length * 100}%"></span></div>` +
+    `<div class="chain-steps">${steps}</div>` +
+    (complete ? `<div class="chain-actions"><button type="button" data-chain-action="new">Новая цепочка</button></div>` : "");
+}
+
+function startNewDiscoveryChain(){
+  discoveryChain = createDiscoveryChain();
+  saveDiscoveryChain();
+  renderDiscoveryChain();
+}
+
+function registerChainDiscovery(id){
+  if (!discoveryChain.includes(id)) return;
+  const complete = discoveryChain.every(chainId => discovered.has(chainId));
+  renderDiscoveryChain();
+  if (complete){
+    setTimeout(() => showPopup("🧭", "Цепочка завершена!", "Открой новую экспедицию"), 2050);
+  }
+}
+
+function openDiscoveryChain(){
+  renderDiscoveryChain();
+  chainModal.classList.add("open");
+  document.getElementById("btnChainClose").focus();
+}
+function closeDiscoveryChain(){ chainModal.classList.remove("open"); }
+
 function showHint(){
   const options = [...new Set(R
     .filter(([k,res]) => {
@@ -1763,6 +1920,7 @@ function discover(id, at){
   lastDiscovered = id;
   save();
   renderPalette();
+  registerChainDiscovery(id);
   showPopup(iconHTML(id), "Новое открытие!", E[id][0]);
   if (hintbar.classList.contains("show")) showHint();
   if (at){ const size = itemSize(); sparks(at.x + size/2, at.y + size/2); }
@@ -1956,6 +2114,13 @@ board.addEventListener("dblclick", e => {
 
 // ---------- Кнопки ----------
 document.getElementById("btnHint").addEventListener("click", showHint);
+btnChain.addEventListener("click", openDiscoveryChain);
+document.getElementById("btnChainClose").addEventListener("click", closeDiscoveryChain);
+chainModal.addEventListener("click", e => { if (e.target === chainModal) closeDiscoveryChain(); });
+chainBody.addEventListener("click", e => {
+  const action = e.target.closest("[data-chain-action]");
+  if (action?.dataset.chainAction === "new") startNewDiscoveryChain();
+});
 
 // ---------- Справочник ----------
 const codex      = document.getElementById("codex");
@@ -2188,6 +2353,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape"){
     setMenuOpen(false);
     closeSettings();
+    closeDiscoveryChain();
   }
 });
 
@@ -2196,11 +2362,14 @@ document.getElementById("btnReset").addEventListener("click", () => {
   if (confirm("Начать заново? Все открытия будут потеряны.")){
     localStorage.removeItem("alchemy.discovered");
     localStorage.removeItem(DISCOVERED_RECIPES_KEY);
+    localStorage.removeItem(DISCOVERY_CHAIN_KEY);
     location.reload();
   }
 });
 
 // ---------- Старт ----------
+if (!discoveryChain.length) startNewDiscoveryChain();
+else updateChainButton();
 renderPalette();
 requestAnimationFrame(() => {
   const n = BASE.length, gap = window.matchMedia("(max-width:640px)").matches ? 82 : 110;
