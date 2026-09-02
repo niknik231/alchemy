@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>⚗️ Алхимия</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚗️</text></svg>">
+<!-- region: STYLES -->
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -194,6 +195,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 }
 </style>
 </head>
+<!-- region: UI_SHELL -->
 <body>
 <header>
   <h1>⚗️ Алхимия <span id="counter"></span></h1>
@@ -268,8 +270,10 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 <script>
 "use strict";
 
-const APP_VERSION = "1.17.0";
+// region: APP_META
+const APP_VERSION = "1.17.1";
 
+// region: DATA_CORE
 // ---------- Данные ----------
 const BASE = ["water","fire","earth","air"];
 const E = {
@@ -321,6 +325,7 @@ const E = {
   government:["Государство","🏛️"], law:["Закон","⚖️"], peace:["Мир","🕊️"], planet:["Планета","🌎"],
   comet:["Комета","☄️"], galaxy:["Галактика","🌌"], blackhole:["Чёрная дыра","⚫"], portal:["Портал","🌀"]
 };
+// region: ICONS
 // Авторские SVG-иконки для образов, которых нет среди стандартных эмодзи.
 const ICONS = {
   earth:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M6 25Q18 18 32 21Q46 17 58 25V52H6Z" fill="#81583d"/><path d="M6 25Q18 18 32 21Q46 17 58 25" fill="none" stroke="#d0a06d" stroke-width="5" stroke-linecap="round"/><path d="M11 36h42M13 45h38" stroke="#5c3b2b" stroke-width="3" opacity=".55"/><path d="M32 23l-5 10 7 5-5 9" fill="none" stroke="#43291f" stroke-width="3" stroke-linecap="round"/></svg>`,
@@ -467,6 +472,7 @@ function makeFullIcon(id, motif){
     `</svg>`;
 }
 
+// region: RECIPES
 const R = [
   // первичные сочетания
   ["air earth","dust"],   ["air fire","energy"],  ["air water","cloud"],  ["earth fire","lava"],
@@ -933,6 +939,7 @@ for (const [raw, result] of R){
 // конечные элементы — не используются как ингредиент ни в одном рецепте
 const USED_INPUTS = new Set(R.flatMap(([k]) => k.split(" ")));
 const FINAL = new Set(Object.keys(E).filter(id => !USED_INPUTS.has(id)));
+// region: CATEGORIES
 // категории элементов
 const CATS = [
   ["base","Базовые",       ["water","fire","earth","air"]],
@@ -957,6 +964,7 @@ for (const [id,,,,, cat] of [...EXPANSION, ...MUSIC_EXPANSION]){
 const CAT_COLOR = { base:"#9aa4b5", elem:"#4fc3f7", sky:"#ffd54f", geo:"#a1887f", life:"#81c784", craft:"#ffcc80", food:"#ffab91", transport:"#90a4ae", tech:"#80cbc4", science:"#4db6ac", civ:"#ffb74d", culture:"#f48fb1", myst:"#ce93d8", space:"#9fa8da" };
 const CAT_OF = {}; CATS.forEach(([cid,,ids]) => ids.forEach(id => CAT_OF[id] = cid));
 
+// region: CLUES
 // Отдельный содержательный намёк для каждого элемента. Резервных шаблонов нет.
 const ELEMENT_CLUES = Object.freeze({
   water:"Прозрачная текучая основа дождей, рек и питья.",
@@ -1502,6 +1510,7 @@ function validateElementClues(){
 }
 validateElementClues();
 
+// region: STATE
 // ---------- Состояние ----------
 const SETTINGS_KEY = "alchemy.settings";
 const settings = { showUnavailableElements:true, codexShowAvailable:false };
@@ -1535,6 +1544,7 @@ try {
 const discoveredRecipes = new Set(savedRecipes.filter(recipe =>
   RECIPE.has(recipe) && discovered.has(RECIPE.get(recipe))
 ));
+// region: SAVE_MIGRATIONS
 // Старые сохранения не знали отдельных рецептов. Для уже открытого результата
 // считаем известным первый доступный рецепт, не раскрывая его альтернативы.
 if (!hasSavedRecipes){
@@ -1561,6 +1571,7 @@ try {
 let lastDiscovered = null;
 let wonShown = false;
 
+// region: DOM_REFS
 const board    = document.getElementById("board");
 const palette  = document.getElementById("palette");
 const palettePanel = palette.closest("aside");
@@ -1592,6 +1603,7 @@ let drag = null;
 let lastTapId = null, lastTapT = 0;
 let lastBoardTapItem = null, lastBoardTapT = 0, suppressDblClickUntil = 0;
 
+// region: UTILITIES
 // ---------- Утилиты ----------
 const key = recipeKey;
 const clampPos = v => Math.max(4, Math.min(v, 99999));
@@ -1631,6 +1643,7 @@ function refreshBoardRecipeCounts(){
   }
 }
 
+// region: BOARD
 function renderPalette(){
   palette.innerHTML = "";
   let shown = 0;
@@ -1734,6 +1747,7 @@ function showPopup(big, ttl, val){
   popupTimer = setTimeout(() => popup.classList.remove("show"), 1900);
 }
 
+// region: HINTS
 let hintTimer = null;
 let hintPicks = [];
 function notify(text, ms){
@@ -1764,6 +1778,7 @@ function mulberry32(a){
   };
 }
 
+// region: DISCOVERY_CHAIN
 // ---------- Цепочки открытий ----------
 // Маршрут строится только из ещё не открытых результатов. Первый этап уже
 // достижим, а каждый следующий использует предыдущий результат как компонент.
@@ -1930,6 +1945,7 @@ function discover(id, at){
   }
 }
 
+// region: MERGE
 // ---------- Соединение ----------
 function tryMerge(mover){
   const size = itemSize(), radius = mergeRadius();
@@ -1971,6 +1987,7 @@ function tryMerge(mover){
   else sparks(nit.x + size/2, nit.y + size/2);
 }
 
+// region: DRAG_DROP
 // ---------- Перетаскивание ----------
 document.addEventListener("pointerdown", e => {
   hideTip();
@@ -2112,6 +2129,7 @@ board.addEventListener("dblclick", e => {
   duplicateItem(it);
 });
 
+// region: CONTROLS
 // ---------- Кнопки ----------
 document.getElementById("btnHint").addEventListener("click", showHint);
 btnChain.addEventListener("click", openDiscoveryChain);
@@ -2122,6 +2140,7 @@ chainBody.addEventListener("click", e => {
   if (action?.dataset.chainAction === "new") startNewDiscoveryChain();
 });
 
+// region: CODEX
 // ---------- Справочник ----------
 const codex      = document.getElementById("codex");
 const codexList  = document.getElementById("codexList");
@@ -2303,6 +2322,7 @@ codex.addEventListener("click", e => { if (e.target === codex) closeCodex(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeCodex(); });
 codexSearch.addEventListener("input", e => renderCodex(e.target.value));
 
+// region: TOOLTIPS
 // ---------- Подсказка рецепта при наведении ----------
 board.addEventListener("mouseover", e => {
   const el = e.target.closest("#board .item");
@@ -2323,6 +2343,7 @@ board.addEventListener("mouseout", e => {
 
 document.getElementById("btnClear").addEventListener("click", () => items.slice().forEach(removeItem));
 
+// region: SETTINGS
 function setMenuOpen(open){
   appMenu.classList.toggle("open", open);
   btnMenu.setAttribute("aria-expanded", String(open));
@@ -2367,6 +2388,7 @@ document.getElementById("btnReset").addEventListener("click", () => {
   }
 });
 
+// region: STARTUP
 // ---------- Старт ----------
 if (!discoveryChain.length) startNewDiscoveryChain();
 else updateChainButton();
