@@ -1,0 +1,277 @@
+[
+  {
+    "id": "base",
+    "name": "Базовые",
+    "color": "#9aa4b5",
+    "elements": [
+      "water",
+      "fire",
+      "earth",
+      "air"
+    ]
+  },
+  {
+    "id": "elem",
+    "name": "Природные явления",
+    "color": "#4fc3f7",
+    "elements": [
+      "steam",
+      "cloud",
+      "mud",
+      "lava",
+      "energy",
+      "sea",
+      "ice",
+      "river",
+      "saltwater"
+    ]
+  },
+  {
+    "id": "sky",
+    "name": "Небо и погода",
+    "color": "#ffd54f",
+    "elements": [
+      "sky",
+      "sun",
+      "rain",
+      "rainbow",
+      "lightning",
+      "snow",
+      "fog",
+      "storm",
+      "hurricane",
+      "flood"
+    ]
+  },
+  {
+    "id": "geo",
+    "name": "Земля и минералы",
+    "color": "#a1887f",
+    "elements": [
+      "dust",
+      "stone",
+      "metal",
+      "mountain",
+      "volcano",
+      "sand",
+      "coal",
+      "gold",
+      "diamond",
+      "salt",
+      "glacier",
+      "iceberg",
+      "oasis",
+      "clay",
+      "copper",
+      "cave",
+      "canyon",
+      "island"
+    ]
+  },
+  {
+    "id": "life",
+    "name": "Живой мир",
+    "color": "#81c784",
+    "elements": [
+      "swamp",
+      "life",
+      "plant",
+      "tree",
+      "forest",
+      "fish",
+      "bird",
+      "lizard",
+      "flower",
+      "fruit",
+      "animal",
+      "livestock",
+      "algae",
+      "moss",
+      "mushroom",
+      "insect",
+      "bee",
+      "butterfly",
+      "egg",
+      "chicken",
+      "seed",
+      "garden",
+      "vegetable",
+      "bacteria",
+      "virus"
+    ]
+  },
+  {
+    "id": "craft",
+    "name": "Материалы и ремесло",
+    "color": "#ffcc80",
+    "elements": [
+      "wood",
+      "glass",
+      "brick",
+      "wheel",
+      "gunpowder",
+      "sword",
+      "wool",
+      "fabric",
+      "clothes",
+      "boat",
+      "ceramic",
+      "crystal",
+      "bronze",
+      "steel",
+      "magnet",
+      "compass",
+      "paper",
+      "ink",
+      "pen",
+      "map",
+      "tool",
+      "hammer"
+    ]
+  },
+  {
+    "id": "food",
+    "name": "Еда и хозяйство",
+    "color": "#ffab91",
+    "elements": [
+      "honey",
+      "milk",
+      "cheese",
+      "field",
+      "grain",
+      "flour",
+      "bread",
+      "dough",
+      "cake",
+      "wine",
+      "juice",
+      "tea",
+      "coffee",
+      "salad"
+    ]
+  },
+  {
+    "id": "transport",
+    "name": "Транспорт и инфраструктура",
+    "color": "#90a4ae",
+    "elements": [
+      "bridge",
+      "road",
+      "cart",
+      "bicycle",
+      "car",
+      "airplane",
+      "airport",
+      "harbor"
+    ]
+  },
+  {
+    "id": "tech",
+    "name": "Техника и связь",
+    "color": "#80cbc4",
+    "elements": [
+      "mechanism",
+      "engine",
+      "explosion",
+      "ship",
+      "electricity",
+      "wire",
+      "lamp",
+      "computer",
+      "internet",
+      "robot",
+      "cyborg",
+      "rocket",
+      "factory",
+      "clock",
+      "battery",
+      "motor",
+      "radio",
+      "television",
+      "camera",
+      "phone",
+      "smartphone",
+      "satellite"
+    ]
+  },
+  {
+    "id": "science",
+    "name": "Наука и медицина",
+    "color": "#4db6ac",
+    "elements": [
+      "telescope",
+      "microscope",
+      "scientist",
+      "science",
+      "laboratory",
+      "medicine",
+      "vaccine",
+      "hospital",
+      "genetics",
+      "clone"
+    ]
+  },
+  {
+    "id": "civ",
+    "name": "Общество",
+    "color": "#ffb74d",
+    "elements": [
+      "human",
+      "house",
+      "city",
+      "civilization",
+      "knight"
+    ]
+  },
+  {
+    "id": "culture",
+    "name": "Культура и институты",
+    "color": "#f48fb1",
+    "elements": [
+      "book",
+      "library",
+      "music",
+      "art",
+      "village",
+      "farm",
+      "market",
+      "money",
+      "bank",
+      "school",
+      "university",
+      "government",
+      "law",
+      "peace"
+    ]
+  },
+  {
+    "id": "myst",
+    "name": "Мифы и алхимия",
+    "color": "#ce93d8",
+    "elements": [
+      "dragon",
+      "philstone",
+      "magic",
+      "wizard",
+      "portal"
+    ]
+  },
+  {
+    "id": "space",
+    "name": "Космос",
+    "color": "#9fa8da",
+    "elements": [
+      "moon",
+      "star",
+      "space",
+      "time",
+      "astronaut",
+      "alien",
+      "universe",
+      "planet",
+      "comet",
+      "galaxy",
+      "blackhole"
+    ]
+  }
+]

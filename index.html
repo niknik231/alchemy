@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>⚗️ Алхимия</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚗️</text></svg>">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header>
+  <h1>⚗️ Алхимия <span id="counter">0 / 0</span></h1>
+  <div class="menu-wrap">
+    <button class="menu-trigger" id="btnMenu" title="Меню">☰</button>
+    <div class="app-menu">
+      <div class="menu-title">⚗️ Алхимия</div>
+      <div class="menu-about">Игра о создании новых элементов из сочетаний уже открытых.</div>
+      <button class="menu-link" id="btnReset">🔄 Сбросить прогресс</button>
+      <div class="menu-version">Версия 2.0.0 (refactored)</div>
+    </div>
+  </div>
+</header>
+<main>
+  <aside>
+    <h2>Элементы</h2>
+    <div id="palette"></div>
+  </aside>
+  <div id="board">
+    <div id="hintbar"></div>
+    <div id="blackHole">🕳️</div>
+    <div id="popup"><div class="card"></div></div>
+  </div>
+</main>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
