@@ -9,29 +9,75 @@
 </head>
 <body>
 <header>
-  <h1>⚗️ Алхимия <span id="counter">0 / 0</span></h1>
-  <div class="menu-wrap">
-    <button class="menu-trigger" id="btnMenu" title="Меню">☰</button>
-    <div class="app-menu">
+  <h1>⚗️ Алхимия <span id="counter"></span></h1>
+  <button id="btnCodex" title="Справочник всех элементов" aria-label="Справочник"><span aria-hidden="true">📖</span><span class="btn-label">Справочник</span></button>
+  <button id="btnHint" title="Показать возможное сочетание" aria-label="Подсказка"><span aria-hidden="true">💡</span><span class="btn-label">Подсказка</span></button>
+  <button id="btnChain" title="Цепочка открытий" aria-label="Цепочка открытий"><span aria-hidden="true">🧭</span><span class="btn-label">Цепочка</span></button>
+  <button id="btnClear" title="Убрать всё с поля" aria-label="Очистить поле"><span aria-hidden="true">🧹</span><span class="btn-label">Поле</span></button>
+  <div class="menu-wrap" id="menuWrap">
+    <button id="btnMenu" class="menu-trigger" title="Меню" aria-label="Открыть меню" aria-expanded="false" aria-controls="appMenu"><span aria-hidden="true">☰</span><span class="btn-label">Меню</span></button>
+    <div class="app-menu" id="appMenu" role="dialog" aria-label="Меню программы">
       <div class="menu-title">⚗️ Алхимия</div>
-      <div class="menu-about">Игра о создании новых элементов из сочетаний уже открытых.</div>
-      <button class="menu-link" id="btnReset">🔄 Сбросить прогресс</button>
-      <div class="menu-version">Версия 2.0.0 (refactored)</div>
+      <div class="menu-about">Игра о создании новых элементов из сочетаний уже открытых. Прогресс хранится только на этом устройстве.</div>
+      <button id="btnSettings" class="menu-link" type="button">⚙️ Настройки</button>
+      <div class="menu-version">Версия <span id="appVersion"></span></div>
+      <button id="btnReset" title="Начать игру заново">🔄 Сбросить прогресс</button>
     </div>
   </div>
 </header>
 <main>
-  <aside>
-    <h2>Элементы</h2>
-    <div id="palette"></div>
-  </aside>
-  <div id="board">
-    <div id="hintbar"></div>
-    <div id="blackHole">🕳️</div>
-    <div id="popup"><div class="card"></div></div>
-  </div>
+  <aside><h2>Открытые элементы</h2><div id="palette"></div></aside>
+  <section id="board"><div id="hintbar"></div><div id="blackHole" role="img" aria-label="Чёрная дыра — удалить элемент" title="Перетащи сюда элемент, чтобы удалить">🕳️</div></section>
 </main>
-<script src="js/engine.js"></script>
-<script src="js/ui.js"></script>
+<div class="modal" id="codex">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>📖 Справочник</h2>
+      <input id="codexSearch" type="text" placeholder="Поиск..." autocomplete="off">
+      <button id="btnCodexClose" title="Закрыть">✕</button>
+    </div>
+    <div class="codex-modes" id="codexModes" role="tablist" aria-label="Режим справочника">
+      <button class="codex-mode active" type="button" role="tab" aria-selected="true" data-mode="all">Все элементы</button>
+      <button class="codex-mode" type="button" role="tab" aria-selected="false" data-mode="undiscovered">Неоткрытые</button>
+    </div>
+    <label class="codex-filter" id="codexAvailableFilter" for="codexShowAvailable">
+      <input id="codexShowAvailable" type="checkbox">
+      <span>Показать доступные</span>
+    </label>
+    <div id="codexList"></div>
+  </div>
+</div>
+<div class="modal" id="chainModal">
+  <div class="sheet chain-sheet" role="dialog" aria-modal="true" aria-labelledby="chainTitle">
+    <div class="sheet-head">
+      <h2 id="chainTitle">🧭 Цепочка открытий</h2>
+      <button id="btnChainClose" type="button" title="Закрыть" aria-label="Закрыть цепочку открытий">✕</button>
+    </div>
+    <div class="chain-body" id="chainBody"></div>
+  </div>
+</div>
+<div class="modal" id="settingsModal">
+  <div class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="sheet-head">
+      <h2 id="settingsTitle">⚙️ Настройки</h2>
+      <button id="btnSettingsClose" type="button" title="Закрыть" aria-label="Закрыть настройки">✕</button>
+    </div>
+    <div class="settings-body">
+      <label class="setting-row" for="showUnavailableElements">
+        <span class="setting-copy">
+          <strong>Отображать недоступные элементы</strong>
+          <small>Показывать в панели выбора конечные элементы и элементы без неоткрытых рецептов.</small>
+        </span>
+        <span class="switch">
+          <input id="showUnavailableElements" type="checkbox" checked>
+          <span class="switch-track" aria-hidden="true"></span>
+        </span>
+      </label>
+    </div>
+  </div>
+</div>
+<div id="popup"><div class="card"><div class="big"></div><div class="ttl">Новое открытие!</div><div class="val"></div></div></div>
+
+<script src="js/game.js"></script>
 </body>
 </html>
