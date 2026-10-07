@@ -272,7 +272,7 @@ aside h2 + .hidefin + .cat-h{margin-top:4px}
 "use strict";
 
 // region: APP_META
-const APP_VERSION = "1.18.1";
+const APP_VERSION = "1.19.0";
 
 // region: DATA_CORE
 // ---------- Данные ----------
@@ -293,7 +293,7 @@ const E = {
   civilization:["Цивилизация","🏛️"], magic:["Магия","✨"], wizard:["Волшебник","🧙"],
   knight:["Рыцарь","🛡️"],      gunpowder:["Порох","🧂"],   explosion:["Взрыв","💥"],
   mountain:["Гора","⛰️"],      snow:["Снег","❄️"],
-  ice:["Лёд","🧊"],           river:["Река","🏞️"],        flower:["Цветок","🌸"],     fruit:["Фрукт","🍎"],
+  ice:["Лёд","🧊"],           river:["Река","🏞️"],        flower:["Цветок","🌼"],     fruit:["Фрукт","🍐"],
   animal:["Животное","🐾"],   livestock:["Скот","🐑"],    wool:["Шерсть","🧶"],      fabric:["Ткань","🧵"],
   clothes:["Одежда","👕"],    boat:["Лодка","⛵"],         ship:["Корабль","🚢"],     electricity:["Электричество","🔌"],
   wire:["Провод","➰"],        lamp:["Лампа","💡"],         computer:["Компьютер","💻"], internet:["Интернет","🌐"],
@@ -305,7 +305,7 @@ const E = {
   oasis:["Оазис","🏝️"], clay:["Глина","🟤"], ceramic:["Керамика","🏺"], crystal:["Кристалл","🔷"],
   copper:["Медь","🟠"], bronze:["Бронза","🥉"], steel:["Сталь","🩶"], magnet:["Магнит","🧲"],
   compass:["Компас","🧭"], cave:["Пещера","🕳️"], canyon:["Каньон","🏜️"], island:["Остров","🏝️"],
-  algae:["Водоросли","🪸"], moss:["Мох","🌿"], mushroom:["Гриб","🍄"], insect:["Насекомое","🐞"],
+  algae:["Водоросли","🪸"], moss:["Мох","🌿"], mushroom:["Гриб","🍄‍🟫"], insect:["Насекомое","🐞"],
   bee:["Пчела","🐝"], honey:["Мёд","🍯"], butterfly:["Бабочка","🦋"], egg:["Яйцо","🥚"],
   chicken:["Курица","🐔"], milk:["Молоко","🥛"], cheese:["Сыр","🧀"], field:["Поле","🌾"],
   grain:["Зерно","🌾"], flour:["Мука","⚪"], bread:["Хлеб","🍞"], dough:["Тесто","🫓"],
@@ -418,7 +418,27 @@ const ICONS = {
   dune:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M3 55q11-25 31-29q15-4 27 29Z" fill="#dfa94f" stroke="#9e6d2f" stroke-width="3"/><path d="M7 55q16-14 30-12q12 2 21 12Z" fill="#f5cd72"/><path d="M13 45q16-18 34-14M19 51q12-8 25-5" fill="none" stroke="#c58b3d" stroke-width="3" stroke-linecap="round"/><circle cx="49" cy="13" r="8" fill="#ffd24e"/><path d="M9 23q8-6 16 0" fill="none" stroke="#e9b85a" stroke-width="4" stroke-linecap="round"/></svg>`,
   iron:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 44l9-25l31-7l9 22l-12 19l-28 3Z" fill="#68727d" stroke="#343d46" stroke-width="3"/><path d="M17 19l14 10l17-17M31 29l14 24M17 56l14-27" fill="none" stroke="#939da6" stroke-width="3"/><path d="M21 23l10 7l12-5M23 48l9-5l10 4" fill="none" stroke="#dce2e6" stroke-width="3" stroke-linecap="round"/><g fill="#414a53"><circle cx="18" cy="38" r="3"/><circle cx="43" cy="34" r="4"/></g></svg>`,
   yogurt:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M11 24h42l-5 33H16Z" fill="#75bde0" stroke="#386986" stroke-width="3"/><ellipse cx="32" cy="24" rx="21" ry="8" fill="#e9f3f7" stroke="#52788d" stroke-width="3"/><ellipse cx="32" cy="23" rx="16" ry="5" fill="#fffdf4"/><path d="M39 22L52 6" stroke="#bcc4ca" stroke-width="5" stroke-linecap="round"/><ellipse cx="53" cy="6" rx="5" ry="3" fill="#dfe4e7" transform="rotate(-30 53 6)"/><path d="M20 36q12 7 24 0M19 44q13 7 26 0" fill="none" stroke="#a9dbed" stroke-width="3"/><circle cx="25" cy="23" r="2" fill="#f7f1df"/></svg>`,
-  vinyl_record:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" fill="#18171d" stroke="#55515e" stroke-width="2"/><circle cx="32" cy="32" r="11" fill="#d85b67"/><circle cx="32" cy="32" r="3" fill="#f3e7cb"/><circle cx="32" cy="32" r="20" fill="none" stroke="#6b6771"/><path d="M12 25q20-9 40 0M13 40q19 8 38 0" fill="none" stroke="#3d3a42" stroke-width="2"/></svg>`
+  vinyl_record:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" fill="#18171d" stroke="#55515e" stroke-width="2"/><circle cx="32" cy="32" r="11" fill="#d85b67"/><circle cx="32" cy="32" r="3" fill="#f3e7cb"/><circle cx="32" cy="32" r="20" fill="none" stroke="#6b6771"/><path d="M12 25q20-9 40 0M13 40q19 8 38 0" fill="none" stroke="#3d3a42" stroke-width="2"/></svg>`,
+  hamster:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="57" rx="19" ry="3" fill="#000" opacity=".18"/><ellipse cx="32" cy="41" rx="20" ry="16" fill="#e9a35a" stroke="#a7642c" stroke-width="2.5"/><ellipse cx="32" cy="45" rx="12" ry="10" fill="#fbe6c8"/><circle cx="18" cy="16" r="6" fill="#e9a35a" stroke="#a7642c" stroke-width="2"/><circle cx="46" cy="16" r="6" fill="#e9a35a" stroke="#a7642c" stroke-width="2"/><circle cx="18" cy="16" r="3" fill="#f4a3a8"/><circle cx="46" cy="16" r="3" fill="#f4a3a8"/><ellipse cx="32" cy="27" rx="17" ry="14" fill="#e9a35a" stroke="#a7642c" stroke-width="2.5"/><ellipse cx="20" cy="32" rx="7.5" ry="6.5" fill="#fbe6c8"/><ellipse cx="44" cy="32" rx="7.5" ry="6.5" fill="#fbe6c8"/><circle cx="25" cy="24" r="2.6" fill="#2b1d14"/><circle cx="39" cy="24" r="2.6" fill="#2b1d14"/><circle cx="25.8" cy="23.2" r=".9" fill="#fff"/><circle cx="39.8" cy="23.2" r=".9" fill="#fff"/><ellipse cx="32" cy="29" rx="2.3" ry="1.6" fill="#c9656d"/><path d="M29.5 32q2.5 2 5 0" stroke="#7a4a2c" stroke-width="1.2" fill="none" stroke-linecap="round"/><ellipse cx="32" cy="43" rx="4" ry="6" fill="#3a332c" transform="rotate(-12 32 43)"/><path d="M31 38.5l2 9" stroke="#d9cbb2" stroke-width="1.3"/><ellipse cx="27" cy="44" rx="3.4" ry="2.6" fill="#f2c7a6"/><ellipse cx="37" cy="44" rx="3.4" ry="2.6" fill="#f2c7a6"/><ellipse cx="22" cy="55" rx="4.5" ry="2.6" fill="#f2c7a6"/><ellipse cx="42" cy="55" rx="4.5" ry="2.6" fill="#f2c7a6"/></svg>`,
+  panda:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="58" rx="22" ry="3" fill="#000" opacity=".18"/><ellipse cx="32" cy="43" rx="19" ry="15" fill="#f5f5f2" stroke="#2a2a2e" stroke-width="2.5"/><path d="M13 40q8-7 38 0v6q-19-5-38 0Z" fill="#26262b"/><ellipse cx="18" cy="55" rx="6" ry="4" fill="#26262b"/><ellipse cx="46" cy="55" rx="6" ry="4" fill="#26262b"/><circle cx="17" cy="11" r="6" fill="#26262b"/><circle cx="47" cy="11" r="6" fill="#26262b"/><ellipse cx="32" cy="24" rx="18" ry="15" fill="#f5f5f2" stroke="#2a2a2e" stroke-width="2.5"/><ellipse cx="24" cy="23" rx="5" ry="6.5" fill="#26262b" transform="rotate(25 24 23)"/><ellipse cx="40" cy="23" rx="5" ry="6.5" fill="#26262b" transform="rotate(-25 40 23)"/><circle cx="24.5" cy="23" r="1.8" fill="#fff"/><circle cx="39.5" cy="23" r="1.8" fill="#fff"/><ellipse cx="32" cy="30" rx="3" ry="2.2" fill="#26262b"/><path d="M29 33.5q3 2.5 6 0" stroke="#26262b" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M47 34l9-11" stroke="#6aa84f" stroke-width="3.5" stroke-linecap="round"/><path d="M52 25q5-3 7 0q-4 3-7 0Z" fill="#8bc34a"/></svg>`,
+  lion:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="58" rx="24" ry="3" fill="#000" opacity=".18"/><path d="M14 56V41q0-9 9-11h14q12 1 14 12v14h-6v-9l-4 9h-6l-1-9h-8l-1 9h-6Z" fill="#e3a446" stroke="#9a6326" stroke-width="2.5" stroke-linejoin="round"/><path d="M51 44q8 2 7 10" stroke="#9a6326" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="58" cy="55" r="3" fill="#8a4e1c"/><path d="M26 6q-8 2-10 9q-7 5-4 13q-2 8 6 12q6 6 14 4q8 2 13-4q7-5 4-13q2-8-6-12q-5-8-17-9Z" fill="#a85a20" stroke="#6e3a14" stroke-width="2.5"/><ellipse cx="31" cy="25" rx="11" ry="12" fill="#efbd5c"/><circle cx="26.5" cy="22" r="2" fill="#2b1d14"/><circle cx="35.5" cy="22" r="2" fill="#2b1d14"/><path d="M28 28h6l-3 3Z" fill="#5a3418"/><path d="M31 31v2.5M27.5 34q3.5 2.5 7 0" stroke="#5a3418" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>`,
+  boar:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="58" rx="25" ry="3" fill="#000" opacity=".18"/><path d="M50 24q-4-8-16-9q-14 0-22 8q-6 6-6 14q0 9 8 12v8h6v-6h18v6h6v-9q8-3 8-12q0-7-2-12Z" fill="#6b4a36" stroke="#3b281c" stroke-width="2.5" stroke-linejoin="round"/><path d="M14 22l4-6 3 5 3-6 3 5 3-6 3 5 3-5 3 5 4-4" stroke="#3b281c" stroke-width="2.5" fill="none" stroke-linejoin="round"/><path d="M48 21l5-9 3 10Z" fill="#6b4a36" stroke="#3b281c" stroke-width="2"/><path d="M50 26q8 0 10 7v7q-3 3-8 2Z" fill="#8a654c" stroke="#3b281c" stroke-width="2.5"/><ellipse cx="58" cy="36" rx="2.5" ry="4" fill="#d6a08a" stroke="#3b281c" stroke-width="1.5"/><circle cx="48" cy="28" r="2" fill="#1b120c"/><path d="M53 41q-2 4-7 3" stroke="#f3ecdc" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M8 32q-4-2-3 4" stroke="#3b281c" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  cocoa:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="30" cy="54" rx="24" ry="5" fill="#e9dfd0" stroke="#a79a88" stroke-width="2"/><path d="M12 24h36v14q0 14-18 14q-18 0-18-14Z" fill="#f2efe8" stroke="#a79a88" stroke-width="2.5"/><path d="M48 29q9-1 9 7q0 8-10 8" fill="none" stroke="#a79a88" stroke-width="4" stroke-linecap="round"/><ellipse cx="30" cy="24" rx="18" ry="4.5" fill="#6b3a20" stroke="#a79a88" stroke-width="2.5"/><ellipse cx="27" cy="23.5" rx="7" ry="1.6" fill="#8b5232"/><ellipse cx="25" cy="22" rx="3" ry="2.2" fill="#fff6f0"/><ellipse cx="33" cy="22.5" rx="2.6" ry="1.9" fill="#ffd7e4"/><path d="M22 15q-3-4 0-8M30 15q-3-4 0-8M38 15q-3-4 0-8" stroke="#c9c2b8" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  mite:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 26l-10-8M16 32H5M18 38l-10 8M46 26l10-8M48 32h11M46 38l10 8" stroke="#3a2418" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M20 22l-6-10M44 22l6-10" stroke="#3a2418" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="32" cy="38" rx="16" ry="18" fill="#7a3b22" stroke="#3a2418" stroke-width="2.5"/><ellipse cx="32" cy="34" rx="10" ry="10" fill="#4a2414"/><path d="M27 15q5-5 10 0v6H27Z" fill="#4a2414" stroke="#3a2418" stroke-width="2"/><path d="M29 15l-1-5M35 15l1-5" stroke="#3a2418" stroke-width="2" stroke-linecap="round"/><ellipse cx="27" cy="31" rx="3" ry="2" fill="#a0583a" opacity=".8"/></svg>`,
+  porcelain:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="30" cy="51" rx="25" ry="6" fill="#f7f9fc" stroke="#7d93b5" stroke-width="2.5"/><ellipse cx="30" cy="50" rx="15" ry="3" fill="#dfe7f3"/><path d="M12 20h36l-3 20q-2 9-15 9t-15-9Z" fill="#fbfcfe" stroke="#7d93b5" stroke-width="2.5"/><path d="M48 25q9 0 8 8q-1 7-10 7" fill="none" stroke="#7d93b5" stroke-width="4" stroke-linecap="round"/><ellipse cx="30" cy="20" rx="18" ry="4" fill="#e9eef6" stroke="#7d93b5" stroke-width="2.5"/><path d="M15 29q4-4 8 0t8 0 8 0 8 0" stroke="#2e5aa8" stroke-width="2" fill="none"/><circle cx="23" cy="37" r="3" fill="none" stroke="#2e5aa8" stroke-width="1.8"/><circle cx="31" cy="39" r="3" fill="none" stroke="#2e5aa8" stroke-width="1.8"/><circle cx="39" cy="37" r="3" fill="none" stroke="#2e5aa8" stroke-width="1.8"/><path d="M31 36v-3M23 34v-2M39 34v-2" stroke="#2e5aa8" stroke-width="1.6"/></svg>`,
+  sugar:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="55" rx="24" ry="3" fill="#000" opacity=".15"/><path d="M8 34l14-6 14 6v16l-14 6-14-6Z" fill="#f4f6fa" stroke="#9aa6b8" stroke-width="2.5" stroke-linejoin="round"/><path d="M8 34l14 6 14-6M22 40v16" stroke="#9aa6b8" stroke-width="2.5" fill="none"/><path d="M28 18l14-6 14 6v16l-14 6-14-6Z" fill="#ffffff" stroke="#9aa6b8" stroke-width="2.5" stroke-linejoin="round"/><path d="M28 18l14 6 14-6M42 24v16" stroke="#9aa6b8" stroke-width="2.5" fill="none"/><g fill="#c9d2e0"><circle cx="15" cy="44" r="1.2"/><circle cx="29" cy="47" r="1.2"/><circle cx="34" cy="28" r="1.2"/><circle cx="48" cy="31" r="1.2"/><circle cx="20" cy="49" r="1"/><circle cx="51" cy="27" r="1"/></g><g fill="#fff" stroke="#9aa6b8" stroke-width="1"><rect x="40" y="48" width="3" height="3" transform="rotate(20 41 49)"/><rect x="48" y="50" width="2.5" height="2.5"/></g></svg>`,
+  fossil:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M6 46q2-24 22-30q20-4 30 12q4 14-6 24q-10 6-28 4q-16-1-18-10Z" fill="#b9ab92" stroke="#6f6553" stroke-width="2.5"/><path d="M33 34m-14 0a14 14 0 1 0 28 0a14 14 0 1 0-28 0" fill="#d8c7a3" stroke="#7a6342" stroke-width="2.5"/><path d="M33 34q0-4 4-3q4 2 2 7q-3 5-9 3q-7-3-5-10q3-8 12-7q10 2 9 12q-1 9-10 12" fill="none" stroke="#7a6342" stroke-width="2.2" stroke-linecap="round"/><path d="M21 27l4 2M20 35l5 0M23 43l4-3M31 47l1-4M41 45l-2-4M46 36l-4 0" stroke="#7a6342" stroke-width="1.6"/></svg>`,
+  wool:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="56" rx="24" ry="3" fill="#000" opacity=".15"/><path d="M10 44q-6-6 0-12q-2-9 7-10q3-8 12-5q6-6 13 0q9-2 11 6q8 3 4 11q4 7-3 11q-1 7-9 6q-5 5-12 1q-7 4-12-1q-9 1-11-7Z" fill="#f2ead8" stroke="#b3a585" stroke-width="2.5"/><g fill="none" stroke="#cdbf9e" stroke-width="2" stroke-linecap="round"><path d="M18 30q3-3 6 0q3 3 6 0"/><path d="M33 26q3-3 6 0q3 3 6 0"/><path d="M14 40q3-3 6 0q3 3 6 0"/><path d="M30 38q3-3 6 0q3 3 6 0"/><path d="M22 48q3-3 6 0q3 3 6 0"/><path d="M40 47q3-3 6 0"/></g></svg>`,
+  cotton:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 62V40" stroke="#6b4a2a" stroke-width="3.5" stroke-linecap="round"/><path d="M32 48q-8-1-12 6M32 52q8-2 11 3" stroke="#6b4a2a" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M18 36q-6-4 2-9l12 6 12-6q8 5 2 9l-14 8Z" fill="#7a4f2c" stroke="#4e321b" stroke-width="2"/><circle cx="22" cy="24" r="9" fill="#fff" stroke="#c8ccd4" stroke-width="2"/><circle cx="42" cy="24" r="9" fill="#fff" stroke="#c8ccd4" stroke-width="2"/><circle cx="32" cy="16" r="10" fill="#fff" stroke="#c8ccd4" stroke-width="2"/><circle cx="32" cy="29" r="9" fill="#fff" stroke="#c8ccd4" stroke-width="2"/><path d="M27 14q3-3 6-1M19 22q2-2 5-1" stroke="#e3e6ec" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  vaccine:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M24 6h16v6H24Z" fill="#7d8a9c" stroke="#4b5566" stroke-width="2"/><path d="M26 12h12v6q8 4 8 12v22q0 6-6 6H24q-6 0-6-6V30q0-8 8-12Z" fill="#e8f3fb" stroke="#4b5566" stroke-width="2.5"/><path d="M20 38h24v14q0 4-4 4H24q-4 0-4-4Z" fill="#5fb4e8"/><rect x="20" y="28" width="24" height="9" fill="#fff" stroke="#4b5566" stroke-width="1.5"/><path d="M29 32.5h6M32 29.5v6" stroke="#e05a5a" stroke-width="2.4"/><path d="M24 42q4-2 8 0" stroke="#bfe3f7" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  pulsar:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 32L6 2h14Z" fill="#8fd3ff" opacity=".75"/><path d="M32 32L58 62H44Z" fill="#8fd3ff" opacity=".75"/><path d="M32 32L10 4M32 32l22 28" stroke="#e6f6ff" stroke-width="2"/><circle cx="32" cy="32" r="16" fill="none" stroke="#5b7bd6" stroke-width="2" stroke-dasharray="3 4" opacity=".8"/><circle cx="32" cy="32" r="9" fill="#cfe9ff"/><circle cx="32" cy="32" r="5.5" fill="#fff"/><path d="M50 20q4 3 3 8M14 44q-4-3-3-8" stroke="#9fb4ff" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`,
+  reactor:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 4q6 2 4 8q-6 3-3 9" stroke="#e6edf4" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/><path d="M42 2q6 3 3 9q-5 3-2 8" stroke="#e6edf4" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/><path d="M8 58q5-14 2-24q-1-6 1-12h18q2 6 1 12q-3 10 2 24Z" fill="#c7cdd6" stroke="#6b7480" stroke-width="2.5"/><path d="M32 58q5-14 2-24q-1-6 1-12h18q2 6 1 12q-3 10 2 24Z" fill="#b5bcc7" stroke="#6b7480" stroke-width="2.5"/><path d="M11 22h18M35 22h18" stroke="#6b7480" stroke-width="2.5"/><path d="M12 30q8 2 16 0M36 30q8 2 16 0" stroke="#e3e8ee" stroke-width="2" fill="none"/><path d="M4 58h56" stroke="#4e5560" stroke-width="3" stroke-linecap="round"/></svg>`,
+  nuclear_power:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#58c4ff" stroke-width="3"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#58c4ff" stroke-width="3" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="27" ry="10" fill="none" stroke="#58c4ff" stroke-width="3" transform="rotate(-60 32 32)"/><circle cx="29" cy="30" r="4" fill="#e85d4a"/><circle cx="35" cy="30" r="4" fill="#9aa5b5"/><circle cx="32" cy="35" r="4" fill="#e85d4a"/><circle cx="28" cy="35" r="3.5" fill="#9aa5b5"/><circle cx="36" cy="35" r="3.5" fill="#e85d4a"/><circle cx="59" cy="32" r="3" fill="#ffe06a"/><circle cx="18.5" cy="55.4" r="3" fill="#ffe06a"/><circle cx="18.5" cy="8.6" r="3" fill="#ffe06a"/><path d="M45 6l-4 8h5l-5 9" stroke="#ffd23f" stroke-width="2.4" fill="none" stroke-linejoin="round"/></svg>`,
+  philstone:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><g stroke="#ffd56a" stroke-width="2.5" stroke-linecap="round" opacity=".9"><path d="M32 2v8M32 54v8M4 32h8M52 32h8M12 12l6 6M46 46l6 6M52 12l-6 6M12 52l6-6"/></g><path d="M32 12l17 10v20L32 52 15 42V22Z" fill="#c4152f" stroke="#6e0a1a" stroke-width="2.5" stroke-linejoin="round"/><path d="M32 12v20l17-10M32 32L15 22M32 32v20" stroke="#8c0f22" stroke-width="2" fill="none"/><path d="M32 12l17 10-17 10-17-10Z" fill="#e8394f"/><path d="M24 20l8-4 6 3" stroke="#ffb3bf" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>`,
+  geyser:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M26 50q-4-20 2-38q2-6 4-8q2 2 4 8q6 18 2 38Z" fill="#bfe6fb" stroke="#7fb8d9" stroke-width="2"/><path d="M30 46q-2-16 2-34q4 18 2 34Z" fill="#fff"/><path d="M22 10q-6-2-6 4M42 10q6-2 6 4M18 22q-6 0-5 6M46 22q6 0 5 6" stroke="#dff2fc" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M4 58q6-10 18-10q4-3 10-3t10 3q12 0 18 10Z" fill="#8a7a64" stroke="#55493a" stroke-width="2.5"/><path d="M20 52q12-5 24 0" stroke="#6fb2d6" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M10 56l4-3M50 53l4 3" stroke="#a89880" stroke-width="2" stroke-linecap="round"/></svg>`,
+  stove:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M40 4h10v18H40Z" fill="#e7e1d6" stroke="#8a8072" stroke-width="2.5"/><path d="M6 22h52v34H6Z" fill="#f4efe6" stroke="#8a8072" stroke-width="2.5"/><path d="M4 20h56v5H4Z" fill="#d8cfc0" stroke="#8a8072" stroke-width="2"/><path d="M14 56V40q0-10 10-10t10 10v16" fill="#3b2a22" stroke="#8a8072" stroke-width="2.5"/><path d="M18 56q0-8 6-12q6 4 6 12Z" fill="#ff8a2a"/><path d="M21 56q0-5 3-8q3 3 3 8Z" fill="#ffd34d"/><path d="M40 34h12v8H40Z" fill="#3b2a22" stroke="#8a8072" stroke-width="2"/><path d="M8 50h4M40 48h14M40 52h14" stroke="#d8cfc0" stroke-width="2"/></svg>`,
+  steam_boiler:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M44 12q3-4 0-8M50 12q3-4 0-8" stroke="#dfe7ef" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M42 14h10v8H42Z" fill="#7a5a3a" stroke="#4a3522" stroke-width="2"/><rect x="6" y="20" width="52" height="30" rx="15" fill="#b8733a" stroke="#6a3e1c" stroke-width="2.5"/><path d="M16 21v28M48 21v28" stroke="#8c5427" stroke-width="2.5"/><g fill="#e2b07a"><circle cx="12" cy="28" r="1.4"/><circle cx="12" cy="42" r="1.4"/><circle cx="52" cy="28" r="1.4"/><circle cx="52" cy="42" r="1.4"/></g><circle cx="30" cy="35" r="9" fill="#f6f1e6" stroke="#4a3522" stroke-width="2.5"/><path d="M30 35l5-5" stroke="#d33" stroke-width="2.2" stroke-linecap="round"/><path d="M24 32l1 1M30 28v1.5M36 32l-1 1" stroke="#4a3522" stroke-width="1.5"/><path d="M14 50v8M50 50v8M8 58h48" stroke="#4a3522" stroke-width="3" stroke-linecap="round"/></svg>`,
+  code:`<svg class="game-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="8" width="56" height="46" rx="5" fill="#1f2433" stroke="#5c6a8a" stroke-width="2.5"/><path d="M4 16h56" stroke="#5c6a8a" stroke-width="2.5"/><g fill="#ff6b6b"><circle cx="10" cy="12" r="1.6"/></g><circle cx="15" cy="12" r="1.6" fill="#ffd166"/><circle cx="20" cy="12" r="1.6" fill="#6bd68a"/><g stroke-width="3" stroke-linecap="round"><path d="M10 23h10" stroke="#c792ea"/><path d="M23 23h14" stroke="#82aaff"/><path d="M16 30h8" stroke="#f78c6c"/><path d="M27 30h16" stroke="#c3e88d"/><path d="M16 37h18" stroke="#82aaff"/><path d="M37 37h8" stroke="#ffcb6b"/><path d="M10 44h6" stroke="#c792ea"/></g><path d="M44 46l-5-4 5-4M50 38l5 4-5 4" stroke="#89ddff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 };
 
 // Крупные самостоятельные emoji-образы на прозрачном фоне.
@@ -430,18 +450,18 @@ const FULL_ICON_MOTIFS = Object.freeze({
   lake:"🌊", dam:"🚧",
   vine:"🌿", herb:"🌱",
   sap:"💧", hydropower:"⚡",
-  stove:"♨️", olympics:"🏅",
+  olympics:"🏅",
   iron:"🧲", alloy:"🔩",
   bark:"🪵", plank:"🪚",
   cement:"🧱", concrete:"🏗️",
   generator:"⚙️", mill:"🌾",
   government:"⚖", museum:"🎨",
-  pulsar:"📡", dark_energy:"↗️",
+  dark_energy:"↗️",
   supernova:"⭐", big_bang:"💥",
-  glacier:"🧊", sugar:"🍬",
+  glacier:"🧊",
   waterfall:"💦", park:"🏞️",
   yacht:"🛥️", sail:"⛵",
-  laptop:"💻", code:"🧑‍💻",
+  laptop:"💻",
   algae:"🦠", reef:"🪸",
   reed:"🎋", hay:"🟨",
   orbit:"🪐", space_station:"🛰️",
@@ -451,17 +471,17 @@ const FULL_ICON_MOTIFS = Object.freeze({
   pond:"🐸", lily:"🪷",
   stew:"🥩", pot:"🏺",
   wax:"🕯", spirit:"👻",
-  nuclear_power:"☢️", physics:"🧪",
+  physics:"🧪",
   palace:"👑", fortress:"🏰",
-  windmill:"🌬️", cotton:"🧶", battery:"🔋", ecology:"♻️",
+  windmill:"🌬️", battery:"🔋", ecology:"♻️",
   rubber_tire:"🛞", skyscraper:"🏙️", frost:"❄️", website:"🌐",
   rover:"🚙", spaceship:"🚀", spacesuit:"👨‍🚀", smoke:"☁",
-  porcelain:"🍶", yogurt:"🥣", cup:"🍵", delta:"🔺",
+  yogurt:"🥣", cup:"🍵", delta:"🔺",
   aqueduct:"⛲", sailor:"⚓", song:"🎵", paint:"🖌️",
   tablet:"📱", astronomy:"🔭", chemistry:"⚗️", antibiotic:"💊",
   social_network:"🕸️", leaf:"🍃", oven:"🔥", dune:"🏜️",
   werewolf:"🐺", centaur:"🏹", griffin:"🦅", oil:"🛢",
-  canal:"🛶", dwarf:"⛏️", ai:"🤖", programmer:"⌨️",
+  canal:"🛶", dwarf:"⛏️", ai:"🤖", programmer:"🧑‍💻",
   driver:"🚗", spell:"✨", ball:"●", lighthouse:"💡",
   tunnel:"🚇", golem:"🗿"
 });
@@ -549,7 +569,7 @@ const EXPANSION = [
   ["smoke","Дым","🌫️","fire","coal","elem"],
   ["ash","Пепел","🩶","fire","forest","geo"],
   ["geyser","Гейзер","♨️","steam","earth","elem"],
-  ["hot_spring","Горячий источник","🧖","geyser","stone","elem"],
+  ["hot_spring","Горячий источник","♨️","geyser","stone","elem"],
   ["waterfall","Водопад","🏞️","river","mountain","elem"],
   ["lake","Озеро","🌊","river","earth","elem"],
   ["pond","Пруд","🪷","water","garden","elem"],
@@ -768,7 +788,7 @@ const EXPANSION = [
   ["baker","Пекарь","🧑‍🍳","human","bread","civ"],
   ["chef","Повар","👨‍🍳","human","soup","civ"],
   ["miner","Шахтёр","👷","human","mine","civ"],
-  ["engineer","Инженер","🧑‍💻","human","mechanism","civ"],
+  ["engineer","Инженер","🧑‍🔧","human","mechanism","civ"],
   ["programmer","Программист","🧑‍💻","human","code","civ"],
   ["artist","Художник","🧑‍🎨","human","art","culture"],
   ["musician","Музыкант","🧑‍🎤","human","music","culture"],
@@ -1002,7 +1022,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "flu",
     "Грипп",
-    "🤒",
+    "🤧",
     "life",
     "Ищите то, что острое инфекционное заболевание верхних дыхательных путей с вирусной природой возникновения.",
     [
@@ -1368,7 +1388,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "beast",
     "Зверь",
-    "🐾",
+    "🐅",
     "life",
     "Обратите внимание: дикое, обычно хищное животное.",
     [
@@ -1576,7 +1596,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "fondue",
     "Фондю",
-    "🍽️",
+    "🫕",
     "food",
     "Ищите то, что национальное блюдо швейцарской кухни. Представляет из себя расплавленный это нескольких сортов с вином, мускатным орехом и прочим, которое едят, намазывая загустевшую массу на кусочки подсушенного хлеба.",
     [
@@ -2201,7 +2221,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "sakura",
     "Сакура",
-    "🐾",
+    "🌸",
     "life",
     "Ищите то, что японская окультуренная вишня, цветущая пышными розовыми цветами; один из символов Японии.",
     [
@@ -2248,7 +2268,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "hedgehog",
     "Еж",
-    "🐾",
+    "🦔",
     "life",
     "Ориентир: небольшое животное с иглами на теле.",
     [
@@ -2265,7 +2285,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "poison",
     "Яд",
-    "🐾",
+    "☠️",
     "life",
     "Подсказка ведёт к тому, что вещество, приводящее в определённых дозах, небольших относительно массы тела, к нарушению жизнедеятельности организма: к отравлению, заболеваниям, иным болезненным состояниям и к смертельным исходам.",
     [
@@ -2286,7 +2306,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "beetle",
     "Жук",
-    "🐞",
+    "🪲",
     "life",
     "Главный признак: насекомое с жёсткими надкрыльями.",
     [
@@ -2299,7 +2319,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "scorpion",
     "Скорпион",
-    "🐾",
+    "🦂",
     "life",
     "Обратите внимание: отряд членистоногих из класса паукообразных. Исключительно наземные формы, которые встречаются лишь в жарких странах.",
     [
@@ -2316,7 +2336,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "monkey",
     "Обезьяна",
-    "🐾",
+    "🐒",
     "life",
     "Подсказка ведёт к тому, что млекопитающее, наиболее близкое к человеку по строению тела.",
     [
@@ -2329,7 +2349,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "dung",
     "Навоз",
-    "🐾",
+    "💩",
     "life",
     "Главный признак: органическое удобрение, состоящее из экскрементов сельскохозяйственных животных. Обладает характерным запахом и консистенцией.",
     [
@@ -2431,7 +2451,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "steak",
     "Жареное мясо",
-    "🍽️",
+    "🍖",
     "food",
     "Главный признак: толстый кусок обжаренного мяса.",
     [
@@ -2478,7 +2498,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "sound",
     "Звук",
-    "🌤️",
+    "🔉",
     "sky",
     "Ищите то, что воспринимаемое слухом физическое явление, порождаемое колебательными движениями частиц воздуха или другой среды.",
     [
@@ -2524,7 +2544,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "french_fries",
     "Картофель фри",
-    "🍽️",
+    "🍟",
     "food",
     "Обратите внимание: кусочки картофеля, обжаренные во фритюре. Употребляют как самостоятельное блюдо или гарнир ко вторым блюдам.",
     [
@@ -2537,7 +2557,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "camel",
     "Верблюд",
-    "🐾",
+    "🐪",
     "life",
     "Главный признак: крупное животное, приспособленное для жизни в засушливых регионах мира — пустынях, полупустынях и степях.",
     [
@@ -2550,7 +2570,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "hamburger",
     "Гамбургер",
-    "🍽️",
+    "🍔",
     "food",
     "Ориентир: вид сэндвича, состоящий из разрезанной пополам булочки и рубленой жареной котлеты.",
     [
@@ -2632,7 +2652,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "petri_dish",
     "Чашка Петри",
-    "🐾",
+    "🧫",
     "life",
     "Ищите то, что прозрачный лабораторный сосуд в форме невысокого плоского цилиндра, закрываемого прозрачной крышкой подобной формы, но несколько большего диаметра. Применяется в микробиологии и химии.",
     [
@@ -2645,7 +2665,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "dumpling",
     "Пельмени",
-    "🍽️",
+    "🥟",
     "food",
     "Ориентир: традиционное блюдо русской кухни в виде термически обработанных изделий из пресного теста с начинкой из рубленого мяса.",
     [
@@ -2744,7 +2764,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "sushi",
     "Суши",
-    "🍽️",
+    "🍣",
     "food",
     "Ищите то, что блюдо традиционной японской кухни, приготовленное из риса с уксусной приправой и различных морепродуктов, а также других ингредиентов.",
     [
@@ -2761,7 +2781,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "fugu",
     "Фугу",
-    "🍽️",
+    "🐡",
     "food",
     "Ориентир: блюдо японской кухни из некоторых видов ядовитых рыб семейства иглобрюхих (Tetraodontidae) рода Takifugu (также называемых это это), содержащих это тетродотоксин. В Японии это считается деликатесом и пользуется большой популярнос.",
     [
@@ -2774,7 +2794,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "hut",
     "Хижина",
-    "🏗️",
+    "🛖",
     "transport",
     "Подсказка ведёт к тому, что примитивное жилище человека. это занимает промежуточное положение между простым укрытием и домом.",
     [
@@ -2834,7 +2854,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "beer",
     "Пиво",
-    "🍽️",
+    "🍺",
     "food",
     "Подсказка ведёт к тому, что слабоалкогольный напиток, получаемый спиртовым брожением солодового сусла с помощью пивных дрожжей, обычно с добавлением хмеля.",
     [
@@ -2847,7 +2867,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "champagne",
     "Шампанское",
-    "🍽️",
+    "🥂",
     "food",
     "Ориентир: игристое вино, произведённое во французском регионе Шампань из установленных сортов винограда методом вторичного брожения вина в бутылке. Название напитка происходит от названия провинции Шампань, где расположен данный регион.",
     [
@@ -2877,7 +2897,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "bomb",
     "Бомба",
-    "⚙️",
+    "💣",
     "tech",
     "Ориентир: разрывной снаряд, начинённый взрывчатым веществом.",
     [
@@ -2890,7 +2910,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "shark",
     "Акула",
-    "🐟",
+    "🦈",
     "life",
     "Ищите то, что результат узнаётся по таким признакам, как крупная, хищная, морская.",
     [
@@ -2959,7 +2979,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "sake",
     "Саке",
-    "🍽️",
+    "🍶",
     "food",
     "Главный признак: традиционный японский алкогольный напиток, который иногда называют рисовой водкой.",
     [
@@ -3113,7 +3133,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "oldman",
     "Старик",
-    "🧑",
+    "🧓",
     "civ",
     "Ищите то, что мужчина, достигший старости.",
     [
@@ -3126,7 +3146,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "santa_claus",
     "Дед Мороз",
-    "✨",
+    "🎅",
     "myst",
     "Ищите то, что главный сказочный персонаж на празднике Нового года, советский вариант рождественского дарителя.",
     [
@@ -3152,7 +3172,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "bone",
     "Кость",
-    "👤",
+    "🦴",
     "civ",
     "Главный признак: соединительная ткань, из которой образован скелет большинства позвоночных. Кости защищают внутренние органы, служат в качестве рычагов при движении и поднятии предметов.",
     [
@@ -3191,7 +3211,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "sick",
     "Больной",
-    "💊",
+    "🤒",
     "civ",
     "Ориентир: это, поражённый какой-либо болезнью.",
     [
@@ -3260,7 +3280,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "salo",
     "Сало",
-    "🍽️",
+    "🥓",
     "food",
     "Подсказка ведёт к тому, что твердый жир, который откладывается у животных в период их усиленного питания. Продукт употребляется в пищу в свежем, соленом, копченом, вареном, тушеном или топленом виде.",
     [
@@ -3298,7 +3318,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "drunkard",
     "Пьяница",
-    "👤",
+    "🥴",
     "civ",
     "Подсказка ведёт к тому, что это, которому свойственно употребление спиртных напитков в значительных количествах.",
     [
@@ -3363,7 +3383,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "grilled_chicken",
     "Курица гриль",
-    "🍽️",
+    "🍗",
     "food",
     "Ищите то, что куриная туша, обжаренная на специальном приборе, который называется грилем.",
     [
@@ -3426,8 +3446,8 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   ],
   [
     "cacao_beans",
-    "Какао&ndash;бобы",
-    "🐾",
+    "Какао-бобы",
+    "🫘",
     "life",
     "Обратите внимание: миндалевидные семена, содержащиеся в плоде шоколадного дерева. Источник какао-порошка и какао-масла, из которого изготавливают шоколад.",
     [
@@ -3440,7 +3460,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "bouquet",
     "Букет",
-    "🐾",
+    "💐",
     "life",
     "Ориентир: срезанные или сорванные цветущие растения, красиво подобранные вместе, обычно для подарка или для помещения их в вазу с целью украшения помещения.",
     [
@@ -3491,7 +3511,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "dream",
     "Сон",
-    "👤",
+    "😴",
     "civ",
     "Ориентир: периодически возникающее состояние покоя, которое сопровождается уменьшением возбудимости центральной нервной системы, выключением сознания, расслаблением мускулатуры, замедлением сердечной деятельности, дыхания и т. д.",
     [
@@ -3533,7 +3553,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "yarn",
     "Пряжа",
-    "🧰",
+    "🧶",
     "craft",
     "Ориентир: нить, скрученная из продольно и последовательно расположенных волокон. Пряжу делают из натуральных (это, хлопок, лён, шёлк) или химических волокон.",
     [
@@ -3572,7 +3592,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "hero",
     "Герой",
-    "👤",
+    "🦸",
     "civ",
     "Ориентир: человек исключительной смелости и доблести, либо одно из главных действующих лиц литературного или иного произведения культуры. это перед лицом опасности сражается с невзгодами, проявляя изобретательность, мужество или силу.",
     [
@@ -3585,7 +3605,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "fisherman",
     "Рыболов",
-    "🐟",
+    "🎣",
     "civ",
     "Подсказка ведёт к тому, что человек, который занимается рыбной ловлей как промыслом.",
     [
@@ -3718,7 +3738,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "statue_of_liberty",
     "Статуя Свободы",
-    "🎭",
+    "🗽",
     "culture",
     "Ориентир: колоссальная скульптура в стиле Наполеона III, или стиле Второй империи, расположенная в это на острове Свободы, находящемся в Верхней Нью-Йоркской бухте примерно в 3 километрах к юго-западу от южной оконечности острова Манхэттен.",
     [
@@ -3731,7 +3751,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "nessie",
     "Лохнесское чудовище",
-    "✨",
+    "🦕",
     "myst",
     "Обратите внимание: водное чудовище, согласно легендам, обитающее в шотландском озере Лох-Несс.",
     [
@@ -3744,7 +3764,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "blade",
     "Лезвие",
-    "🪨",
+    "🪒",
     "geo",
     "Обратите внимание: острая заточенная грань клинка режущего, рубящего инструмента или оружия.",
     [
@@ -3770,7 +3790,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "syringe",
     "Шприц",
-    "🧰",
+    "💉",
     "craft",
     "Ориентир: медицинский инструмент, предназначенный для инъекций, диагностических пункций, отсасывания патологического содержимого из полостей.",
     [
@@ -3796,7 +3816,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "banana",
     "Банан",
-    "🍽️",
+    "🍌",
     "food",
     "Подсказка ведёт к тому, что высокое тропическое растение с очень большими листьями, а также его сладкий мучнистый плод.",
     [
@@ -3809,7 +3829,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "bonsai",
     "Бонсай",
-    "🐾",
+    "🪴",
     "life",
     "Главный признак: искусство выращивания точной копии настоящего дерева в миниатюре. Хотя слово «это» является японским, описываемое им искусство возникло в китайской империи.",
     [
@@ -3994,7 +4014,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "flashlight",
     "Фонарик",
-    "☀️",
+    "🔦",
     "sky",
     "Ориентир: небольшой носимый источник света для индивидуального использования.",
     [
@@ -4037,7 +4057,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "firefighter",
     "Пожарный",
-    "🔥",
+    "🧑‍🚒",
     "civ",
     "Ориентир: работник подразделения профессиональной пожарной охраны, штатная единица расчёта пожарного автомобиля.",
     [
@@ -4063,7 +4083,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "fire_extinguisher",
     "Огнетушитель",
-    "🔥",
+    "🧯",
     "craft",
     "Главный признак: переносное или передвижное устройство для тушения очагов пожара за счет выпуска запасенного огнетушащего вещества.",
     [
@@ -4097,7 +4117,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "ring",
     "Кольцо",
-    "🪨",
+    "💍",
     "geo",
     "Обратите внимание: ювелирное изделие из золота другого драгоценного металла в форме обода, круга, с пустым пространством внутри линии круга. Надевают на пальцы в качестве украшения или символа брака, которым, по обычаю, обмениваются жених с невесто.",
     [
@@ -4198,7 +4218,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "ninja",
     "Ниндзя",
-    "👤",
+    "🥷",
     "civ",
     "Ориентир: разведчик-диверсант, шпион, лазутчик и наёмный убийца в средневековой Японии; это, владеющий искусством ниндзюцу. В функции это входили шпионаж, обман и неожиданные атаки.",
     [
@@ -4224,7 +4244,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "snowman",
     "Снеговик",
-    "❄️",
+    "☃️",
     "civ",
     "Ищите то, что стилизованная снежная фигура человека, скульптура. Лепка снеговика или снежной бабы — зимняя забава, зародившаяся в древние времена.",
     [
@@ -4280,7 +4300,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "calendar",
     "Календарь",
-    "🧰",
+    "📅",
     "craft",
     "Главный признак: специальная таблица или книжка, в которой все дни года разделены на месяцы и недели.",
     [
@@ -4327,7 +4347,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "circle",
     "Круг",
-    "🧰",
+    "⭕",
     "craft",
     "Главный признак: часть плоскости, которая лежит внутри окружности.",
     [
@@ -4340,7 +4360,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "ruler",
     "Линейка",
-    "🎭",
+    "📏",
     "culture",
     "Подсказка ведёт к тому, что прямая планка для вычерчивания прямых линий.",
     [
@@ -4426,7 +4446,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "ice_skate",
     "Коньки",
-    "❄️",
+    "⛸️",
     "elem",
     "Подсказка ведёт к тому, что спортивный или прогулочный инвентарь, который представляет собой совокупность специализированных ботинок и прикрепляемой к ним системе подвижных или неподвижных лезвий. Используются для передвижения по ровной твёрдой ледяной пове.",
     [
@@ -4439,7 +4459,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "nest",
     "Гнездо",
-    "🐾",
+    "🪺",
     "life",
     "Ориентир: сооружение, строящееся различными видами животных и служащее как место для сна, жилья и высиживания яиц и вскармливания потомства. Гнёзда могут располагаться на деревьях, под крышами и на земле.",
     [
@@ -4465,7 +4485,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "soldier",
     "Солдат",
-    "🛡️",
+    "🪖",
     "civ",
     "Обратите внимание: результат узнаётся по таким признакам, как рядовой, военнослужащий.",
     [
@@ -4517,7 +4537,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "luck",
     "Удача",
-    "🐾",
+    "🍀",
     "life",
     "Обратите внимание: субъективная положительная оценка случайного или непредсказуемого стечения обстоятельств.",
     [
@@ -4581,7 +4601,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "apple",
     "Яблоко",
-    "🍽️",
+    "🍎",
     "food",
     "Ориентир: плод яблони, который употребляется в пищу в свежем виде, служит сырьём в кулинарии и для приготовления напитков.",
     [
@@ -4633,7 +4653,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "clover",
     "Клевер",
-    "🐾",
+    "☘️",
     "life",
     "Ищите то, что многолетнее травянистое растение, которое произрастает в Азии и Европе. Первый лист символизирует надежду, второй – веру, третий – любовь, а четвертый – удачу.",
     [
@@ -4702,7 +4722,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "berry",
     "Ягода",
-    "🍎",
+    "🫐",
     "food",
     "Ориентир: небольшой сочный плод кустарников, полукустарников, кустарничков и травянистых растений.",
     [
@@ -4775,7 +4795,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "rum",
     "Ром",
-    "🍽️",
+    "🥃",
     "food",
     "Главный признак: крепкий напиток из перебродившего сока или патоки, получаемых при производстве тростникового сахара. это известен как напиток пиратов, моряков и разбойников.",
     [
@@ -4882,7 +4902,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "picture",
     "Картина",
-    "🧰",
+    "🖼️",
     "craft",
     "Подсказка ведёт к тому, что произведение живописи, имеющее самостоятельное художественное значение и обладающее свойством законченности (в отличие от этюда и эскиза).",
     [
@@ -4946,7 +4966,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "antenna",
     "Антенна",
-    "⚙️",
+    "📡",
     "tech",
     "Подсказка ведёт к тому, что часть радиоустановки, служащая для излучения радиоволн при передаче или для улавливания их при приёме.",
     [
@@ -4993,7 +5013,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "casino",
     "Казино",
-    "🏗️",
+    "🎰",
     "transport",
     "Обратите внимание: игорное заведение, в котором с использованием рулетки, игровых столов для карточных игр и игры в кости, игровых автоматов, а также другого игорного оборудования осуществляется проведение азартных игр с объявленным денежным или ины.",
     [
@@ -5006,7 +5026,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "love",
     "Любовь",
-    "👤",
+    "💕",
     "civ",
     "Ищите то, что чувство, свойственное человеку, глубокая привязанность и устремлённость к другому человеку или объекту, чувство глубокой симпатии. это включает в себя ряд сильных и позитивных эмоциональных и психических состояний, от самой возвы.",
     [
@@ -5079,7 +5099,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "confetti",
     "Конфетти",
-    "🧰",
+    "🎊",
     "craft",
     "Подсказка ведёт к тому, что разноцветные, обычно бумажные кружочки мелкого размера, неотъемлемый атрибут праздников, в основном, балов, карнавалов, триумфальных шествий, но также дней рождения и свадебных торжеств. это осыпают друг друга участники празднест.",
     [
@@ -5118,7 +5138,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "candy",
     "Конфета",
-    "🍽️",
+    "🍬",
     "food",
     "Ищите то, что кондитерские изделия на основе сахарно-паточного сиропа с добавлением различных видов пищевого сырья.",
     [
@@ -5139,7 +5159,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "pinata",
     "Пиньята",
-    "🧰",
+    "🪅",
     "craft",
     "Подсказка ведёт к тому, что мексиканская по происхождению полая игрушка довольно крупных размеров, изготовленная из папье-маше или лёгкой обёрточной бумаги с орнаментом и украшениями. Своей формой это воспроизводит фигуры животных (обычно лошадей) или геоме.",
     [
@@ -5225,7 +5245,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "fly",
     "Муха",
-    "🐾",
+    "🪰",
     "life",
     "Обратите внимание: общее название широко распространённых двукрылых насекомых.",
     [
@@ -5242,7 +5262,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "mosquito",
     "Комар",
-    "🐾",
+    "🦟",
     "life",
     "Подсказка ведёт к тому, что небольшое крылатое кровососущее насекомое.",
     [
@@ -5255,7 +5275,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "watermelon",
     "Арбуз",
-    "🌊",
+    "🍉",
     "food",
     "Обратите внимание: однолетнее травянистое растение семейства тыквенные, бахчевая культура. С точки зрения ботаники, это – это настоящая это.",
     [
@@ -5285,7 +5305,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "tent",
     "Палатка",
-    "🏗️",
+    "⛺",
     "transport",
     "Ищите то, что временное летнее помещение из ткани.",
     [
@@ -5298,7 +5318,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "beaver",
     "Бобр",
-    "🐾",
+    "🦫",
     "life",
     "Ориентир: животное из отряда грызунов с ценным мехом.",
     [
@@ -5311,7 +5331,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "alarm_clock",
     "Будильник",
-    "⏳",
+    "⏰",
     "sky",
     "Главный признак: это с особым заводом, звонящие в требуемое это.",
     [
@@ -5354,7 +5374,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "flute",
     "Флейта",
-    "🐾",
+    "🪈",
     "life",
     "Ориентир: деревянный духовой музыкальный инструмент высокого тона в виде прямой трубки с отверстиями и клапанами.",
     [
@@ -5430,7 +5450,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "projector",
     "Проектор",
-    "🌤️",
+    "📽️",
     "sky",
     "Ищите то, что аппарат для передачи изображений на экран.",
     [
@@ -5443,7 +5463,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "crystal_ball",
     "Магический шар",
-    "🎮",
+    "🔮",
     "geo",
     "Главный признак: известный по многим легендам европейского Средневековья предмет, представляющий собой кристаллический или стеклянный шар, который якобы обладает магическими свойствами.",
     [
@@ -5486,7 +5506,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "toy",
     "Игрушка",
-    "👤",
+    "🧸",
     "civ",
     "Главный признак: предмет, предназначенный для взаимодействия с предметом в целях игры и познавания мира.",
     [
@@ -5519,7 +5539,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "fortune_cookie",
     "Печенье с предсказаниями",
-    "🍽️",
+    "🥠",
     "food",
     "Главный признак: ванильные печеньица, в каждое из которых запечена бумажка с мудрыми изречениями, афоризмами или пророчествами.",
     [
@@ -5570,7 +5590,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "snowboard",
     "Сноуборд",
-    "❄️",
+    "🏂",
     "transport",
     "Подсказка ведёт к тому, что спортивный снаряд, предназначенный для скоростного спуска с заснеженных склонов и гор.",
     [
@@ -5583,7 +5603,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "sled",
     "Сани",
-    "🏗️",
+    "🛷",
     "transport",
     "Ищите то, что зимняя повозка на двух полозьях.",
     [
@@ -5651,7 +5671,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "doughnut",
     "Пончик",
-    "🍽️",
+    "🍩",
     "food",
     "Главный признак: круглое или кольцеобразное, жаренное во фритюре хлебобулочное изделие, с начинкой или без неё.",
     [
@@ -5677,7 +5697,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "drum",
     "Барабан",
-    "🍽️",
+    "🪘",
     "food",
     "Ориентир: ударный музыкальный инструмент в виде цилиндра, верх и низ которого обтянуты кожей.",
     [
@@ -5690,7 +5710,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "caterpillar",
     "Гусеница",
-    "🐾",
+    "🐛",
     "life",
     "Ищите то, что личинка бабочки, обычно червеобразная с несколькими парами ног.",
     [
@@ -5811,7 +5831,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "document",
     "Документ",
-    "🧰",
+    "📃",
     "craft",
     "Обратите внимание: деловая это, подтверждающая какой-нибудь факт или право на что-нибудь.",
     [
@@ -5837,7 +5857,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "jellyfish",
     "Медуза",
-    "🐟",
+    "🪼",
     "life",
     "Ищите то, что морское животное со студенистым телом, снабжённым щупальцами. По форме напоминает колокол или зонтик.",
     [
@@ -5897,7 +5917,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "pandemic",
     "Пандемия",
-    "🪐",
+    "😷",
     "space",
     "Подсказка ведёт к тому, что необычайно сильная эпидемия, распространившаяся на территории ряда стран, континентов; высшая степень развития эпидемического процесса.",
     [
@@ -5948,7 +5968,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "radiation",
     "Радиация",
-    "🔬",
+    "☢️",
     "science",
     "Подсказка ведёт к тому, что ионизирующее излучение, которое образуется при распаде радиоактивных частиц.",
     [
@@ -5965,7 +5985,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "spider",
     "Паук",
-    "🐾",
+    "🕷️",
     "life",
     "Ищите то, что членистоногое животное с ядовитыми железами, обычно плетущее паутину, в которую ловит мелких животных, служащих ему пищей.",
     [
@@ -6046,7 +6066,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "fly_agaric",
     "Мухомор",
-    "🐾",
+    "🍄",
     "life",
     "Подсказка ведёт к тому, что ядовитый это с красной в белых крапинках шляпкой. Вопреки распространённому убеждению, мухи умирают не из-за воздействия веществ, содержащихся в мухоморе.",
     [
@@ -6093,7 +6113,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "celluar",
     "Сотовая связь",
-    "🍽️",
+    "📶",
     "food",
     "Ориентир: способ передачи данных по радиоканалам между точками, одна из которых относится к категории мобильных.",
     [
@@ -6140,7 +6160,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "mountain_range",
     "Горный хребет",
-    "🪨",
+    "🏔️",
     "geo",
     "Обратите внимание: крупное линейно вытянутое поднятие рельефа с чётко выраженными склонами, пересекающимися в верхней части.",
     [
@@ -6166,7 +6186,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "surfing",
     "Сёрфинг",
-    "🌤️",
+    "🏄",
     "sky",
     "Ориентир: катание на водной волне на специальной лёгкой доске.",
     [
@@ -6252,7 +6272,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "squirrel",
     "Белка",
-    "🐾",
+    "🐿️",
     "life",
     "Главный признак: небольшой ловкий лесной грызун с пушистым хвостом.",
     [
@@ -6269,7 +6289,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "circus",
     "Цирк",
-    "🏗️",
+    "🎪",
     "transport",
     "Ищите то, что зрелищное предприятие для устройства представлений с участием акробатов, гимнастов, клоунов, дрессированных животных.",
     [
@@ -6303,7 +6323,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "nut",
     "Орех",
-    "🍽️",
+    "🌰",
     "food",
     "Обратите внимание: плод растения, который обычно имеет съедобное ядро, заключенное в твердую скорлупу.",
     [
@@ -6358,7 +6378,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "tomahawk",
     "Томагавк",
-    "⚙️",
+    "🪓",
     "tech",
     "Подсказка ведёт к тому, что боевой топор, традиционно используемый индейцами Северной Америки.",
     [
@@ -6371,7 +6391,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "cricket",
     "Кузнечик",
-    "🐾",
+    "🦗",
     "life",
     "Подсказка ведёт к тому, что прыгающее насекомое, издающее стрекочущие звуки.",
     [
@@ -6397,7 +6417,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "clown",
     "Клоун",
-    "👤",
+    "🤡",
     "civ",
     "Главный признак: артист, который использует комедийные приемы, такие как гротеск и буффонада, для развлечения публики. В основном, клоуны работают в цирке, на эстраде или в театре, но также встречаются на праздниках, фестивалях и других мероприят.",
     [
@@ -6423,7 +6443,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "coconut",
     "Кокос",
-    "🍽️",
+    "🥥",
     "food",
     "Главный признак: результат узнаётся по таким признакам, как кокосовой, пальмы.",
     [
@@ -6531,7 +6551,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "cherry",
     "Вишня",
-    "🍽️",
+    "🍒",
     "food",
     "Ищите то, что это из семейства розоцветных. Имеет кисло-сладкий вкус.",
     [
@@ -6557,7 +6577,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "cocktail",
     "Коктейль",
-    "🍽️",
+    "🍸",
     "food",
     "Обратите внимание: алкогольный напиток, получаемый в результате смешивания двух и более компонентов.",
     [
@@ -6595,7 +6615,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "night",
     "Ночь",
-    "🌙",
+    "🌃",
     "space",
     "Главный признак: промежуток времени от захода Солнца вечером до его восхода утром.",
     [
@@ -6608,7 +6628,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "stink",
     "Зловоние",
-    "🧰",
+    "🤢",
     "craft",
     "Ориентир: крайне неприятный, сильный, резкий и отвратительный запах.",
     [
@@ -6634,7 +6654,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "fear",
     "Страх",
-    "🐾",
+    "😱",
     "life",
     "Обратите внимание: естественная базовая эмоция, которая возникает как реакция на реальную или воображаемую опасность.",
     [
@@ -6660,7 +6680,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "doll",
     "Кукла",
-    "👤",
+    "🪆",
     "civ",
     "Обратите внимание: детская это в виде фигурки человека, сделанная из ткани, дерева, пластика или других материалов.",
     [
@@ -6673,7 +6693,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "necklace",
     "Ожерелье",
-    "🪨",
+    "📿",
     "geo",
     "Ориентир: шейное украшение из драгоценных камней или жемчуга.",
     [
@@ -6703,7 +6723,7 @@ const IMPORTED_ALCHEMY_GAME = Object.freeze([
   [
     "skunk",
     "Скунс",
-    "🐾",
+    "🦨",
     "life",
     "Ориентир: хищное млекопитающее, известное своим черно-белым окрасом и способностью защищаться с помощью едкого запаха.",
     [
