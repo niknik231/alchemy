@@ -1,3 +1,3 @@
 // region: APP_META
-const APP_VERSION = "1.20.2";
+const APP_VERSION = "1.20.6";
 
