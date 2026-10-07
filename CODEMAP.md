@@ -2,175 +2,149 @@
 
 ## Назначение
 
-Эта карта помогает быстро определить область изменения, связанные подсистемы и обязательные проверки.
+Эта карта помогает быстро определить область изменения, связанные подсистемы и обязательные проверки. Исходники игры лежат в `src/`, а корневой `index.html` собирается из них командой `node tools/build.mjs` и публикуется. Собранный файл вручную не редактировать.
 
-Проект имеет две сборки:
-- **Модульная** (`alchemy-refactored/`) — для разработки: разделённые HTML, CSS, JS и JSON.
-- **Standalone** (`alchemy.html`) — для игроков: один HTML-файл без внешних зависимостей. Собирается скриптом `build-standalone.py`.
+Номера строк намеренно не используются: они быстро устаревают. Нужный участок ищется по стабильному маркеру `region:` или имени сущности, например:
+
+```text
+rg "region: CODEX" src
+rg "function renderCodex" src
+```
 
 ## Общая архитектура
 
 ```text
-JSON-данные (elements, recipes, categories, icons)
+данные и рецепты
     ↓
-AlchemyEngine.load() → инициализация индексов
+производные индексы и категории
     ↓
-localStorage: discovered, settings
+загрузка состояния из localStorage
     ↓
-AlchemyUI.init() → рендер палитры, привязка событий
+рендер панели, поля и справочника
     ↓
-Действия игрока (drag/drop) → combine() → saveProgress() → обновление UI
+действия игрока → изменение состояния → сохранение → повторный рендер
 ```
 
-## Структура проекта
+## Исходники и сборка
 
 ```text
-.
-├── alchemy.html              ← 🎮 Standalone-сборка (играть сразу)
-├── alchemy-refactored/       ← 🛠️  Модульная версия для разработки
-│   ├── index.html            — Точка входа (нужен сервер из-за fetch)
-│   ├── css/styles.css        — Все стили, адаптив до 640px
-│   ├── js/
-│   │   ├── engine.js         — Класс AlchemyEngine: данные, рецепты, состояние
-│   │   ├── ui.js             — Класс AlchemyUI: рендер, drag/drop, анимации
-│   │   └── add-element.js    — Хелперы для консоли браузера
-│   ├── data/
-│   │   ├── elements.json     — 879 элементов
-│   │   ├── recipes.json      — 1088 рецептов
-│   │   ├── categories.json   — 14 категорий
-│   │   └── icons.json        — 56 SVG-иконок
-│   ├── serve.py              — Локальный сервер (порт 8000)
-│   └── publish.py            — Скрипт публикации
-├── build-standalone.py       — Сборка standalone из модульной версии
-└── README.md                 — Документация для контрибьюторов
+src/index.html      шаблон разметки с маркерами <!-- build:styles --> и <!-- build:scripts -->
+src/styles.css      стили
+src/data/*.js       данные: элементы, иконки, рецепты, категории, намёки
+src/game/*.js       логика и интерфейс
+tools/build.mjs     сборка index.html; --check проверяет, что index.html актуален
+tools/validate-game-data.mjs  проверка данных собранного index.html
 ```
 
-## Области кода
+JS-файлы не являются модулями: сборка склеивает их в один `<script>` после `"use strict"` в порядке списка `SCRIPTS` из `tools/build.mjs`, и все объявления видны друг другу. Каждый файл начинается со своего маркера `region:`. Для игрока игра остаётся автономным HTML-файлом без внешних зависимостей.
 
-### `js/engine.js` — Игровой движок
+Рабочий цикл: правка в `src/` → `node tools/build.mjs` → `node tools/validate-game-data.mjs` → проверка в браузере.
 
-| Метод / Сущность | Назначение |
-|---|---|
-| `constructor()` | Инициализация: `elements`, `recipes`, `recipesUsing`, `discovered`, `categories`, `customIcons`, `settings` |
-| `load()` | Загрузка данных из `window._ALCHEMY_*` (standalone) или `fetch()` (модульная) |
-| `initElements()` | Заполнение `this.elements`, определение базовых |
-| `initRecipes()` | Заполнение `this.recipes` и `this.recipesUsing` (обратный индекс) |
-| `initCategories()` | Заполнение `this.categories` |
-| `initIcons()` | Заполнение `this.customIcons` |
-| `recipeKey(a, b)` | Канонический ключ рецепта (сортировка по алфавиту) |
-| `combine(a, b)` | Проверка рецепта и открытие результата. Возвращает `{ result, isNew }` или `null` |
-| `getDiscoveredElements()` | Список открытых элементов для рендера палитры |
-| `getAvailableElements()` | Элементы, которые можно скрафтить из открытых |
-| `getRecipesFor(id)` | Все рецепты, где элемент является ингредиентом |
-| `getIconHTML(id)` | Рендер иконки: SVG → emoji → full |
-| `saveProgress()` / `loadProgress()` | localStorage: `alchemy.save` |
-| `saveSettings()` / `loadSettings()` | localStorage: `alchemy.settings` |
-| `exportSave()` / `importSave()` | Экспорт/импорт JSON-строки |
-| `resetProgress()` | Сброс к базовым элементам |
+## Области и файлы
 
-### `js/ui.js` — Интерфейс
-
-| Метод / Сущность | Назначение |
-|---|---|
-| `constructor(engine)` | Привязка DOM-элементов, инициализация состояния |
-| `init()` | `engine.load()` → `renderPalette()` → `bindEvents()` |
-| `renderPalette()` | Группировка по категориям, рендер чипов |
-| `createChip(el)` | Создание элемента палитры с dragstart и touch |
-| `createBoardItem(el, x, y)` | Создание элемента на поле с drag |
-| `makeDraggable(item, id)` | Обработчики pointer-событий (мышь + touch) |
-| `checkCombine(dragged, id)` | Проверка пересечения и вызов `engine.combine()` |
-| `onCombineSuccess(a, b, result)` | Анимация поглощения, создание результата, искры |
-| `createSparks(x, y)` | CSS-анимация ✨ при успешном крафте |
-| `showPopup(id)` | Модальное окно «Новый элемент!» |
-| `showHint(text)` | Подсказка внизу экрана |
-| `updateCounter()` | Обновление счётчика «открыто / всего» |
-| `bindEvents()` | Меню, сброс, закрытие меню по клику вне |
-
-### `js/add-element.js` — Консольный хелпер
-
-| Функция | Назначение |
-|---|---|
-| `addElement(id, name, icon, category, a, b, clue)` | Добавить элемент и рецепт в runtime |
-| `addRecipe(a, b, result)` | Добавить только рецепт |
-| `downloadData()` | Экспорт текущего состояния в JSON |
-
-### `css/styles.css` — Стили
-
-| Секция | Назначение |
-|---|---|
-| Базовые стили | `body`, градиент фона, шрифты |
-| Шапка | `header`, `#counter`, кнопки, меню |
-| Палитра | `#palette`, `.chip`, категории |
-| Рабочее поле | `#board`, `.item`, drag-стили |
-| Эффекты | `.spark`, `.consumed`, `.pop`, `.new` |
-| Модальные окна | `#popup`, `#hintbar`, `.sheet` |
-| Адаптив | `@media(max-width:640px)` и `@media(max-width:380px)` |
+| Маркер | Файл | Назначение | Основные сущности |
+|---|---|---|---|
+| `STYLES` | `src/styles.css` | Общие и адаптивные стили | CSS, медиазапросы до `640px` |
+| `UI_SHELL` | `src/index.html` | Статическая разметка интерфейса | шапка, поле, панели, модальные окна |
+| `APP_META` | `src/game/app-meta.js` | Метаданные сборки | `APP_VERSION` |
+| `DATA_CORE` | `src/data/elements.js` | Базовые данные элементов | `BASE`, `E` |
+| `ICONS` | `src/data/icons.js` | Специальные и полноразмерные иконки | `ICONS`, `FULL_ICON_MOTIFS`, `makeFullIcon()` |
+| `RECIPES` | `src/data/recipes.js` | Исходные рецепты и наборы расширений | `R`, `EXPANSION`, `MUSIC_EXPANSION` |
+| `IMPORTED_ALCHEMY_GAME` | `src/data/imported.js` | Импортированные элементы с рецептами и намёками | `IMPORTED_ALCHEMY_GAME` |
+| `INDEXES` | `src/game/indexes.js` | Производные индексы рецептов и иконок | `FULL_ICONS`, `recipeKey`, `RECIPE`, `RECIPES_USING`, `FINAL` |
+| `CATEGORIES` | `src/data/categories.js` | Категории и цвета | `CATS`, `CAT_COLOR`, `CAT_OF` |
+| `CLUES` | `src/data/clues.js` | Описания-намеки и их проверка | `ELEMENT_CLUES`, `validateElementClues()` |
+| `STATE` | `src/game/state.js` | Загрузка игрового состояния | `settings`, `discovered`, `discoveredRecipes`, `discoveryChain` |
+| `SAVE_MIGRATIONS` | `src/game/save-migrations.js` | Совместимость старых сохранений | миграция открытых рецептов |
+| `DOM_REFS` | `src/game/dom-refs.js` | Ссылки на узлы интерфейса и временное состояние | DOM-константы, `items`, `drag` |
+| `UTILITIES` | `src/game/utilities.js` | Общие функции представления и сохранения | `save*()`, `iconHTML()`, счетчики рецептов |
+| `BOARD` | `src/game/board.js` | Панель элементов и рабочее поле | `renderPalette()`, `addItem()`, `removeItem()` |
+| `HINTS` | `src/game/hints.js` | Уведомления и игровые подсказки | `notify*()`, `showHint()` |
+| `DISCOVERY_CHAIN` | `src/game/discovery-chain.js` | Построение и отображение цепочки открытий | `createDiscoveryChain()`, `renderDiscoveryChain()` |
+| `MERGE` | `src/game/merge.js` | Проверка сочетания и открытие результата | `tryMerge()`, `discover()` |
+| `DRAG_DROP` | `src/game/drag-drop.js` | Перетаскивание мышью и касанием | обработчики pointer-событий, `endDrag()` |
+| `CONTROLS` | `src/game/controls.js` | Основные кнопки и команды | обработчики кнопок |
+| `CODEX` | `src/game/codex.js` | Справочник, поиск и режим неоткрытых | `renderCodex()`, строки справочника |
+| `TOOLTIPS` | `src/game/tooltips.js` | Карточка рецептов при наведении | обработчики `mouseover` и `mouseout` |
+| `SETTINGS` | `src/game/settings.js` | Меню, настройки и сброс прогресса | `setMenuOpen()`, обработчики настроек |
+| `STARTUP` | `src/game/startup.js` | Начальная отрисовка | создание цепочки, панели и базовых карточек |
 
 ## Карта типовых изменений
 
-| Задача | Начать с | Связанные файлы | Проверить |
+| Задача | Начать с | Связанные области | Проверить |
 |---|---|---|---|
-| Добавить элемент | `data/elements.json` | `data/recipes.json`, `data/categories.json` | ID уникален, рецепт существует, категория валидна |
-| Добавить рецепт | `data/recipes.json` | `data/elements.json` | оба ингредиента существуют, результат существует, пара уникальна |
-| Изменить категорию | `data/categories.json` | `js/ui.js` → `renderPalette()` | цвет, название, список элементов |
-| Добавить SVG-иконку | `data/icons.json` | `data/elements.json` → `iconType: "svg"` | viewBox 64×64, класс `game-icon` |
-| Изменить логику крафта | `js/engine.js` → `combine()` | `js/ui.js` → `onCombineSuccess()` | новый/известный результат, сохранение |
-| Изменить интерфейс | `js/ui.js` + `css/styles.css` | — | desktop и mobile, touch-совместимость |
-| Изменить сохранение | `js/engine.js` → `saveProgress()` | `js/ui.js` → сброс | localStorage не ломается, базовые восстанавливаются |
-| Изменить анимации | `css/styles.css` | `js/ui.js` | CSS-классы добавляются/убираются корректно |
-| Собрать standalone | `build-standalone.py` | все в `alchemy-refactored/` | `alchemy.html` открывается без сервера |
+| Изменить элемент | `DATA_CORE` | `CATEGORIES`, `ICONS`, `CLUES`, `RECIPES` | постоянство ID, достижимость, отображение |
+| Изменить рецепт | `RECIPES` | `MERGE`, `HINTS`, `CODEX` | уникальность пары, существование ID, счетчики |
+| Изменить категорию | `CATEGORIES` | `BOARD`, `CODEX` | состав и счетчики во всех представлениях |
+| Изменить иконку | `ICONS` | `UTILITIES` | читаемость на мобильной и настольной версиях |
+| Изменить панель элементов | `BOARD` | `STYLES`, `DRAG_DROP` | фильтрацию, счетчики, touch-прокрутку |
+| Изменить соединение | `MERGE` | `RECIPES`, `STATE`, `BOARD` | новый и уже известный результат, альтернативный рецепт |
+| Изменить подсказки | `HINTS` | `RECIPES`, `STATE` | только неоткрытые результаты, устойчивость списка |
+| Изменить справочник | `CODEX` | `CATEGORIES`, `CLUES`, `STATE` | оба режима, поиск, прокрутку, кнопку добавления |
+| Изменить перетаскивание | `DRAG_DROP` | `BOARD`, `STYLES` | мышь, touch, границы поля, чёрную дыру |
+| Изменить сохранение | `STATE` | `SAVE_MIGRATIONS`, `SETTINGS` | старое, полное и поврежденное сохранение |
+| Изменить интерфейс | `UI_SHELL` | `STYLES`, соответствующий JS-раздел | desktop и ширину до `640px`, aria-атрибуты |
+| Завершить любую правку игры | `APP_META` | — | повысить версию один раз за запрос |
 
-## Сборка standalone
+## Ключевые потоки выполнения
 
-```bash
-python build-standalone.py
+```text
+Перетаскивание
+pointerdown → pointermove → endDrag() → tryMerge()
+                                      → consumeItem()
+
+Открытие результата
+tryMerge() → discover() → save()
+                       → renderPalette()
+                       → refreshBoardRecipeCounts()
+                       → registerChainDiscovery()
+
+Справочник
+openCodex() → renderCodex()
+             ├─ makeCodexRow()
+             └─ makeUndiscoveredRow()
+
+Запуск
+загрузка STATE → миграция SAVE_MIGRATIONS → STARTUP
 ```
-
-Что делает скрипт:
-1. Читает `alchemy-refactored/index.html`, CSS, JS, JSON.
-2. Заменяет `<link rel="stylesheet">` на inline `<style>`.
-3. Встраивает JSON-данные как `window._ALCHEMY_*` — убирает `fetch()`.
-4. Меняет `async load()` на синхронный `load()`.
-5. Убирает `await` в `AlchemyUI.init()`.
-6. Объединяет всё в один `alchemy.html`.
-
-> ⚠️ После правок в `alchemy-refactored/data/` всегда пересобирайте standalone!
 
 ## Контракты, которые нельзя нарушать
 
 ### Рецепты
 
-- Сочетание неупорядоченное; канонический ключ — `recipeKey(a, b)`.
-- Одна пара ингредиентов = один результат.
-- Все ID в рецептах должны существовать в `elements.json`.
-- Каждый небазовый элемент должен быть достижим из базовых.
+- Сочетание неупорядоченное; канонический ключ создается через `recipeKey()`.
+- Одна пара ингредиентов дает один результат.
+- Открытость результата и открытость конкретного рецепта — разные состояния.
+- Все ингредиенты и результаты должны ссылаться на существующие ID.
+- Каждый небазовый элемент должен быть достижим из базовых элементов.
 
 ### Сохранение
 
-- Ключи: `alchemy.save` и `alchemy.settings`.
-- Базовые элементы (`isBase: true`) всегда восстанавливаются.
-- Неизвестные ID в сохранении не должны ломать загрузку.
-- Новые элементы не сбрасывают прежний прогресс.
+- ID существующего элемента является постоянным ключом сохранения.
+- Сохраняются ключи `alchemy.discovered` и `alchemy.discoveredRecipes`.
+- Базовые элементы гарантированно восстанавливаются.
+- Неизвестные и повторяющиеся ID не должны повреждать загрузку.
+- Новые элементы не должны сбрасывать прежний прогресс.
+- `localStorage.clear()` не используется.
 
 ### Интерфейс
 
-- Работает на desktop и mobile (ширина до `640px`).
-- Touch и мышь — оба работают.
+- Изменения по умолчанию работают и на desktop, и на мобильной ширине до `640px`.
+- Один расчет остатка рецептов используется на панели, рабочем поле и в справочнике.
+- Добавление элемента из справочника не закрывает его и не сбрасывает состояние просмотра.
 - Чёрная дыра удаляет элемент только с рабочего поля.
 
 ## Проверка перед завершением изменения
 
-1. Проверить синтаксис JSON в `data/`.
+1. Проверить синтаксис встроенного JavaScript.
 2. Проверить существование всех ID из рецептов и категорий.
-3. Проверить уникальность неупорядоченных пар рецептов.
+3. Проверить уникальность неупорядоченных пар и единственность результата пары.
 4. Проверить достижимость небазовых элементов.
-5. Проверить сценарии старого и повреждённого сохранения.
-6. Проверить desktop и мобильную компоновку.
-7. Пересобрать `alchemy.html` и убедиться, что он открывается без сервера.
+5. Проверить сценарии старого, полного и поврежденного сохранения, если затронуто состояние.
+6. Проверить desktop и мобильную компоновку, если затронут интерфейс.
+7. Повысить `APP_VERSION` ровно один раз за завершенный пользовательский запрос.
+8. Выполнить `node tools/build.mjs --check`. При публикации убедиться, что в коммит входит только публикуемый набор файлов из AGENTS.md.
 
 ## Правило поддержки карты
 
-При добавлении новой подсистемы:
-1. Добавить файл/метод в таблицу областей.
-2. При необходимости — в таблицу типовых изменений.
-3. Обновить `README.md` для контрибьюторов.
+При добавлении новой подсистемы нужно создать для нее отдельный файл в `src/` с уникальным маркером `region:` в первой строке, внести файл в список `SCRIPTS` в `tools/build.mjs`, добавить строку в таблицу областей и при необходимости дополнить карту типовых изменений. Внутреннюю реализацию функций здесь пересказывать не нужно.
